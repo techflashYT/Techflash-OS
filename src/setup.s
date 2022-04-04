@@ -93,8 +93,11 @@ startup:
 	test edx, (1 << 29)
 	jz .no_lmode
 
+	push ax
+	mov ax, 0x0E2E		# .
+	int 0x10
+	pop ax
 
-	
 	# hlt
 	# mov ax, 0x2401
 	# int 0x15		# enable A20 Gate
