@@ -5,5 +5,4 @@ extern "C" {
 #include <stdint.h>
 
     void kernelMain();
-    // extern void printTest();
 }
