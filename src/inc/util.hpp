@@ -9,6 +9,10 @@ static inline void halt() {
 
 unsigned short int* vga_buffer = (unsigned short int*)0xB8000;
 
+
+#define VERSION "0.0.1a"
+
+
 #define BLACK 0
 #define BLUE 1
 #define GREEN 2
