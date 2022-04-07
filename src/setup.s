@@ -254,7 +254,7 @@ printstr_rmode:
 .done:
 	ret
 
-dummy_IDT: 
+dummy_IDT:
 	.word 0x00
 	.long 0x00	
 

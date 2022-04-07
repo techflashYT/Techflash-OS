@@ -1,3 +1,4 @@
+#include <stdint.h>
 static inline uint_fast32_t farpeekl(uint_fast16_t sel, void* off) {
 	uint_fast32_t ret;
 	asm (	"push %%fs\n\t"

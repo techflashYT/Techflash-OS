@@ -1,4 +1,7 @@
+#pragma once
 #include "io.hpp"
+#include <stdlib.h>
+#include <stdint.h>
 static inline void halt() {
 	for (;;) {
 		asm("hlt");
@@ -6,8 +9,13 @@ static inline void halt() {
 }
 
 
+static inline void softHalt() {
+	asm("hlt");
+}
 
-unsigned short int* vga_buffer = (unsigned short int*)0xB8000;
+
+
+__attribute__((unused)) static uint_fast16_t* vga_buffer = (uint_fast16_t*)0xB8000;
 
 
 #define VERSION "0.0.1a"
@@ -30,11 +38,10 @@ unsigned short int* vga_buffer = (unsigned short int*)0xB8000;
 #define LIGHT_BROWN 14
 #define WHITE 15
 
-
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
 
-struct Terminal {
+static struct Terminal {
 	size_t row = 0;
 	size_t column = 0;
 	size_t width = VGA_WIDTH;
@@ -70,141 +77,32 @@ struct Terminal {
 	} cursor;
 } terminal;
 
-struct Keyboard {
-	struct LEDs {
-		bool num;
-		bool caps;
-		bool scroll;
-	} leds;
-	struct FunctionKeys {
-		bool F1;
-		bool F2;
-		bool F3;
-		bool F4;
-		bool F5;
-		bool F6;
-		bool F7;
-		bool F8;
-		bool F9;
-		bool F10;
-		bool F11;
-		bool F12;
-	} funcKeys;
-	struct NumpadKeys {
-		bool bkslash;
-		bool asterisk;
-		bool minus;
-		bool seven;
-		bool eight;
-		bool nine;
-		bool plus;
-		bool four;
-		bool five;
-		bool six;
-		bool one;
-		bool two;
-		bool three;
-		bool enter;
-		bool zero;
-		bool period;
-	} numpad;
-	struct ArrowKeys {
-		bool up;
-		bool down;
-		bool left;
-		bool right;
-	} arrowKeys;
-	struct SpecialKeys {
-		bool printScr;
-		bool pauseBreak;
-		bool sysRq; // Same as pauseBreak
-		bool insert;
-		bool home;
-		bool pageUp;
-		bool deleteKey;
-		bool end;
-		bool pageDown;
-		bool escape;
-	} special;
-	struct Modifiers {
-		bool shift;
-		bool ctrl;
-		bool alt;
-		bool fn;
-		bool menu; // The key next to FN
-	} modifiers;
-	struct RegularKeys {
-		bool tilde;
-		bool one;
-		bool two;
-		bool three;
-		bool four;
-		bool five;
-		bool six;
-		bool seven;
-		bool eight;
-		bool nine;
-		bool zero;
-		bool minus;
-		bool equals;
-		bool backspace;
-		bool tab;
-		bool q;
-		bool w;
-		bool e;
-		bool r;
-		bool t;
-		bool y;
-		bool u;
-		bool i;
-		bool o;
-		bool p;
-		bool leftBracket;
-		bool rightBracket;
-		bool forwardSlash;
-		bool a;
-		bool s;
-		bool d;
-		bool f;
-		bool g;
-		bool h;
-		bool j;
-		bool k;
-		bool l;
-		bool semicolon;
-		bool apostrophe;
-		bool enter;
-		bool z;
-		bool x;
-		bool c;
-		bool v;
-		bool b;
-		bool n;
-		bool m;
-		bool comma;
-		bool dot;
-		bool backslash;
-		bool leftWin;
-		bool spacebar;
-		bool rightWin;
-	} keys;
-} keyboard;
+void kprintf(int_fast8_t x, uint_fast8_t y, uint_fast8_t color, const int_fast8_t* str, ...);
+void kprintf(int_fast8_t x, uint_fast8_t y, uint_fast8_t color, const char* str, ...);
 
-
-/* 
-	Print function, prints a string to the screen by writing into VGA RAM.
-
-	ARGUMENTS:
-		char* string, the string to print
-		uint_fast8_t color, the color to print the string in, (0-15), default is 15 (white)
-	
-	RETURNS: Nothing.
-*/
-void print(const uint_fast8_t* str, uint_fast8_t x, uint_fast8_t y, uint_fast8_t color = terminal.fgColor) {
-	for (uint_fast8_t i = 0; str[i] != '\0'; i++) {
-		vga_buffer[(y * VGA_WIDTH) + x + i] = str[i] | (color << 8);
+static inline uint_fast32_t strlen(const int_fast8_t *str) {
+	int i = 0;
+	while (str[i] != (char)0) {
+		++i;
 	}
+	return i;
+}
+static inline uint_fast32_t strlen(const char *str) {
+	int i = 0;
+	while (str[i] != (char)0) {
+		++i;
+	}
+	return i;
 }
 
 
-
+static inline void kernelPanic(const int_fast8_t message[]) {
+	kprintf(0, 0, RED, "KERNEL PANIC: %s", message);
+}
+static inline void kernelPanic(const char message[]) {
+	kprintf(0, 0, RED, "KERNEL PANIC: %s", message);
+}
+// void *memset(void *b, int val, size_t count) {
+	// asm volatile ("cld; rep stosb" : "+c" (count), "+D" (b) : "a" (val) : "memory");
+	// return b;
+// }

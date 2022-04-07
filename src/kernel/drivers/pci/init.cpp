@@ -1,0 +1,3 @@
+bool pciInit() {
+    return false;
+}
