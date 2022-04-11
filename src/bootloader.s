@@ -118,11 +118,11 @@ startup:
 	int 0x10
 	pop ax
 
-	# hlt
 	# mov ax, 0x2401
 	# int 0x15		# enable A20 Gate
 	# mov ax, 0x03
 	# int 0x10		# set VGA text mode to 3
+	
 .int15:
 	mov eax, 0xE820		# int 0x15 subfunction - get memory map	
 	xor ebx, ebx		# clear ebx
@@ -142,6 +142,7 @@ startup:
 .int15_failed:
 	cli
 	hlt
+	jmp .int15_failed
 
 .int15_loop:
 	mov ax, 0xE820		# ax clobbered by interrupt
