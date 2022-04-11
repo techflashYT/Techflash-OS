@@ -1,7 +1,7 @@
-#include "../../../inc/util.hpp"
+#include "../../../../inc/util.hpp"
 #include <cstdlib>
 #include <cstdint>
-void idtSetGate(uint_fast8_t num, uint_fast64_t base, uint_fast16_t sel, uint_fast8_t flags);
+void idtSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags);
 
 
 extern void _irq0();
@@ -23,10 +23,10 @@ extern void _irq15();
 
 /* Registers */
 struct regs {
-	uint_fast32_t gs, fs, es, ds;
-	uint_fast32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	uint_fast32_t int_no, err_code;
-	uint_fast32_t eip, cs, eflags, useresp, ss;
+	uint32_t gs, fs, es, ds;
+	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+	uint32_t int_no, err_code;
+	uint32_t eip, cs, eflags, useresp, ss;
 };
 
 typedef struct regs regs_t;
@@ -38,7 +38,7 @@ static irq_handler_t irq_routines[16] = { NULL };
 /*
  * Install an interupt handler for a hardware device.
  */
-void irq_install_handler(int_fast8_t irq, irq_handler_t handler) {
+void irq_install_handler(int8_t irq, irq_handler_t handler) {
 	irq_routines[irq] = handler;
 }
 

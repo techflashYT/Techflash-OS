@@ -40,10 +40,10 @@ struct Keyboard {
 		uint_fast8_t scancode = inb(0x60);
 		bufferPush(convert(scancode));
 	}
-	char getChar() {
-		char ret = 0;
+	const char* getChar() {
+		char* ret = 0;
 		while (!ret) {
-			ret = bufferPop();
+			*ret = bufferPop();
 		}
         return ret;
 	}
