@@ -3,7 +3,7 @@
 #include "drivers/keyboard/inc/main.hpp"
 Keyboard keyboard;
 extern "C" {
-	extern void printTest();
+	extern void kernelMain();
 }
 void kernelMain() {
 	// setupRealIDT();
