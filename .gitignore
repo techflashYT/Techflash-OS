@@ -5,4 +5,3 @@ build/*
 *.bin
 *.o
 .vscode
-src/lib/cstdlib.a
