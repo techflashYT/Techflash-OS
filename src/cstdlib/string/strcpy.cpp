@@ -1,6 +1,6 @@
 #include "../util.hpp"
 // Forward declarations for functions that we end up using here
-void *memcpy(void *dest, const void *src, size_t count);
+void *memcpy(void *dest, const void *src, const size_t &count);
 size_t strlen(const char *str);
 
 char *strcpy(char *dest, const char *src) {
