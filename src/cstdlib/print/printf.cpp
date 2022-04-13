@@ -22,6 +22,6 @@ uint8_t printf(const char *format, ...) {
 			}
 		}
 	}
-	va_end(ap);
+	va_end(args);
 	return i;
 }
