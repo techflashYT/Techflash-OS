@@ -1,6 +1,9 @@
 #include "../inc/util.hpp"
 #include "inc/main.hpp"
 #include "drivers/keyboard/inc/main.hpp"
+extern "C" {
+	#include "../cstdlib/defs.h"
+}
 Keyboard keyboard;
 extern "C" {
 	extern void kernelMain();

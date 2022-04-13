@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "../../../../inc/util.hpp"
+void kernelPanic(const char message[]);
 struct KeyboardScancode {
     uint_fast8_t scanCode;
     char charValue;

@@ -1,3 +1,4 @@
+#pragma once
 #include "cstdlib/util.hpp"
 
 #define u __attribute__ ((unused)) 
