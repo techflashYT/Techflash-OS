@@ -1,3 +1,6 @@
-void putc(const char *c, void *stream, const uint8_t &x = 255, const uint8_t &y = 255) {
-	vga_buffer[((x == 255) ? terminal.position.x : x) + (((y == 255) ? terminal.position.y : y) * VGA_WIDTH)] = c;
+#include "../util.h"
+#include "../../shared.hpp"
+void putc(const char c, void *stream) {
+	(void)stream;
+	vga_buffer[terminal.cursor.position.x + terminal.cursor.position.y * VGA_WIDTH] = c;
 }

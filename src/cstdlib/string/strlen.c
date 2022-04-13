@@ -1,7 +1,7 @@
-#include "../util.hpp"
+#include "../util.h"
 
 size_t strlen(const char *str) {
-	int i = 0;
+	size_t i = 0;
 	while (str[i] != '\0') {
 		++i;
 	}

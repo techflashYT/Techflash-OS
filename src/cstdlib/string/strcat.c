@@ -1,4 +1,4 @@
-#include "../util.hpp"
+#include "../util.h"
 // Forward declarations for functions that we end up using here
 size_t strlen(const char *str);
 

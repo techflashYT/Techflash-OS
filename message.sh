@@ -7,10 +7,10 @@ then
     printf "\033[1;32mSTEP 2/4: C standard library compiled!\033[0m\r\n"
 elif [ "$1" = "3" ]
 then
-    printf "\033[1;32mSTEP 3/4: C++ standard library compiled!\033[0m\r\n"
+    printf "\033[1;32mSTEP 3/4: Kernel compiled!\033[0m\r\n"
 elif [ "$1" = "4" ]
 then
-    printf "\033[1;32mSTEP 4/4: Kernel compiled!\033[0m\r\n"
+    printf "\033[1;32mSTEP 4/4: Linked!\033[0m\r\n"
 elif [ "$1" = "5" ]
 then
     printf "\033[1;32mFully compiled in bin/bootsect.bin!\033[0m\r\n"

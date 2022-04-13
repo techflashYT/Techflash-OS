@@ -1,7 +1,7 @@
-#include "../util.hpp"
+#include "../util.h"
 #include <stdarg.h>
 uint8_t fputs(const char *str, void *stream);
-void putchar(char c, const uint8_t &x = 255, const uint8_t &y = 255);
+void putchar(char c);
 uint8_t printf(const char *format, ...) {
 	va_list args;
 	va_start(args, format);

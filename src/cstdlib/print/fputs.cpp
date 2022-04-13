@@ -1,9 +1,15 @@
-#include "../util.hpp"
+#include "../util.h"
 #include "../../shared.hpp"
-void putc(const char *c, void *stream, uint8_t x = 255, uint8_t y = 255);
-uint8_t fputs(const char *str, void *stream, const uint8_t &x, const uint8_t &y) {
-	for (uint8_t i = 0; str[i] != '\0'; i++) {
-		// TODO IF MORE THAN VGA WIDTH THEN WRAP
-		putc(str[i], stdout, i, )
+void putc(const char c, void *stream);
+uint8_t fputs(const char *str, void *stream) {
+	(void)stream;
+	uint8_t i = 0;
+	for (; str[i] != '\0'; i++) {
+		if (i + terminal.cursor.position.x >= VGA_WIDTH) {
+			terminal.cursor.position.x = 0;
+			terminal.cursor.position.y++;
+		}
+		putc(str[i], stdout);
 	}
+	return i;
 }

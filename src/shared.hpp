@@ -1,5 +1,5 @@
 #pragma once
-#include "cstdlib/util.hpp"
+#include "cstdlib/util.h"
 
 #define u __attribute__ ((unused)) 
 
@@ -25,9 +25,10 @@
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
 
-
-u uint8_t inb(uint16_t port);
-u void outb(uint16_t port, uint8_t val);
+extern "C" {
+	u uint8_t inb(uint16_t port);
+	u void outb(uint16_t port, uint8_t val);
+}
 static struct Terminal {
 	size_t row = 0;
 	size_t column = 0;

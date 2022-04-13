@@ -1,6 +1,7 @@
-CC       := g++
-CXX      := gcc
-CFLAGS   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -Ofast -ffreestanding -fno-exceptions -fno-rtti -c 
+CC       := gcc
+CFLAGS   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c2x -g -ffreestanding -fno-exceptions -c 
+CXX      := g++
+CXXFLAGS := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -ffreestanding -fno-exceptions -fno-rtti -c 
 AS       := as
 ASFLAGS  := --msyntax=intel -mnaked-reg
 LNK      := ld
@@ -20,36 +21,38 @@ bootloader:
 
 
 customLibIO:
-	@echo "CXX   src/cstdlib/io/farpeekl.cpp    build/cstdlib/farpeekl.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/io/farpeekl.cpp -o build/cstdlib/farpeekl.o
-	@echo "CXX   src/cstdlib/io/farpokeb.cpp    build/farpokeb.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/io/farpokeb.cpp -o build/cstdlib/farpokeb.o
-	@echo "CXX   src/cstdlib/io/inb.cpp         build/cstdlib/inb.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/io/inb.cpp -o build/cstdlib/inb.o
-	@echo "CXX   src/cstdlib/io/outb.cpp        build/cstdlib/outb.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/io/outb.cpp -o build/cstdlib/outb.o
+	@echo "CC    src/cstdlib/io/farpeekl.c      build/cstdlib/farpeekl.o"
+	@$(CC) $(CFLAGS) src/cstdlib/io/farpeekl.c -o build/cstdlib/farpeekl.o
+	@echo "CC    src/cstdlib/io/farpokeb.c      build/farpokeb.o"
+	@$(CC) $(CFLAGS) src/cstdlib/io/farpokeb.c -o build/cstdlib/farpokeb.o
+	@echo "CC    src/cstdlib/io/inb.c           build/cstdlib/inb.o"
+	@$(CC) $(CFLAGS) src/cstdlib/io/inb.c -o build/cstdlib/inb.o
+	@echo "CC    src/cstdlib/io/outb.cpp        build/cstdlib/outb.o"
+	@$(CC) $(CFLAGS) src/cstdlib/io/outb.c -o build/cstdlib/outb.o
 
 customLibMem:
-	@echo "CXX   src/cstdlib/mem/memcpy.cpp     build/cstdlib/memcpy.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/mem/memcpy.cpp -o build/cstdlib/memcpy.o
-	@echo "CXX   src/cstdlib/mem/memset.cpp     build/cstdlib/memset.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/mem/memset.cpp -o build/cstdlib/memset.o
+	@echo "CC    src/cstdlib/mem/memcpy.c       build/cstdlib/memcpy.o"
+	@$(CC) $(CFLAGS) src/cstdlib/mem/memcpy.c -o build/cstdlib/memcpy.o
+	@echo "CC    src/cstdlib/mem/memset.c       build/cstdlib/memset.o"
+	@$(CC) $(CFLAGS) src/cstdlib/mem/memset.c -o build/cstdlib/memset.o
 
 customLibPrint:
 	@echo "CXX   src/cstdlib/print/fputs.cpp    build/cstdlib/fputs.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/print/fputs.cpp -o build/cstdlib/fputs.o
-	@echo "CXX   src/cstdlib/print/putchar.cpp  build/cstdlib/putchar.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/print/putchar.cpp -o build/cstdlib/putchar.o
-	@echo "CXX   src/cstdlib/print/printf.cpp   build/cstdlib/printf.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/print/printf.cpp -o build/cstdlib/printf.o
+	@$(CXX) $(CXXFLAGS) src/cstdlib/print/fputs.cpp -o build/cstdlib/fputs.o
+	@echo "CC    src/cstdlib/print/putchar.c    build/cstdlib/putchar.o"
+	@$(CC) $(CFLAGS) src/cstdlib/print/putchar.c -o build/cstdlib/putchar.o
+	@echo "CXX   src/cstdlib/print/putc.cpp     build/cstdlib/putc.o"
+	@$(CXX) $(CXXFLAGS) src/cstdlib/print/putc.cpp -o build/cstdlib/putc.o
+	@echo "CC    src/cstdlib/print/printf.c     build/cstdlib/printf.o"
+	@$(CC) $(CFLAGS) src/cstdlib/print/printf.c -o build/cstdlib/printf.o
 
 customLibString:
-	@echo "CXX    src/cstdlib/string/strcat.cpp  build/cstdlib/strcat.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/string/strcat.cpp -o build/cstdlib/strcat.o
-	@echo "CXX    src/cstdlib/string/strcpy.cpp  build/cstdlib/strcpy.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/string/strcpy.cpp -o build/cstdlib/strcpy.o
-	@echo "CXX    src/cstdlib/string/strlen.cpp  build/cstdlib/strlen.o"
-	@$(CXX) $(CFLAGS) src/cstdlib/string/strlen.cpp -o build/cstdlib/strlen.o
+	@echo "CC    src/cstdlib/string/strcat.c    build/cstdlib/strcat.o"
+	@$(CC) $(CFLAGS) src/cstdlib/string/strcat.c -o build/cstdlib/strcat.o
+	@echo "CC    src/cstdlib/string/strcpy.c    build/cstdlib/strcpy.o"
+	@$(CC) $(CFLAGS) src/cstdlib/string/strcpy.c -o build/cstdlib/strcpy.o
+	@echo "CC    src/cstdlib/string/strlen.c    build/cstdlib/strlen.o"
+	@$(CC) $(CFLAGS) src/cstdlib/string/strlen.c -o build/cstdlib/strlen.o
 
 customLib: customLibIO customLibMem customLibPrint customLibString
 	@echo "$(shell ./message.sh 2)"
@@ -58,9 +61,9 @@ customLib: customLibIO customLibMem customLibPrint customLibString
 
 kernel:
 	@echo "CXX   src/kernel/kernel.cpp          build/kernel.o"
-	@$(CXX) $(CFLAGS) src/kernel/main.cpp -o build/kernel.o
-	@echo "CXX   src/kernel/kernelPanic.cpp     build/kernelPanic.o"
-	@$(CXX) $(CFLAGS) src/kernel/kernelPanic.cpp -o build/kernelPanic.o
+	@$(CXX) $(CXXFLAGS) src/kernel/main.cpp -o build/kernel.o
+	@echo "CC    src/kernel/kernelPanic.c       build/kernelPanic.o"
+	@$(CC) $(CFLAGS) src/kernel/kernelPanic.c -o build/kernelPanic.o
 	@echo "$(shell ./message.sh 3)"
 
 

@@ -1,6 +1,6 @@
-#include "../util.hpp"
+#include "../util.h"
 void farpokeb(uint16_t sel, void* off, uint8_t v) {
-	asm(
+	__asm__(
         "push %%fs\r\n"
         "mov  %0, %%fs\r\n"
         "movb %2, %%fs:(%1)\r\n"

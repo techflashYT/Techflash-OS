@@ -1,10 +1,10 @@
-#include "../inc/util.hpp"
 #include "inc/main.hpp"
-#include "drivers/keyboard/inc/main.hpp"
 extern "C" {
+	#include "drivers/keyboard/inc/main.h"
+	Keyboard keyboard;
+	#include "../inc/util.h"
 	#include "../cstdlib/defs.h"
 }
-Keyboard keyboard;
 extern "C" {
 	extern void kernelMain();
 }
@@ -17,6 +17,8 @@ void kernelMain() {
 	// if (!usbInit()) {
 	// 	print((const uint_fast8_t*)"FATAL ERROR: USB INITIALIZATION FAILED", 0, 1, RED);
 	// }
+	terminal.cursor.position.x = 13;
+	terminal.cursor.position.y = 0;
 	printf(".");
 	halt();
 	printf("\033[{0};{9}H.\r\n");
@@ -25,7 +27,7 @@ void kernelMain() {
 	printf("\033[0m> "); // Print a prompt
 	terminal.cursor.enable(15, 15);
 	terminal.cursor.position.change(1, 3);
-	for (uint_fast8_t i = 0; i < VGA_WIDTH; i++) {
+	for (;;) {
 		keyboard.handler();
 		printf((const char*)keyboard.getChar());
 	}
