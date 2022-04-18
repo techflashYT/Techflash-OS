@@ -10,7 +10,6 @@ extern "C" {
 }
 void kernelMain() {
 	// setupRealIDT();
-	// pciInit();
 	// if (!pciInit()) {
 	// 	print((const uint_fast8_t*)"FATAL ERROR: PCI INITIALIZATION FAILED", 0, 1, RED);
 	// }
