@@ -14,6 +14,12 @@ then
 elif [ "$1" = "5" ]
 then
     printf "\033[1;32mFully compiled in bin/bootsect.bin!\033[0m\r\n"
+elif [ "$1" = "6" ]
+then
+    printf "\033[1;33mCompilin C Standard library to a static library.\r\nThis more than likely will fail.\033[0m\r\n"
+elif [ "$1" = "e" ]
+then
+    printf ""
 else
     printf "\033[1;31mERROR: Invalid argument!\033[0m\r\n"
 fi
