@@ -28,7 +28,7 @@ void kernelMain() {
 	terminal.cursor.position.change(1, 3);
 	for (;;) {
 		keyboard.handler();
-		printf((const char*)keyboard.getChar());
+		putc(keyboard.getChar());
 	}
 	softHalt();
 	printf("\r\nThis broke through the softHalt!");
