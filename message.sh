@@ -19,7 +19,9 @@ then
     printf "\033[1;33mCompilin C Standard library to a static library.\r\nThis more than likely will fail.\033[0m\r\n"
 elif [ "$1" = "e" ]
 then
-    printf ""
+    printf "\033[1;31m"
+elif [ "$1" = "r" ]
+    tput sgr0
 else
     printf "\033[1;31mERROR: Invalid argument!\033[0m\r\n"
 fi
