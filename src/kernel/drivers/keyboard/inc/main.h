@@ -17,7 +17,7 @@ extern "C" {
 			/* 0x2A is LShift */ {0x2C, 'z'}, {0x2D, 'x'}, {0x2E, 'c'}, {0x2F, 'v'}, {0x30, 'b'}, {0x31, 'n'}, {0x32, 'm'}, {0x33, ','}, {0x34, '.'}, {0x35, '/'}, /* 0x36 is RShift */
 			/* 0x1D is LControl */ // TODO Rest of keys here https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1
 		};
-		static char buffer[256];
+		char buffer[256];
 		uint8_t bufferIndex = 0;
 
 		void bufferPush(char value) {
@@ -49,12 +49,8 @@ extern "C" {
 			uint8_t scancode = inb(0x60);
 			bufferPush(convert(scancode));
 		}
-		const char* getChar() {
-			char* ret = 0;
-			while (!ret) {
-				*ret = bufferPop();
-			}
-			return ret;
+		char getChar() {
+			return bufferPop();
 		}
 	};
 }
