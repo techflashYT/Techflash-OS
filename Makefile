@@ -73,14 +73,14 @@ link:
  	# Wait to make sure that the kernel finished compiling (and writing to the disc) incase before linking
 	@sleep 0.25
 	@echo "Linking..."
-	ifeq (COMPILE_C_LIB_TO_STATIC, true)
+ifeq ($(COMPILE_C_LIB_TO_STATIC),true)
 	@echo "$(shell ./message.sh 6)"
 	@ar cr src/lib/cstdlib.a build/cstdlib/*.o
 	@echo "$(shell ./message.sh e)"
 	@$(LNK) $(LNKFLAGS) -Lsrc/lib -l:cstdlib.a build/*.o -o build/bootsect.elf
-	else
+else
 	@$(LNK) $(LNKFLAGS) build/*.o build/cstdlib/*.o -o build/bootsect.elf
-	endif
+endif
 	
 toBinary:
  	# Sleep again to make sure that it has finished linking
