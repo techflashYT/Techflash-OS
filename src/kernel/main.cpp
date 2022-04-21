@@ -10,7 +10,6 @@ extern "C" {
 }
 void kernelMain() {
 	// setupRealIDT();
-	// pciInit();
 	// if (!pciInit()) {
 	// 	print((const uint_fast8_t*)"FATAL ERROR: PCI INITIALIZATION FAILED", 0, 1, RED);
 	// }
@@ -29,7 +28,7 @@ void kernelMain() {
 	terminal.cursor.position.change(1, 3);
 	for (;;) {
 		keyboard.handler();
-		printf((const char*)keyboard.getChar());
+		putc(keyboard.getChar());
 	}
 	softHalt();
 	printf("\r\nThis broke through the softHalt!");

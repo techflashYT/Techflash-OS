@@ -1,11 +1,13 @@
-CC       := gcc
-CFLAGS   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c2x -g -ffreestanding -fno-exceptions -c 
-CXX      := g++
-CXXFLAGS := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -ffreestanding -fno-exceptions -fno-rtti -c 
-AS       := as
-ASFLAGS  := --msyntax=intel -mnaked-reg
-LNK      := ld
-LNKFLAGS := -s -Tsrc/linkerScript.ld -Lsrc/lib -l:cstdlib.a
+CC                       := gcc
+CFLAGS                   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c2x -g -ffreestanding -fno-exceptions -c 
+CXX                      := g++
+CXXFLAGS                 := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -ffreestanding -fno-exceptions -fno-rtti -c 
+AS                       := as
+ASFLAGS                  := --msyntax=intel -mnaked-reg
+LNK                      := ld
+LNKFLAGS                 := -s -Tsrc/linkerScript.ld
+COMPILE_C_LIB_TO_STATIC  := false
+
 all: dirs bootloader customLib kernel link toBinary
 	@echo "$(shell ./message.sh 5)"
 
@@ -68,11 +70,17 @@ kernel:
 
 
 link:
- 	# Wait to make sure that the kernel finished compiling (and writing to the disc) before linking
+ 	# Wait to make sure that the kernel finished compiling (and writing to the disc) incase before linking
 	@sleep 0.25
 	@echo "Linking..."
+	ifeq (COMPILE_C_LIB_TO_STATIC, true)
+	@echo "$(shell ./message.sh 6)"
 	@ar cr src/lib/cstdlib.a build/cstdlib/*.o
-	@$(LNK) $(LNKFLAGS) build/*.o -o build/bootsect.elf
+	@echo "$(shell ./message.sh e)"
+	@$(LNK) $(LNKFLAGS) -Lsrc/lib -l:cstdlib.a build/*.o -o build/bootsect.elf
+	else
+	@$(LNK) $(LNKFLAGS) build/*.o build/cstdlib/*.o -o build/bootsect.elf
+	endif
 	
 toBinary:
  	# Sleep again to make sure that it has finished linking
