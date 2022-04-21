@@ -1,7 +1,7 @@
 #include "../util.h"
 #include "../../shared.hpp"
-void putc(const char c, void *stream);
 extern "C" {
+	void putc(const char c, void *stream);
 	uint8_t fputs(const char *str, void *stream);
 }
 uint8_t fputs(const char *str, void *stream) {
