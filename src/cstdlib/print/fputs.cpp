@@ -1,6 +1,9 @@
 #include "../util.h"
 #include "../../shared.hpp"
 void putc(const char c, void *stream);
+extern "C" {
+	uint8_t fputs(const char *str, void *stream);
+}
 uint8_t fputs(const char *str, void *stream) {
 	(void)stream;
 	uint8_t i = 0;

@@ -1,7 +1,7 @@
 #include "../../../../inc/util.h"
 #include "../../../../shared.hpp"
 void kernelPanic(const char message[]);
-	extern "C" {
+extern "C" {
 	struct KeyboardScancode {
 		uint8_t scanCode;
 		char charValue;
@@ -17,7 +17,7 @@ void kernelPanic(const char message[]);
 			/* 0x2A is LShift */ {0x2C, 'z'}, {0x2D, 'x'}, {0x2E, 'c'}, {0x2F, 'v'}, {0x30, 'b'}, {0x31, 'n'}, {0x32, 'm'}, {0x33, ','}, {0x34, '.'}, {0x35, '/'}, /* 0x36 is RShift */
 			/* 0x1D is LControl */ // TODO Rest of keys here https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1
 		};
-		char buffer[256];
+		static char buffer[256];
 		uint8_t bufferIndex = 0;
 
 		void bufferPush(char value) {
