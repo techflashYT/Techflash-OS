@@ -16,7 +16,7 @@ then
     printf "\033[1;32mFully compiled in bin/bootsect.bin!\033[0m\r\n"
 elif [ "$1" = "6" ]
 then
-    printf "\033[1;33mCompilin C Standard library to a static library.\r\nThis more than likely will fail.\033[0m\r\n"
+    printf "\033[1;33mCompiling C Standard library to a static library.\r\nThis more than likely will fail.\033[0m\r\n"
 elif [ "$1" = "e" ]
 then
     printf "\033[1;31m"
