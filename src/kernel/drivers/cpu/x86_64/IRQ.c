@@ -1,9 +1,8 @@
-#include "../../../../inc/util.hpp"
-#include <cstdlib>
-#include <cstdint>
-void idtSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags);
-
-
+#include "../../../../shared.h"
+#include "../../../../cstdlib/defs.h"
+#define IRQ_OFF { asm volatile ("cli"); }
+#define IRQ_RES { asm volatile ("sti"); }
+typedef void (*irq_handler_t) (struct regs *);
 extern void _irq0();
 extern void _irq1();
 extern void _irq2();
@@ -21,38 +20,17 @@ extern void _irq13();
 extern void _irq14();
 extern void _irq15();
 
-/* Registers */
-struct regs {
-	uint32_t gs, fs, es, ds;
-	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	uint32_t int_no, err_code;
-	uint32_t eip, cs, eflags, useresp, ss;
-};
+static irq_handler_t irqRoutines[16] = { NULL };
 
-typedef struct regs regs_t;
-
-typedef void (*irq_handler_t) (struct regs *);
-
-static irq_handler_t irq_routines[16] = { NULL };
-
-/*
- * Install an interupt handler for a hardware device.
- */
-void irq_install_handler(int8_t irq, irq_handler_t handler) {
-	irq_routines[irq] = handler;
+void irqInstallHandler(int irq, irq_handler_t handler) {
+	irqRoutines[irq] = handler;
 }
 
-/*
- * Remove an interrupt handler for a hardware device.
- */
 void irq_uninstall_handler(int irq) {
-	irq_routines[irq] = 0;
+	irqRoutines[irq] = 0;
 }
 
-/*
- * Remap interrupt handlers
- */
-void irq_remap() {
+void irqRemap() {
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);
 	outb(0x21, 0x20);
@@ -65,7 +43,7 @@ void irq_remap() {
 	outb(0xA1, 0x0);
 }
 
-void irq_gates() {
+void irqGates() {
 	idt_set_gate(32, (unsigned)_irq0, 0x08, 0x8E);
 	idt_set_gate(33, (unsigned)_irq1, 0x08, 0x8E);
 	idt_set_gate(34, (unsigned)_irq2, 0x08, 0x8E);
@@ -84,37 +62,38 @@ void irq_gates() {
 	idt_set_gate(47, (unsigned)_irq15, 0x08, 0x8E);
 }
 
-/*
- * Set up interrupt handler for hardware devices.
- */
 void irq_install() {
-	irq_remap();
-	irq_gates();
+	irqRemap();
+	irqGates();
 	IRQ_RES;
 }
 
-void irq_ack(int irq_no) {
+void irqAck(int irq_no) {
 	if (irq_no >= 12) {
 		outb(0xA0, 0x20);
 	}
 	outb(0x20, 0x20);
 }
-
-void
-irq_handler(struct regs *r) {
+struct regs {
+	unsigned int gs, fs, es, ds;
+	unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
+	unsigned int int_no, err_code;
+	unsigned int eip, cs, eflags, useresp, ss;
+};
+void irqHandler(struct regs *r) {
 	IRQ_OFF;
 	void (*handler)(struct regs *r);
 	if (r->int_no > 47 || r->int_no < 32) {
 		handler = NULL;
 	}
-	else {
-		handler = irq_routines[r->int_no - 32];
+    else {
+		handler = irqRoutines[r->int_no - 32];
 	}
 	if (handler) {
 		handler(r);
 	}
-	else {
-		irq_ack(r->int_no - 32);
+    else {
+		irqAck(r->int_no - 32);
 	}
 	IRQ_RES;
 }
