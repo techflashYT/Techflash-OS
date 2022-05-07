@@ -1,5 +1,5 @@
 #pragma once
-#include "../shared.hpp"
+#include "../shared.h"
 extern "C" {
 	u void halt() {
 		for (;;) {

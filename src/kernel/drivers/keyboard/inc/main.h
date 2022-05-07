@@ -1,5 +1,5 @@
 #include "../../../../inc/util.h"
-#include "../../../../shared.hpp"
+#include "../../../../shared.h"
 void kernelPanic(const char message[]);
 extern "C" {
 	struct KeyboardScancode {

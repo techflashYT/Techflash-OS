@@ -19,7 +19,6 @@ void kernelMain() {
 	terminal.cursor.position.x = 13;
 	terminal.cursor.position.y = 0;
 	printf(".");
-	halt();
 	printf("\033[{0};{9}H.\r\n");
 	printf("\033[1;32mKernel Loaded\r\n");
 	printf("\033[37mWelcome to Techflash OS \033[36m%s\033[37m!\r\n", VERSION);
