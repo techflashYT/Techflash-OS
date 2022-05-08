@@ -18,7 +18,7 @@ dirs:
 
 bootloader:
 	@echo "AS    src/boot.s"
-	@$(AS) $(ASFLAGS) src/boot.s -o boot.o
+	@$(AS) $(ASFLAGS) src/boot.s -o build/boot.o
 
 kernel:
 	@echo "CC    src/kernel/main.c"
