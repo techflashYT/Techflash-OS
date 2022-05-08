@@ -3,10 +3,10 @@
 VERSION=0.1
 
 messages=(
-	"\x1b[1;32[STEP 1/3]: Bootloader Compiled!\x1b[0m"
-	"\x1b[1;32[STEP 2/3]: Kernel Compiled!\x1b[0m"
-	"\x1b[1;32[STEP 3/3]: Linked!\x1b[0m"
-	"\x1b[1;36Done!  You should now have a compiled binary in bin/kernel.bin!\x1b[0m"
+	"\x1b[1;32m[STEP 1/3]: Bootloader Compiled!\x1b[0m"
+	"\x1b[1;32m[STEP 2/3]: Kernel Compiled!\x1b[0m"
+	"\x1b[1;32m[STEP 3/3]: Linked!\x1b[0m"
+	"\x1b[1;36mDone!  You should now have a compiled binary in bin/kernel.bin!\x1b[0m"
 )
 
 usage() {
