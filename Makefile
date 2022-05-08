@@ -30,7 +30,7 @@ kernel:
 
 link:
 	@echo "LD    build/*.o"
-	$(LD) $(LDFLAGS) build/*.o -o bin/kernel.bin
+	@$(LD) $(LDFLAGS) build/*.o -o bin/kernel.bin
 	@echo "$(shell ./message.sh -m 2)"
 
 # toBinary:
