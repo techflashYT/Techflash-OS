@@ -11,7 +11,6 @@ RAINBOW					 := true
 
 all: dirs bootloader kernel link
 	@echo "$(shell ./message.sh 5)"
-	@echo "$(shell ./message.sh 5)"
 
 dirs:
 	mkdir -p bin
