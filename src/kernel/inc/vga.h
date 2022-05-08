@@ -18,7 +18,7 @@ enum vga_color {
 	VGA_COLOR_LIGHT_BROWN = 14,
 	VGA_COLOR_WHITE = 15,
 };
-inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg);
-inline uint16_t vga_entry(unsigned char uc, uint8_t color);
+uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg);
+uint16_t vga_entry(unsigned char uc, uint8_t color);
 const size_t VGA_WIDTH;
 const size_t VGA_HEIGHT;
