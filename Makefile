@@ -14,8 +14,8 @@ all: dirs bootloader kernel link
 	@echo "$(shell ./message.sh 5)"
 
 dirs:
+	mkdir -p bin
 	mkdir -p build
-	mkdir -p build/cstdlib
 
 bootloader:
 	@echo "AS    src/boot.s"
