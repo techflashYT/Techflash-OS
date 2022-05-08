@@ -28,7 +28,7 @@ kernel:
 	@$(CC) $(CFLAGS) src/kernel/vga.c -o vga.o
 
 link:
-	$(LD) $(LDFLAGS) build/*.o -o bu/kernel.bin
+	$(LD) $(LDFLAGS) build/*.o -o bin/kernel.bin
 
 # toBinary:
 #  	# Sleep again to make sure that it has finished linking
