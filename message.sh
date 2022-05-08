@@ -16,7 +16,7 @@ Arguments:
     -h, --help:     Show this messsage
     --messages:     Show the message IDs and the messages they correspond to
     -v, --version:  Show script version
-	-m <id>, --message <id>: Show the message with the given ID"
+    -m <id>, --message <id>: Show the message with the given ID"
 }
 showMessages() {
 	for i in "${!messages[@]}"
