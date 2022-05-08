@@ -23,9 +23,9 @@ bootloader:
 
 kernel:
 	@echo "CC    src/kernel/main.c"
-	@$(CC) $(CFLAGS) src/kernel/main.c -o kernel.o
+	@$(CC) $(CFLAGS) src/kernel/main.c -o build/kernel.o
 	@echo "CC    src/kernel/vga.c"
-	@$(CC) $(CFLAGS) src/kernel/vga.c -o vga.o
+	@$(CC) $(CFLAGS) src/kernel/vga.c -o build/vga.o
 
 link:
 	@echo "LD    build/*.o"
