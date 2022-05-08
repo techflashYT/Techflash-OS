@@ -4,8 +4,8 @@ CXX                      := i686-elf-g++
 CXXFLAGS                 := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -c 
 AS                       := i686-elf-as
 ASFLAGS                  := --msyntax=intel -mnaked-reg
-LD                       := i686-elf-ld
-LDFLAGS                  := -s
+LD                       := i686-elf-gcc # Yes I DO want GCC for some reason?
+LDFLAGS                  := -s -T src/libkerScript.ld -ffreestanding -Ofast -nostdlib -lgcc
 COMPILE_C_LIB_TO_STATIC  := false
 RAINBOW					 := true
 
@@ -28,6 +28,7 @@ kernel:
 	@$(CC) $(CFLAGS) src/kernel/vga.c -o vga.o
 
 link:
+	@echo "LD    build/*.o"
 	$(LD) $(LDFLAGS) build/*.o -o bin/kernel.bin
 
 # toBinary:
