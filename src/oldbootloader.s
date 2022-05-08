@@ -1,3 +1,4 @@
+# Just in case I still need this
 .set KERNEL_CODE_SEG,	0x08
 .set KERNEL_DATA_SEG,	0x10
 .set USER_CODE_SEG,	0x18
