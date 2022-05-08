@@ -1,29 +1,40 @@
-#!/bin/sh
-if [ "$1" = "1" ]
-then
-    printf "\033[1;32mSTEP 1/4: Bootloader compiled!\033[0m\r\n"
-elif [ "$1" = "2" ]
-then
-    printf "\033[1;32mSTEP 2/4: C standard library compiled!\033[0m\r\n"
-elif [ "$1" = "3" ]
-then
-    printf "\033[1;32mSTEP 3/4: Kernel compiled!\033[0m\r\n"
-elif [ "$1" = "4" ]
-then
-    printf "\033[1;32mSTEP 4/4: Linked!\033[0m\r\n"
-elif [ "$1" = "5" ]
-then
-    printf "\033[1;36mFully compiled in bin/bootsect.bin!\033[0m\r\n"
-elif [ "$1" = "6" ]
-then
-    printf "\033[1;33mCompiling C Standard library to a static library.\r\nThis more than likely will fail.\033[0m\r\n"
-elif [ "$1" = "e" ]
-then
-    printf "\033[1;31m"
-elif [ "$1" = "r" ]
-then
-    tput sgr0
-else
-    printf "\033[1;31mERROR: Invalid argument!\033[0m\r\n"
-fi
+#!/bin/bash
+# Sorry guys bash is slow as heck but I need it for arrays
+VERSION=0.1
 
+messages=(
+	"Message 0"
+	"Message 1"
+	"Message 2"
+	"Message 3"
+)
+
+usage() {
+	echo "Usage: message.sh [message id]"
+	echo "
+Arguments: 
+    -h, --help:     Show this messsage
+    --messages:     Show the message IDs and the messages they correspond to
+    -v, --version:  Show script version"
+}
+showMessages() {
+	for i in "${!messages[@]}"
+	do
+		echo -e "Message ${i}: \"${messages[$i]}\""
+	done
+}
+
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$2" != "" ] || [ "$*" = "" ]
+then
+	usage
+elif [ "$1" = "-m" ] || [ "$1" = "--messages" ]
+then
+	showMessages
+elif [ "$1" = "-v" ] || [ "$1" = "--version" ]
+then
+	echo -e "Techflash OS Message.sh version ${VERSION}, created by Techflash.\r\nYou can find the source code for this script at https://github.com/techflashYT/Techflash-OS/tree/master/message.sh"
+else
+	usage
+fi
