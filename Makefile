@@ -1,27 +1,40 @@
-CC                       := gcc
-CFLAGS                   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c2x -g -ffreestanding -fno-exceptions -nostdlib -c 
-CXX                      := g++
-CXXFLAGS                 := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -ffreestanding -fno-exceptions -fno-rtti -nostdlib -c 
-AS                       := as
+CC                       := i686-elf-gcc
+CFLAGS                   := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c2x -g -c 
+CXX                      := i686-elf-g++
+CXXFLAGS                 := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -Wformat-truncation -Wformat-overflow -Werror -std=c++2b -g -c 
+AS                       := i686-elf-as
 ASFLAGS                  := --msyntax=intel -mnaked-reg
-LNK                      := ld
-LNKFLAGS                 := -s -Tsrc/linkerScript.ld -Lsrc/lib -l:libc.so
+LD                       := i686-elf-ld
+LDFLAGS                  := -s
 COMPILE_C_LIB_TO_STATIC  := false
 RAINBOW					 := true
 
-all: dirs bootloader kernel link toBinary
+all: dirs bootloader kernel link
 	@echo "$(shell ./message.sh 5)"
 	@echo "$(shell ./message.sh 5)"
 
 dirs:
 	mkdir -p build
 	mkdir -p build/cstdlib
-	
-toBinary:
- 	# Sleep again to make sure that it has finished linking
-	@sleep 1
-	@objcopy -O binary build/bootsect.elf bin/bootsect.bin
-	@echo "$(shell ./message.sh 4)"
+
+bootloader:
+	@echo "AS    src/boot.s"
+	@$(AS) $(ASFLAGS) src/boot.s -o boot.o
+
+kernel:
+	@echo "CC    src/kernel/main.c"
+	@$(CC) $(CFLAGS) src/kernel/main.c -o kernel.o
+	@echo "CC    src/kernel/vga.c"
+	@$(CC) $(CFLAGS) src/kernel/vga.c -o vga.o
+
+link:
+	$(LD) $(LDFLAGS) build/*.o -o bu/kernel.bin
+
+# toBinary:
+#  	# Sleep again to make sure that it has finished linking
+# 	@sleep 1
+# 	@objcopy -O binary build/bootsect.elf bin/bootsect.bin
+# 	@echo "$(shell ./message.sh 4)"
 
 clean:
 	@echo "Cleaning..."
