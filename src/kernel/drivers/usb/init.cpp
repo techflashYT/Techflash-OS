@@ -1,3 +1,0 @@
-bool usbInit() {
-    return false;
-}
