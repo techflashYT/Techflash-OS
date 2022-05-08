@@ -10,7 +10,7 @@ COMPILE_C_LIB_TO_STATIC  := false
 RAINBOW					 := true
 
 all: dirs bootloader kernel link
-	@echo "$(shell ./message.sh 5)"
+	@echo "$(shell ./message.sh -m 3)"
 
 dirs:
 	mkdir -p bin
@@ -19,16 +19,19 @@ dirs:
 bootloader:
 	@echo "AS    src/boot.s"
 	@$(AS) $(ASFLAGS) src/boot.s -o build/boot.o
+	@echo "$(shell ./message.sh -m 0)"
 
 kernel:
 	@echo "CC    src/kernel/main.c"
 	@$(CC) $(CFLAGS) src/kernel/main.c -o build/kernel.o
 	@echo "CC    src/kernel/vga.c"
 	@$(CC) $(CFLAGS) src/kernel/vga.c -o build/vga.o
+	@echo "$(shell ./message.sh -m 1)"
 
 link:
 	@echo "LD    build/*.o"
 	$(LD) $(LDFLAGS) build/*.o -o bin/kernel.bin
+	@echo "$(shell ./message.sh -m 2)"
 
 # toBinary:
 #  	# Sleep again to make sure that it has finished linking

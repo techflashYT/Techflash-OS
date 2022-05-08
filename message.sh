@@ -3,10 +3,10 @@
 VERSION=0.1
 
 messages=(
-	"Message 0"
-	"Message 1"
-	"Message 2"
-	"Message 3"
+	"\x1b[1;32[STEP 1/3]: Bootloader Compiled!\x1b[0m"
+	"\x1b[1;32[STEP 2/3]: Kernel Compiled!\x1b[0m"
+	"\x1b[1;32[STEP 3/3]: Linked!\x1b[0m"
+	"\x1b[1;36Done!  You should now have a compiled binary in bin/kernel.bin!\x1b[0m"
 )
 
 usage() {
@@ -64,7 +64,7 @@ then
 	then
 		if [ "$2" -ge 0 ] && [ "$2" -lt ${#messages[@]} ]
 		then
-			echo "${messages[$2]}"
+			echo -e "${messages[$2]}"
 		else
 			echo "The message ID you specified is not valid."
 			usage
