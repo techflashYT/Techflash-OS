@@ -5,7 +5,7 @@ CXXFLAGS                 := -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wconve
 AS                       := i686-elf-as
 ASFLAGS                  := --msyntax=intel -mnaked-reg
 LD                       := i686-elf-gcc # Yes I DO want GCC for some reason?
-LDFLAGS                  := -s -T src/libkerScript.ld -ffreestanding -Ofast -nostdlib -lgcc
+LDFLAGS                  := -s -T src/linkerScript.ld -ffreestanding -Ofast -nostdlib -lgcc
 COMPILE_C_LIB_TO_STATIC  := false
 RAINBOW					 := true
 
