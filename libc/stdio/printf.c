@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include <kernel/tty.h>
+#include <kernel/assert.h>
 
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
@@ -59,6 +60,7 @@ int printf(const char* restrict format, ...) {
 			written++;
 		}
 		else if (*format == 's') {
+			assert("printfstr");
 			format++;
 			const char* str = va_arg(parameters, const char*);
 			size_t len = strlen(str);
@@ -72,6 +74,7 @@ int printf(const char* restrict format, ...) {
 			written += len;
 		}
 		else {
+			assert("Unknown format specifier.");
 			format = format_begun_at;
 			size_t len = strlen(format);
 			if (maxrem < len) {
