@@ -13,9 +13,9 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -fstack-protector-all -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
-CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude -fstack-protector-all -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
-LDFLAGS:=$(LDFLAGS) -fstack-protector-all
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra  -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
+CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude  -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
+LDFLAGS:=$(LDFLAGS) 
 LIBS:=$(LIBS) -nostdlib -lk -lgcc
 
 ARCHDIR=arch/$(HOSTARCH)
