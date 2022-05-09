@@ -25,7 +25,7 @@ int printf(const char* restrict format, ...) {
 	while (*format != '\0') {
 		size_t maxrem = INT_MAX - written;
 		if (format[0] != '%' || format[1] == '%') {
-			if (format[0] == 0x0D && format[1] == 0x0A) {
+			if (format[0] == 0x0D || format[0] == 0x0A) {
 				terminal_move(0, terminal_get_y() + 1);
 			}
 			if (format[0] == '%') {
