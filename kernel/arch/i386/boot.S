@@ -28,7 +28,23 @@ _start:
 	mov cx, 0x2607
 	int 0x10
 	mov stack_top, esp
-
+	# Clear other regs
+	push ah
+	push al
+	push bh
+	push bl
+	push cx
+	mov ah, 0x09 # Write char
+	xor bh, bh
+	xor bl, bl
+	xor cx, cx
+	mov al, '1'
+	int 0x10
+	pop cx
+	pop bl
+	pop bh
+	pop al
+	pop ah
 	# Call the global constructors.
 	call _init
 
