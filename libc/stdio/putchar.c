@@ -3,7 +3,6 @@
 #if defined(__is_libk)
 #include <kernel/tty.h>
 #endif
-bool checkIfNextCharIsNewline = false;
 int putchar(int ic) {
 #if defined(__is_libk)
 	char c = (char) ic;
