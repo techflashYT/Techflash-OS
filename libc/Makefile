@@ -4,7 +4,7 @@ HOSTARCH!=../util/target-triplet-to-arch.sh $(HOST)
 
 CFLAGS?=-O2 -g
 CPPFLAGS?=
-LDFLAGS?=
+LDFLAGS?= -s
 LIBS?=
 
 DESTDIR?=
