@@ -24,10 +24,10 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	mov 0x1, ah
-	mov 0x2607, cx
+	mov ah, 0x1
+	mov cx, 0x2607
 	int 0x10
-	movl esp, stack_top
+	mov esp, stack_top
 
 	# Call the global constructors.
 	call _init
