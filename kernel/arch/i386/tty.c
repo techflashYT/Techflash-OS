@@ -48,6 +48,10 @@ size_t terminal_get_y() {
 }
 void terminal_putchar(char c) {
 	unsigned char uc = (unsigned char)c;
+	if (c == '\r' || c == '\n') {
+		terminal_row++;
+		return;
+	}
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
