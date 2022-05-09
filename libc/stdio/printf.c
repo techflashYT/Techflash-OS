@@ -93,7 +93,6 @@ int printf(const char* restrict format, ...) {
 			format += len;
 		}
 	}
-	print("reached null", sizeof("reached null"));
 
 	va_end(parameters);
 	if (written >= INT_MAX) {
