@@ -13,8 +13,8 @@ EXEC_PREFIX?=$(PREFIX)
 INCLUDEDIR?=$(PREFIX)/include
 LIBDIR?=$(EXEC_PREFIX)/lib
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
-CPPFLAGS:=$(CPPFLAGS) -D__is_libc -Iinclude
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -fstack-protector-all -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
+CPPFLAGS:=$(CPPFLAGS) -D__is_libc -Iinclude -fstack-protector-all -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter
 LIBK_CFLAGS:=$(CFLAGS)
 LIBK_CPPFLAGS:=$(CPPFLAGS) -D__is_libk
 
