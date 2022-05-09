@@ -54,7 +54,8 @@ all: tfos.elf
 
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
-	pwd
+	mkdir -p $(DESTDIR)$(BOOTDIR)
+	mv tfos.elf $(DESTDIR)$(BOOTDIR)
 	grub-file --is-x86-multiboot ../sysroot/boot/tfos.elf
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
