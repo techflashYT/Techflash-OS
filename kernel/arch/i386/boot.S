@@ -26,7 +26,7 @@ stack_top:
 _start:
 	mov 0x1, ah
 	mov 0x2607, cx
-	int 0x10
+	int 10h 
 	movl esp, stack_top
 
 	# Call the global constructors.
