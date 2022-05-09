@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <kernel/tty.h>
+
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
 	for (size_t i = 0; i < length; i++) {
@@ -22,8 +24,10 @@ int printf(const char* restrict format, ...) {
 
 	while (*format != '\0') {
 		size_t maxrem = INT_MAX - written;
-
 		if (format[0] != '%' || format[1] == '%') {
+			if (format[0] == '\r' && format[1] == '\n') {
+				terminal_move(0, terminal_get_y() + 1);
+			}
 			if (format[0] == '%') {
 				format++;
 			}
