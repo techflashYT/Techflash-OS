@@ -79,7 +79,7 @@ int printf(const char* restrict format, ...) {
 			format++;
 		}
 		else {
-			assert("Unknown format specifier.");
+			assert("Unknown format specifier.", __FILE__, __LINE__);
 			format = format_begun_at;
 			size_t len = strlen(format);
 			if (maxrem < len) {
