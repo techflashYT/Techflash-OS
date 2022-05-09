@@ -60,7 +60,7 @@ int printf(const char* restrict format, ...) {
 			written++;
 		}
 		else if (*format == 's') {
-			assert("printfstr");
+			printf("string here");
 			format++;
 			const char* str = va_arg(parameters, const char*);
 			size_t len = strlen(str);
@@ -72,6 +72,10 @@ int printf(const char* restrict format, ...) {
 				return -1;
 			}
 			written += len;
+		}
+		else if (*format == 'd') {
+			print("number should go here", sizeof("number should go here"));
+			format++;
 		}
 		else {
 			assert("Unknown format specifier.");
