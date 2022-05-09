@@ -55,7 +55,7 @@ all: tfos.elf
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	mkdir -p $(DESTDIR)$(BOOTDIR)
-	mv tfos.elf $(DESTDIR)$(BOOTDIR)
+	cp tfos.elf $(DESTDIR)$(BOOTDIR)
 	grub-file --is-x86-multiboot ../sysroot/boot/tfos.elf
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
@@ -80,6 +80,6 @@ install-headers:
 
 install-kernel: tfos.elf
 	mkdir -p $(DESTDIR)$(BOOTDIR)
-	mv tfos.elf $(DESTDIR)$(BOOTDIR)
+	cp tfos.elf $(DESTDIR)$(BOOTDIR)
 
 -include $(OBJS:.o=.d)
