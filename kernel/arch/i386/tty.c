@@ -53,15 +53,22 @@ void terminal_putchar(char c) {
 		checkIfNextCharIsNewline = true;
 		return;
 	}
-	if (c == '\n' && checkIfNextCharIsNewline) {
+	else if (c == '\n' && checkIfNextCharIsNewline) {
 		terminal_row++;
 		terminal_column = 0;
 		checkIfNextCharIsNewline = false;
+		return;
 	}
-	if (c != '\n' && checkIfNextCharIsNewline) {
+	else if (c != '\n' && checkIfNextCharIsNewline) {
 		terminal_row++;
 		terminal_column = 0;
 		checkIfNextCharIsNewline = false;
+		return;
+	}
+	else if (c == '\n') {
+		terminal_row++;
+		terminal_column = 0;
+		return;
 	}
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
