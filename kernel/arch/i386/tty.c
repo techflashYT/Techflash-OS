@@ -46,11 +46,22 @@ size_t terminal_get_x() {
 size_t terminal_get_y() {
 	return terminal_row;
 }
+bool checkIfNextCharIsNewline = false;
 void terminal_putchar(char c) {
 	unsigned char uc = (unsigned char)c;
-	if (c == '\r' || c == '\n') {
-		terminal_row++;
+	if (c == '\r') {
+		checkIfNextCharIsNewline = true;
 		return;
+	}
+	if (c == '\n' && checkIfNextCharIsNewline) {
+		terminal_row++;
+		terminal_column = 0;
+		checkIfNextCharIsNewline = false;
+	}
+	if (c != '\n' && checkIfNextCharIsNewline) {
+		terminal_row++;
+		terminal_column = 0;
+		checkIfNextCharIsNewline = false;
 	}
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
