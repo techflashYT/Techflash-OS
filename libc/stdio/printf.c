@@ -75,7 +75,7 @@ int printf(const char* restrict format, ...) {
 			written += len;
 		}
 		else if (*format == 'd') {
-			print("number here", sizeof("number here"));
+			print("number here", sizeof("number here") - 1);
 			format++;
 		}
 		else {
