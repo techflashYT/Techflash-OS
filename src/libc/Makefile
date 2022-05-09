@@ -67,19 +67,19 @@ libk.a: $(LIBK_OBJS)
 
 .c.o:
 	@echo "CC    $*.c"
-	@$(CC) -MD -c $< -o $(BUILDDIR)/$@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
 
 .c.S:
 	@echo "CC    $*.S"
-	@$(CC) -MD -c $< -o $(BUILDDIR)/$@ $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .c.libk.o:
 	@echo "CC    $*.c"
-	@$(CC) -MD -c $< -o $(BUILDDIR)/$@ -std=gnu11 $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+	@$(CC) -MD -c $< -o $@ -std=gnu11 $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 .S.libk.o:
 	@echo "CC    $*.S"
-	@$(CC) -MD -c $< -o $(BUILDDIR)/$@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+	@$(CC) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 clean:
 	@rm -f $(BINARIES) *.a
