@@ -25,10 +25,7 @@ stack_top:
 .type _start, @function
 _start:
 	# Clear other regs
-	mov ah, 0x09 # Write char
-	xor bh, bh
-	xor bl, bl
-	xor cx, cx
+	mov ah, 0x0E # Write char
 	mov al, '1'
 	int 0x10
 	nop
