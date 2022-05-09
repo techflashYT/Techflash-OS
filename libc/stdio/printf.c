@@ -90,6 +90,6 @@ int printf(const char* restrict format, ...) {
 		return INT_MAX;
 	}
 	else {
-		return written;
+		return (int)written;
 	}
 }
