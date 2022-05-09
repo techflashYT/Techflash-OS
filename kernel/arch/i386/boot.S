@@ -24,11 +24,11 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
+	# Clear other regs
+	mov ah, 0x0E # Write char
 	cli
 1:	hlt
 	jmp 1b
-	# Clear other regs
-	mov ah, 0x0E # Write char
 	mov al, '1'
 	int 0x10
 
