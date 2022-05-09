@@ -78,6 +78,6 @@ install-headers:
 
 install-kernel: tfos.elf
 	mkdir -p $(DESTDIR)$(BOOTDIR)
-	mv kernel/tfos.elf $(DESTDIR)$(BOOTDIR)
+	mv tfos.elf $(DESTDIR)$(BOOTDIR)
 
 -include $(OBJS:.o=.d)
