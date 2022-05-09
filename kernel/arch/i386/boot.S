@@ -26,7 +26,12 @@ stack_top:
 _start:
 	# Clear other regs
 	xor eax, eax
+	xor ebx, ebx
+	xor ecx, ecx
 	mov ah, 0x0E # Write char
+	mov bh, 0x00 # to screen
+	mov bl, 0x0F # White
+	mov cx, 0x0001 # Print once
 	mov al, '1'
 	int 0x10
 	cli
