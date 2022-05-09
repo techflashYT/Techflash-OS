@@ -24,7 +24,10 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	movl $stack_top, %esp
+	mov 0x1, ah
+	mov 0x2607, cx
+	int 0x10
+	movl esp, stack_top
 
 	# Call the global constructors.
 	call _init
