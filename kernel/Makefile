@@ -65,7 +65,7 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
 
 .S.o:
-	$(CC) -MD -Wa,-mnaked-reg -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	$(CC) -MD -Wa,-mnaked-reg -Wa,-msyntax=intel -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 clean:
 	rm -f tfos.elf
