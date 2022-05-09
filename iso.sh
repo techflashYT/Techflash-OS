@@ -6,7 +6,9 @@ mkdir -p isodir
 mkdir -p isodir/boot
 mkdir -p isodir/boot/grub
 
-cp sysroot/boot/tfos.elf isodir/boot/install
+#cp sysroot/boot/tfos.elf isodir/boot/install
+cp sysroot isodir
+mv isodir/boot/tfos.elf isodir/boot/install
 cat > isodir/boot/grub/grub.cfg << EOF
 menuentry "Install Techflash OS" {
 	multiboot /boot/install
