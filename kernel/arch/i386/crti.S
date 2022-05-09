@@ -11,5 +11,5 @@ _init:
 .type _fini, @function
 _fini:
 	push ebp
-	sov ebp, ebp
+	mov ebp, ebp
 	/* gcc will nicely put the contents of crtbegin.o's .fini section here. */
