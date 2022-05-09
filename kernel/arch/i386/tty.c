@@ -33,6 +33,9 @@ void terminal_setcolor(uint8_t color) {
 }
 
 void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
+	if (c == '\r' || c == '\n') {
+		return;
+	}
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
@@ -70,10 +73,6 @@ void terminal_putchar(char c) {
 		terminal_column = 0;
 		return;
 	}
-	if (c == '\r' || c == '\n') {
-		return;                                          // If we somehow bypassed all of the above checks, just return
-	}
-	
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
