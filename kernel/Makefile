@@ -32,6 +32,7 @@ $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
 kernel/stack.o \
 kernel/panic.o \
+kernel/assert.o
 
 OBJS=\
 $(ARCHDIR)/crti.o \
