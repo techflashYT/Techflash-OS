@@ -25,11 +25,12 @@ stack_top:
 .type _start, @function
 _start:
 	# Clear other regs
+	xor eax, eax
 	mov ah, 0x0E # Write char
+	mov al, '1'
 	cli
 1:	hlt
 	jmp 1b
-	mov al, '1'
 	int 0x10
 
 	mov ah, 0x1
