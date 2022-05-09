@@ -38,9 +38,6 @@ _start:
 1:	hlt
 	jmp 1b
 
-	mov ah, 0x1
-	mov cx, 0x2607
-	int 0x10
 	mov stack_top, esp
 	# Call the global constructors.
 	call _init
