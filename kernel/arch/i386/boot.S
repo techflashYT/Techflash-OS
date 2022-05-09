@@ -28,32 +28,8 @@ _start:
 	mov ah, 0x0E # Write char
 	mov al, '1'
 	int 0x10
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
+	cli
+	hlt
 
 	mov ah, 0x1
 	mov cx, 0x2607
