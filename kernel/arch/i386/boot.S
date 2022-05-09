@@ -24,21 +24,8 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	# Clear other regs
-	xor eax, eax
-	xor ebx, ebx
-	xor ecx, ecx
-	mov ah, 0x0E # Write char
-	mov bh, 0x00 # to screen
-	mov bl, 0x0F # White
-	mov cx, 0x0001 # Print once
-	mov al, '1'
-	int 0x10
-	cli
-1:	hlt
-	jmp 1b
+	movl $stack_top, %esp
 
-	mov stack_top, esp
 	# Call the global constructors.
 	call _init
 
@@ -47,6 +34,6 @@ _start:
 
 	# Hang if kernel_main unexpectedly returns.
 	cli
-2:	hlt
-	jmp 2b
+1:	hlt
+	jmp 1b
 .size _start, . - _start
