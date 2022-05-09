@@ -77,7 +77,7 @@ install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
 
-install-kernel: bin/tfos.elf
+install-kernel: tfos.elf
 	mkdir -p $(DESTDIR)$(BOOTDIR)
 	cp bin/tfos.elf $(DESTDIR)$(BOOTDIR)
 
