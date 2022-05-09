@@ -3,7 +3,7 @@
 #include <kernel/tty.h>
 
 void kernel_main(void) {
-	return; // Return to lock the CPU
 	terminal_initialize();
+	return; // Return to lock the CPU
 	printf("Hello, kernel World!\n");
 }
