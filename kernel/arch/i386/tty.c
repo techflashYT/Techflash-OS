@@ -50,26 +50,30 @@ bool checkIfNextCharIsNewline = false;
 void terminal_putchar(char c) {
 	unsigned char uc = (unsigned char)c;
 	if (c == '\r') {
-		checkIfNextCharIsNewline = true;
+		checkIfNextCharIsNewline = true;                  // Begin check for newline next time this function is called
 		return;
 	}
-	else if (c == '\n' && checkIfNextCharIsNewline) {
+	else if (c == '\n' && checkIfNextCharIsNewline) {     // If the current character to print is a newline and the previous character was a carriage return    (CRLF)  (Windows)
 		terminal_row++;
 		terminal_column = 0;
 		checkIfNextCharIsNewline = false;
 		return;
 	}
-	else if (c != '\n' && checkIfNextCharIsNewline) {
+	else if (c != '\n' && checkIfNextCharIsNewline) {    // If the current character to print is not a newline and the previous character was a carriage return (CR)    (Mac)
 		terminal_row++;
 		terminal_column = 0;
 		checkIfNextCharIsNewline = false;
 		return;
 	}
-	else if (c == '\n') {
+	else if (c == '\n') {                                // If the current character to print is a newline and the previous character was not a carriage return (LF)    (Unix)
 		terminal_row++;
 		terminal_column = 0;
 		return;
 	}
+	if (c == '\r' || c == '\n') {
+		return;                                          // If we somehow bypassed all of the above checks, just return
+	}
+	
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
