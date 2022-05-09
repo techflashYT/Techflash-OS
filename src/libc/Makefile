@@ -1,6 +1,6 @@
-DEFAULT_HOST!=../default-host.sh
+DEFAULT_HOST!=./default-host.sh
 HOST?=DEFAULT_HOST
-HOSTARCH!=../target-triplet-to-arch.sh $(HOST)
+HOSTARCH!=./target-triplet-to-arch.sh $(HOST)
 
 BUILDDIR=../../build
 CFLAGS?=-O2 -g
