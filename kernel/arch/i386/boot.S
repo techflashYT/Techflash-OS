@@ -24,10 +24,6 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-	mov ah, 0x1
-	mov cx, 0x2607
-	int 0x10
-	mov stack_top, esp
 	# Clear other regs
 	mov ah, 0x09 # Write char
 	xor bh, bh
@@ -35,6 +31,37 @@ _start:
 	xor cx, cx
 	mov al, '1'
 	int 0x10
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+	mov ah, 0x1
+	mov cx, 0x2607
+	int 0x10
+	mov stack_top, esp
 	# Call the global constructors.
 	call _init
 
