@@ -60,21 +60,22 @@ int printf(const char* restrict format, ...) {
 			written++;
 		}
 		else if (*format == 's') {
-			printf("string here");
 			format++;
 			const char* str = va_arg(parameters, const char*);
 			size_t len = strlen(str);
 			if (maxrem < len) {
+				printf("string here");
 				// TODO: Set errno to EOVERFLOW.
 				return -1;
 			}
 			if (!print(str, len)) {
+				printf("string here");
 				return -1;
 			}
 			written += len;
 		}
 		else if (*format == 'd') {
-			print("number should go here", sizeof("number should go here"));
+			print("number here", sizeof("number here"));
 			format++;
 		}
 		else {
