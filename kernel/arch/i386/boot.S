@@ -27,7 +27,7 @@ _start:
 	mov ah, 0x1
 	mov cx, 0x2607
 	int 0x10
-	mov esp, stack_top
+	mov stack_top, esp
 
 	# Call the global constructors.
 	call _init
