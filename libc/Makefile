@@ -2,9 +2,9 @@ DEFAULT_HOST!=../util/default-host.sh
 HOST?=DEFAULT_HOST
 HOSTARCH!=../util/target-triplet-to-arch.sh $(HOST)
 
-CFLAGS?= -g
+CFLAGS?=-Ofast
 CPPFLAGS?=
-LDFLAGS?= -s
+LDFLAGS?=-s
 LIBS?=
 
 DESTDIR?=
@@ -32,6 +32,7 @@ $(ARCH_FREEOBJS) \
 stdio/printf.o \
 stdio/putchar.o \
 stdio/puts.o \
+stdio/itoa.o \
 stdlib/abort.o \
 string/memcmp.o \
 string/memcpy.o \
