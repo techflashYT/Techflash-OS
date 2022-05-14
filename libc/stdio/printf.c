@@ -90,7 +90,7 @@ int printf(const char* restrict format, ...) {
 			written += len;
 		}
 		else if (*format == 'd') {
-			const char* numStr = itoa(parameters);
+			const char* numStr = itoa(va_arg(parameters, int));
 			print(numStr, sizeof(numStr));
 			format++;
 		}
