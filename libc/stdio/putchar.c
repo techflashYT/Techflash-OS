@@ -4,7 +4,7 @@
 #include <kernel/tty.h>
 #endif
 #include <kernel/sourceFileInfo.h>
-sourceFileInfo fileInfo = {
+static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/putchar.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 13th, 2022",

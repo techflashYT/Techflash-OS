@@ -3,7 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/assert.h>
 #include <kernel/sourceFileInfo.h>
-sourceFileInfo fileInfo = {
+static sourceFileInfo fileInfo = {
 	.fileName       = "kernel/kernel.c",
 	.lastEditor     = "Techflash",
 	.lastEditDate   = "May 9th, 2022",

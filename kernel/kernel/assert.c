@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <kernel/sourceFileInfo.h>
-sourceFileInfo fileInfo = {
+static sourceFileInfo fileInfo = {
 	.fileName = "kernel/kernel/assert.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 13th, 2022",

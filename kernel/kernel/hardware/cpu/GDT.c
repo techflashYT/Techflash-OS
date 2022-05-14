@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <kernel/sourceFileInfo.h>
 #include <kernel/assert.h>
-sourceFileInfo fileInfo = {
+static sourceFileInfo fileInfo = {
 	.fileName = "kernel/kernel/hardware/cpu/GDT.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 13th, 2022",
