@@ -12,7 +12,7 @@ char* itoa(int res) {
     t = res;
     int i = size - 1;
     while(i >= 0) {
-        ret[i] = (t % 10) + '0';
+        ret[i] = (char)(t % 10) + '0';
         t = t/10;
         i--;
     }
