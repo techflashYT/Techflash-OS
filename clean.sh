@@ -3,7 +3,12 @@ set -e
 . ./util/config.sh
 
 for PROJECT in $PROJECTS; do
-  (cd "$PROJECT" && $MAKE clean)
+	if [ "$1" = "-s" ]
+	then
+		(cd "$PROJECT" && $MAKE softclean)
+	else
+		(cd "$PROJECT" && $MAKE clean)
+	fi
 done
 
 rm -rf sysroot
