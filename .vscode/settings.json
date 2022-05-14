@@ -3,5 +3,54 @@
 		"*.s": "asm-intel-x86-generic",
 		"assert.h": "c",
 		"sourcefileinfo.h": "c"
-	}
+	},
+	"commentAnchors.tags.list": [
+		{
+			"tag": "ANCHOR",
+			"iconColor": "default",
+			"highlightColor": "#A8C023",
+			"scope": "file"
+		},
+		{
+			"tag": "TODO",
+			"iconColor": "blue",
+			"highlightColor": "#3ea8ff",
+			"scope": "workspace"
+		},
+		{
+			"tag": "FIXME",
+			"iconColor": "red",
+			"highlightColor": "#F44336",
+			"scope": "workspace"
+		},
+		{
+			"tag": "STUB",
+			"iconColor": "purple",
+			"highlightColor": "#BA68C8",
+			"scope": "file"
+		},
+		{
+			"tag": "NOTE",
+			"iconColor": "orange",
+			"highlightColor": "#FFB300",
+			"scope": "file"
+		},
+		{
+			"tag": "REVIEW",
+			"iconColor": "green",
+			"highlightColor": "#64DD17",
+			"scope": "workspace"
+		},
+		{
+			"tag": "SECTION",
+			"highlightColor": null,
+			"enabled": false
+		},
+		{
+			"tag": "LINK",
+			"highlightColor": null,
+			"enabled": false
+		}
+	],
+	"commentAnchors.workspace.excludeFiles": "**/{node_modules,.git,.idea,.vscode,bin,sysroot,target,out,build,dist,vendor}/**/*"
 }
