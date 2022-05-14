@@ -63,6 +63,7 @@ libc.a: $(OBJS)
 
 libk.a: $(LIBK_OBJS)
 	$(AR) rcs $@ $(LIBK_OBJS)
+	make softclean
 
 .c.o:
 	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)

@@ -6,15 +6,17 @@
 static sourceFileInfo fileInfo = {
 	.fileName       = "kernel/kernel.c",
 	.lastEditor     = "Techflash",
-	.lastEditDate   = "May 9th, 2022",
-	.lastEditReason = "Add fileInfo",
-	.versionMajor   = 0,
+	.lastEditDate   = "May 14th, 2022",
+	.lastEditReason = "Add beginning of handler, and rename the function from kernel_main to kernelMain.",
+	.versionMajor   = 255,
 	.versionMinor   = 0,
-	.versionPatch   = 1
+	.versionPatch   = 2
 };
-void kernel_main(void) {
+void kernelMain(void) {
 	terminalInit();
 	printf("Hello, kernel World!\r\n");
 	assert((const char*)"The kernel has reached the end of execution.  The system will now halt.", fileInfo, __LINE__);
-	return; // Return to lock the CPU
+	for (;;) {
+		
+	}
 }
