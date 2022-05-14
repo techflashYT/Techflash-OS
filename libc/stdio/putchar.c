@@ -16,6 +16,7 @@ static sourceFileInfo fileInfo = {
 
 // TODO: Serial output?
 int putchar(int ic) {
+	(void)fileInfo;
 #if defined(__is_libk)
 	char c = (char)ic;
 	terminalWrite(&c, sizeof(c));
