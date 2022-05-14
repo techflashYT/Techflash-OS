@@ -8,18 +8,22 @@
 #include <kernel/assert.h>
 #include <kernel/sourceFileInfo.h>
 
+
+char* itoa(int res);
+
+
 static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/printf.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 13th, 2022",
-	.lastEditReason = "Fix the placeholder for printing the %s modifier to use print() rather than printf()",
+	.lastEditReason = "Make use of the newly added itoa function",
 	.versionMajor = 0,
 	.versionMinor = 0,
 	.versionPatch = 1
 };
 
 static bool print(const char* data, size_t length) {
-	const unsigned char* bytes = (const unsigned char*) data;
+	const unsigned char* bytes = (const unsigned char*)data;
 	for (size_t i = 0; i < length; i++) {
 		if (putchar(bytes[i]) == EOF) {
 			return false;
@@ -86,7 +90,8 @@ int printf(const char* restrict format, ...) {
 			written += len;
 		}
 		else if (*format == 'd') {
-			print("number here", sizeof("number here") - 1);
+			const char* numStr = itoa(parameters);
+			print(numStr, sizeof(numStr));
 			format++;
 		}
 		else {

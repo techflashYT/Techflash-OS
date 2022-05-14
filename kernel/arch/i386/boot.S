@@ -21,6 +21,7 @@ stack_top:
 
 # The kernel entry point.
 .section .text
+# TODO: check how args are passed to the kernel from GRUB.  (What register[s]?)
 .global _start
 .type _start, @function
 _start:
