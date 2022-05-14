@@ -1,3 +1,5 @@
+#ifndef SOURCEFILEINFO_H
+#define SOURCEFILEINFO_H
 #include <stdint.h>
 typedef struct __internal_sourceFileInfo_t {
 	const char *fileName;
@@ -8,3 +10,4 @@ typedef struct __internal_sourceFileInfo_t {
 	uint8_t versionMinor;
 	uint8_t versionPatch;
 } sourceFileInfo;
+#endif
