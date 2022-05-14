@@ -6,3 +6,6 @@ build/*
 *.o
 .vscode
 copyFromOldPC.bat
+*.elf
+*.a
+sysroot
