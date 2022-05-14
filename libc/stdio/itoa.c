@@ -1,6 +1,7 @@
 #include <stddef.h>
+#include <stdint.h>
 char* itoa(int res) {
-    int size = 0;
+    uint8_t size = 0;
 	if (res > 100) {
 		size = 3;
 	}
@@ -10,17 +11,13 @@ char* itoa(int res) {
 	else {
 		size = 1;
 	}
+	char* ret;
+	ret[size] = NULL;
 
-    int t = res;
-    static char ret[64] = {'\0'};
-    ret[size] = '\0';
-    t = res;
-    int i = size - 1;
-    while(i >= 0) {
-        ret[i] = (char)(t % 10) + '0';
-        t = t/10;
-        i--;
-    }
+	for (uint8_t i = 0; i < size; i++) {
+		ret[size - i] = (res % 10) + '0';
+		res /= 10;	
+	}
 
     return ret;
 }
