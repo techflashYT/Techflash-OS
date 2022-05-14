@@ -10,6 +10,7 @@ static sourceFileInfo fileInfo = {
 	.versionPatch = 1
 };
 void assert(const char *message, sourceFileInfo file, int line) {
+	(void)fileInfo;
 	printf("ASSERT: Message: \"%s\", Line: %d\r\n", message, line);
 	printf("\
 ==== Begin File Info Dump ====\r\n\
