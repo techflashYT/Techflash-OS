@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"*.s": "asm-intel-x86-generic",
+		"assert.h": "c",
+		"sourcefileinfo.h": "c"
+	}
+}
