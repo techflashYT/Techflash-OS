@@ -4,6 +4,7 @@ bin/*
 build/*
 *.bin
 *.o
+*.d
 copyFromOldPC.bat
 *.elf
 *.a
