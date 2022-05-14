@@ -6,6 +6,17 @@
 
 #include <kernel/tty.h>
 #include <kernel/assert.h>
+#include <kernel/sourceFileInfo.h>
+
+sourceFileInfo fileInfo = {
+	.fileName = "libc/stdio/printf.c",
+	.lastEditor = "Techflash",
+	.lastEditDate = "May 13th, 2022",
+	.lastEditReason = "Fix the placeholder for printing the \%s modifier to use print() rather than printf()",
+	.versionMajor = 0,
+	.versionMinor = 0,
+	.versionPatch = 1
+};
 
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
@@ -64,12 +75,12 @@ int printf(const char* restrict format, ...) {
 			const char* str = va_arg(parameters, const char*);
 			size_t len = strlen(str);
 			if (maxrem < len) {
-				printf("string here");
+				print("string here", sizeof("string here"));
 				// TODO: Set errno to EOVERFLOW.
 				return -1;
 			}
 			if (!print(str, len)) {
-				printf("string here");
+				print("string here", sizeof("string here"));
 				return -1;
 			}
 			written += len;
@@ -79,7 +90,7 @@ int printf(const char* restrict format, ...) {
 			format++;
 		}
 		else {
-			assert("Unknown format specifier.", __FILE__, __LINE__);
+			assert("Unknown format specifier.", fileInfo, __LINE__);
 			format = format_begun_at;
 			size_t len = strlen(format);
 			if (maxrem < len) {
