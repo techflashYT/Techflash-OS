@@ -8,7 +8,7 @@ static sourceFileInfo fileInfo = {
 	.lastEditor     = "Techflash",
 	.lastEditDate   = "May 14th, 2022",
 	.lastEditReason = "Add beginning of handler, and rename the function from kernel_main to kernelMain.",
-	.versionMajor   = 255,
+	.versionMajor   = 0,
 	.versionMinor   = 0,
 	.versionPatch   = 2
 };

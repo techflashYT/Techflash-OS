@@ -11,11 +11,13 @@ char* itoa(int res) {
 	else {
 		size = 1;
 	}
-	char* ret;
-	ret[size] = NULL;
+	static char ret[4];
+	for (uint8_t i = 0; i < 4; i++) {
+		ret[i] = '\0';
+	}
 
 	for (uint8_t i = 0; i < size; i++) {
-		ret[size - i] = (res % 10) + '0';
+		ret[size - i] = (char)((res % 10) + '0');
 		res /= 10;	
 	}
 
