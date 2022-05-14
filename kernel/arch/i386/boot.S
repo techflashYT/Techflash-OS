@@ -29,6 +29,9 @@ _start:
 	# Call the global constructors.
 	call _init
 
+	# Just in case interrupts are enabled, disable them.
+	cli
+
 	# Transfer control to the main kernel.
 	call kernel_main
 
