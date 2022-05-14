@@ -59,6 +59,7 @@ all: $(BINARIES)
 
 libc.a: $(OBJS)
 	$(AR) rcs $@ $(OBJS)
+	make softclean
 
 libk.a: $(LIBK_OBJS)
 	$(AR) rcs $@ $(LIBK_OBJS)
@@ -74,6 +75,10 @@ libk.a: $(LIBK_OBJS)
 
 .S.libk.o:
 	$(CC) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+
+softclean:
+	rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
+	rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
 
 clean:
 	rm -f $(BINARIES) *.a

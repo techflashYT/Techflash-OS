@@ -60,6 +60,7 @@ tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	mkdir -p $(DESTDIR)$(BOOTDIR)
 	cp tfos.elf $(DESTDIR)$(BOOTDIR)
 	grub-file --is-x86-multiboot ../sysroot/boot/tfos.elf
+	make softclean
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
@@ -69,6 +70,10 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 
 .S.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+
+softclean:
+	rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
+	rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
 
 clean:
 	rm -f tfos.elf
