@@ -12,14 +12,14 @@
 char* itoa(int res);
 
 
-static sourceFileInfo fileInfo = {
+__attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/printf.c",
 	.lastEditor = "Techflash",
-	.lastEditDate = "May 13th, 2022",
-	.lastEditReason = "Make use of the newly added itoa function",
+	.lastEditDate = "May 14th, 2022",
+	.lastEditReason = "FileInfo to unused + remove assert",
 	.versionMajor = 0,
 	.versionMinor = 0,
-	.versionPatch = 1
+	.versionPatch = 2
 };
 
 static bool print(const char* data, size_t length) {
@@ -95,7 +95,6 @@ int printf(const char* restrict format, ...) {
 			format++;
 		}
 		else {
-			assert("Unknown format specifier.", fileInfo, __LINE__);
 			format = format_begun_at;
 			size_t len = strlen(format);
 			if (maxrem < len) {
