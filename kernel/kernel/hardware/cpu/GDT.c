@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <kernel/sourceFileInfo.h>
 #include <kernel/assert.h>
-static sourceFileInfo fileInfo = {
+__attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "kernel/kernel/hardware/cpu/GDT.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 13th, 2022",
@@ -74,7 +74,7 @@ void createDescriptor(uint32_t base, uint32_t limit, uint16_t flag) {
 	descriptor |= base  << 16;                       // set base bits 15:0
 	descriptor |= limit  & 0x0000FFFF;               // set limit bits 15:0
 
-	printf("0x%.16llX\n", descriptor);
+	// printf("0x%.16llX\n", descriptor);
 }
 
 void GDTinit() {
@@ -83,5 +83,5 @@ void GDTinit() {
 	createDescriptor(0, 0x000FFFFF, (GDT_DATA_PL0));
 	createDescriptor(0, 0x000FFFFF, (GDT_CODE_PL3));
 	createDescriptor(0, 0x000FFFFF, (GDT_DATA_PL3));
-	assert("GDT init done", fileInfo, __LINE__);
+	// assert("GDT init done", fileInfo, __LINE__);
 }
