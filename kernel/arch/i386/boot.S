@@ -21,10 +21,10 @@ stack_top:
 
 # The kernel entry point.
 .section .text
-# TODO: check how args are passed to the kernel from GRUB.  (What register[s]?)
 .global _start
 .type _start, @function
 _start:
+	push %ebp # Push ebp to the stack to be used for calling kernelMain.  Also prevent it from protentially getting clobbered later
 	movl $stack_top, %esp
 
 	# Call the global constructors.
