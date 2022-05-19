@@ -3,12 +3,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <kernel/sourceFileInfo.h>
-#include <kernel/assert.h>
 __attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "kernel/kernel/hardware/cpu/GDT.c",
 	.lastEditor = "Techflash",
-	.lastEditDate = "May 13th, 2022",
-	.lastEditReason = "Add soureceFileInfo to GDT",
+	.lastEditDate = "May 16th, 2022",
+	.lastEditReason = "Remove <kernel/assert.h> as it no long exists",
 	.versionMajor = 0,
 	.versionMinor = 0,
 	.versionPatch = 1
@@ -73,8 +72,6 @@ void createDescriptor(uint32_t base, uint32_t limit, uint16_t flag) {
 	// Create the low 32 bit segment
 	descriptor |= base  << 16;                       // set base bits 15:0
 	descriptor |= limit  & 0x0000FFFF;               // set limit bits 15:0
-
-	// printf("0x%.16llX\n", descriptor);
 }
 
 void GDTinit() {
@@ -83,5 +80,4 @@ void GDTinit() {
 	createDescriptor(0, 0x000FFFFF, (GDT_DATA_PL0));
 	createDescriptor(0, 0x000FFFFF, (GDT_CODE_PL3));
 	createDescriptor(0, 0x000FFFFF, (GDT_DATA_PL3));
-	// assert("GDT init done", fileInfo, __LINE__);
 }
