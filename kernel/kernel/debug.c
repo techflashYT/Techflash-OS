@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <kernel/sourceFileInfo.h>
-static sourceFileInfo fileInfo = {
+__attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "kernel/kernel/assert.c",
 	.lastEditor = "Techflash",
 	.lastEditDate = "May 14th, 2022",
@@ -9,17 +9,17 @@ static sourceFileInfo fileInfo = {
 	.versionMinor = 0,
 	.versionPatch = 2
 };
-void assert(const char *message, sourceFileInfo file, int line) {
+void kernelDebug(const char *message, sourceFileInfo file, int line) {
 	(void)fileInfo;
-	printf("ASSERT: Message: \"%s\", Line: %d\r\n", message, line);
+	printf("DEBUG: Message: \"%s\", Line: %d\r\n", message, line);
 	printf("\
-====== Begin File Info Dump ======\r\n\
+============================= BEGIN FILE INFO DUMP =============================\
 FileName: %s\r\n\
 LastEditor: %s\r\n\
 LastEditTime: %s\r\n\
 LastEditReason: %s\r\n\
 Version: %d.%d.%d\r\n\
-======= End File Info Dump =======\r\n",
+============================== END FILE INFO DUMP ==============================\r\n",
 file.fileName,
 file.lastEditor,
 file.lastEditDate,
