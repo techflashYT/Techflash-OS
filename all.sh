@@ -1,5 +1,8 @@
 #!/bin/sh
-git pull
+if [ "$1" != "--no-pull" ]
+then
+	git pull
+fi
 clear
 ./clean.sh
 clear
