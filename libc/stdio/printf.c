@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include <kernel/tty.h>
-#include <kernel/assert.h>
 #include <kernel/sourceFileInfo.h>
 
 
@@ -15,8 +14,8 @@ char* itoa(int res);
 __attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/printf.c",
 	.lastEditor = "Techflash",
-	.lastEditDate = "May 14th, 2022",
-	.lastEditReason = "FileInfo to unused + remove assert",
+	.lastEditDate = "May 16th, 2022",
+	.lastEditReason = "Remove <kernel/assert.h> as it no long exists",
 	.versionMajor = 0,
 	.versionMinor = 0,
 	.versionPatch = 2
