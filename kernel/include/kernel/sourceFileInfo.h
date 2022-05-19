@@ -1,7 +1,7 @@
 #ifndef SOURCEFILEINFO_H
 #define SOURCEFILEINFO_H
 #include <stdint.h>
-typedef struct __internal_sourceFileInfo_t {
+typedef struct {
 	const char *fileName;
 	const char *lastEditor;
 	const char *lastEditDate;
@@ -9,5 +9,5 @@ typedef struct __internal_sourceFileInfo_t {
 	uint8_t versionMajor;
 	uint8_t versionMinor;
 	uint8_t versionPatch;
-} sourceFileInfo;
+} __attribute__ ((packed)) sourceFileInfo;
 #endif
