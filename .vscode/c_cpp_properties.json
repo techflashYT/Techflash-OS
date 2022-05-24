@@ -5,12 +5,13 @@
             "includePath": [
                 "kernel/include/",
                 "libc/include/",
-                "/root/opt/cross/lib/gcc/i686-elf/12.1.0/include"
+                "userspace/include/",
+                "~/opt/cross/lib/gcc/i686-elf/12.1.0/include"
             ],
             "defines": [
                 "__is_libk"
             ],
-            "compilerPath": "/root/opt/cross/bin/i686-elf-gcc",
+            "compilerPath": "~/opt/cross/bin/i686-elf-gcc",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x86",
