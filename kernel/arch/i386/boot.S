@@ -15,29 +15,63 @@
 # Reserve a stack for the initial thread.
 .section .bss
 .align 16
-stack_bottom:
+stackBottom:
 .skip 16384 # 16 KiB
-stack_top:
+stackTop:
 
 # The kernel entry point.
 .section .text
 .global _start
+.global disableCursor
 .type _start, @function
 _start:
+	movl $stackTop, %esp
 	push %ebp # Push ebp to the stack to be used for calling kernelMain.  Also prevent it from protentially getting clobbered later
-	movl $stack_top, %esp
 
 	# Call the global constructors.
 	call _init
+	# Check if A20 Gate is already enabled from grub 
+	pushal
+	mov $0x112345, %edi  # odd megabyte address.
+	mov $0x012345, %esi  # even megabyte address.
+	mov %esi, (%esi)     # making sure that both addresses contain diffrent values.
+	mov %esi, (%esi)     # (if A20 line is cleared the two pointers would point to the address 0x012345 that would contain 0x112345 (edi)) 
+	cmpsd             # compare addresses to see if the're equivalent.
+	popal
+	jne __bootstg2 # if A20 is on, jmp to call boot stage2.
 
+	# Enable A20 Gate if it's not enabled.
+	in $0x92, %al
+	or $2, %al
+	out %al, $0x92
+
+disableCursor:
+	pushf
+	push %eax
+	push %edx
+
+	mov $0x3d4, %dx
+	mov $0xa, %al
+	out %al, %dx
+
+	inc %dx
+	mov $0x20, %al
+	out %al, %dx
+
+	pop %edx
+	pop %eax
+	popf
+	ret
+
+__bootstg2:
+	call disableCursor
 	# Just in case interrupts are enabled, disable them.
 	cli
-
 	# Transfer control to the main kernel.
 	call kernelMain
 
 	# Hang if kernelMain unexpectedly returns.
-#	cli
-# 1:	hlt
-#	jmp 1b
-.size _start, . - _start
+	cli
+1:	hlt
+	jmp 1b
+.size __bootstg2, . - _start
