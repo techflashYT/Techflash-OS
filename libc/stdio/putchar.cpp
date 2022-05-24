@@ -1,9 +1,11 @@
-#include <stdio.h>
-#include <stdbool.h>
-#if defined(__is_libk)
-#include <kernel/tty.h>
-#endif
-#include <kernel/sourceFileInfo.h>
+extern "C" {
+	#include <stdio.h>
+	#include <stdbool.h>
+	#include <kernel/tty.h>
+	#include <kernel/sourceFileInfo.h>
+}
+#include <userspace/apps/terminal/term.hpp>
+
 static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/putchar.c",
 	.lastEditor = "Techflash",
@@ -24,7 +26,8 @@ int putchar(int ic) {
 	}
 	terminalWrite(&c, sizeof(c));
 #else
-	// TODO: Implement stdio and the write system call.
+	_write();
 #endif
 	return ic;
+	
 }
