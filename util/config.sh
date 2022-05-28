@@ -1,6 +1,6 @@
 #!/bin/sh
-SYSTEM_HEADER_PROJECTS="libc kernel"
-PROJECTS="libc kernel"
+SYSTEM_HEADER_PROJECTS="userspace libc kernel"
+PROJECTS="userspace libc kernel"
 
 export MAKE="${MAKE:-make}"
 export HOST="${HOST:-$(./util/default-host.sh)}"
@@ -8,6 +8,7 @@ export HOST="${HOST:-$(./util/default-host.sh)}"
 export AR="${HOST}"-ar
 export AS="${HOST}"-as
 export CC="${HOST}"-gcc
+export CXX="${HOST}"-g++
 
 export PREFIX=/usr
 export EXEC_PREFIX=$PREFIX
