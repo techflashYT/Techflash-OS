@@ -22,7 +22,8 @@ stackTop:
 # The kernel entry point.
 .section .text
 .global _start
-.global disableCursor
+.global _disableCursor
+.type _disableCursor, @function
 .type _start, @function
 _start:
 	movl $stackTop, %esp
@@ -45,7 +46,7 @@ _start:
 	or $2, %al
 	out %al, $0x92
 
-disableCursor:
+_disableCursor:
 	pushf
 	push %eax
 	push %edx
@@ -64,7 +65,7 @@ disableCursor:
 	ret
 
 __bootstg2:
-	call disableCursor
+	call _disableCursor
 	# Just in case interrupts are enabled, disable them.
 	cli
 	# Also just in case, clear all the regs
