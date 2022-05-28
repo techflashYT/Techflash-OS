@@ -26,7 +26,7 @@ stackTop:
 .type _start, @function
 _start:
 	movl $stackTop, %esp
-	push %ebp # Push ebp to the stack to be used for calling kernelMain.  Also prevent it from protentially getting clobbered later
+	movl 16(%ebx), %ecx
 
 	# Call the global constructors.
 	call _init
@@ -67,6 +67,15 @@ __bootstg2:
 	call disableCursor
 	# Just in case interrupts are enabled, disable them.
 	cli
+	# Also just in case, clear all the regs
+	xor %eax, %eax
+	xor %ebx, %ebx
+	xor %edx, %edx
+	xor %esi, %esi
+	xor %edi, %edi
+	xor %ebp, %ebp
+	push %ecx # Push the grub args to the stack before zeroing ecx
+	xor %ecx, %ecx
 	# Transfer control to the main kernel.
 	call kernelMain
 
