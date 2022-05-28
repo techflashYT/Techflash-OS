@@ -7,4 +7,6 @@ clear
 ./clean.sh
 clear
 ./build.sh
+echo "ISO"
 ./iso.sh
+echo "Done!  Boot iso is in bin/TFOS_ISO.iso"
