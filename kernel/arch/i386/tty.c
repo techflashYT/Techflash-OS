@@ -18,12 +18,12 @@ static uint16_t* terminalBuf;
 void terminalInit(void) {
 	terminalRow = 0;
 	terminalCol = 0;
-	terminalColor = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+	terminalColor = vgaEntryColor(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	terminalBuf = VGA_MEMORY;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminalBuf[index] = vga_entry(' ', terminalColor);
+			terminalBuf[index] = vgaEntry(' ', terminalColor);
 		}
 	}
 }
@@ -37,7 +37,7 @@ void terminalPutCharAt(unsigned char c, uint8_t color, size_t x, size_t y) {
 		return;
 	}
 	const size_t index = y * VGA_WIDTH + x;
-	terminalBuf[index] = vga_entry(c, color);
+	terminalBuf[index] = vgaEntry(c, color);
 }
 void terminalMove(size_t x, size_t y) {
 	terminalRow = y;
