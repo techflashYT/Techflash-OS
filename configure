@@ -1,4 +1,9 @@
 #!/bin/bash
+
+kernel_done=false
+libc_done=false
+userspace_done=false
+
 printf "Techflash OS Configure Script v0.0.1 starting, built for Techflash OS v0.0.2...\r\n"
 if [ "$1" != "--vga" ] && [ "$2" != "--vga" ] && [ "$3" != "--vga" ] && [ "$4" != "--vga" ]
 then
@@ -8,10 +13,9 @@ then
 		echo "If you're stuck on 80 columns (VGA), please run the script with --vga."
 		exit 1
 	fi
-	if [ "$(tput lines)" -lt 30 ]
+	if [ "$(tput lines)" -lt 10 ]
 	then
-		echo "Your terminal is too small. Please resize it to at least 30 lines."
-		echo "If you're stuck on 25 lines (VGA), please run the script with --vga."
+		echo "Your terminal is too small. Please resize it to at least 10 lines."
 		exit 1
 	fi
 fi
@@ -31,14 +35,27 @@ kernel() {
 		echo "Invalid value. Please enter a valid number between 100 and 65535."
 		return 1
 	fi
+	kernel_done=true
 	return 0
 }
 
 run() {
 	# Run kernel function and check if the return value is 1
-	if ! kernel
+	if ! kernel && [ "$kernel_done" != true ]
 	then
 		run
+	else
+		if ! libc && [ "$libc_done" != true ]
+		then
+			run
+		else
+			if ! userspace && [ "$userspace_done" != true ]
+			then
+				run
+			else
+				end
+			fi
+		fi
 	fi
 }
 run
