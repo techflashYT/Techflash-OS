@@ -20,7 +20,10 @@ LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
 ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
-
+CONFIG_KERN_VERSION_MAJOR=0
+CONFIG_KERN_VERSION_MINOR=0
+CONFIG_KERN_VERSION_PATCH=3
+include ../.config
 CFLAGS:=$(CFLAGS)
 CPPFLAGS:=$(CPPFLAGS)
 LDFLAGS:=$(LDFLAGS)-s
@@ -51,12 +54,22 @@ $(LIBS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 
-.PHONY: all clean install install-headers install-kernel
+clean:
+	@rm -f tfos.elf
+	@rm -f $(OBJS) *.o */*.o */*/*.o
+	@rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
+	
+.PHONY: all install install-headers install-kernel
 .SUFFIXES: .o .c .S
 
 all: tfos.elf
+checkversion:
+	RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) 0 0 3; echo $$?)
+	ifeq ($(RET),1)
+		$(error "Kernel Version Mismatch!  Expected: 0.0.3  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH)")
+	endif
 
-tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
+tfos.elf: checkversion $(OBJS) $(ARCHDIR)/linker.ld
 	@echo "LINK   $(LINK_LIST)    $@"
 	@$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
@@ -76,14 +89,7 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	@echo "CC    $@"
 	@$(CC)  -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
-softclean:
-	@rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
-	@rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
 
-clean:
-	@rm -f tfos.elf
-	@rm -f $(OBJS) *.o */*.o */*/*.o
-	@rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 install: install-headers install-kernel
 
@@ -96,3 +102,7 @@ install-kernel: tfos.elf
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)
 
 -include $(OBJS:.o=.d)
+softclean:
+	@rm -f $(OBJS) $(LIBK_OBJS) *.o */*.o */*/*.o
+	@rm -f $(OBJS:.o=.d) $(LIBK_OBJS:.o=.d) *.d */*.d */*/*.d
+
