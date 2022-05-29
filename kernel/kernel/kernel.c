@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include <kernel/tty.h>
 #include <kernel/sourceFileInfo.h>
@@ -18,8 +19,6 @@ static sourceFileInfo fileInfo = {
 	.versionPatch   = 2
 };
 void kernelMain(void* grubCMDline) {
-	
-
 	terminalInit();
 	printf("[ %d.%d ] Terminal initialized\r\n", timer.now.seconds(), timer.now.milliseconds());
 	GDTinit();
@@ -28,13 +27,15 @@ void kernelMain(void* grubCMDline) {
 	
 	if (_testasm() != 0x12345678) {
 		printf("FAILED\r\n");
-		panic("Handwritten ASM test returned a non-136 value");
+		panic("Handwritten ASM test returned a non-305,419,896 value");
 	}
 	else {
 		printf("PASSED\r\n");
 	}
-	printf("[ %d.%d ] KERN_ARGS: %s\r\n", timer.now.seconds(), timer.now.milliseconds(), grubCMDline);
-	// TODO: Handle arguments here
+	printf("[ %d.%d ] KERN_ARGS: %s\r\n", timer.now.seconds(), timer.now.milliseconds(), (strcmp(grubCMDline, "") == 0) ? "NONE" : grubCMDline);
+	for (uint16_t i = 0; i < CONFIG_MAXARGS) {
+
+	}
 	printf("Welcome to Techflash OS v%d.%d.%d!\r\n", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
 	printf("> \r\n");
 	kernelDebug((const char*)"The kernel has reached the end of execution.  The system will now halt.", fileInfo, __LINE__);
