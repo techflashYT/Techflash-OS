@@ -9,7 +9,11 @@
                 "~/opt/cross/lib/gcc/i686-elf/12.1.0/include"
             ],
             "defines": [
-                "__is_libk"
+                "__is_libk",
+                "CONFIG_KERN_VERSION_MAJOR=0",
+                "CONFIG_KERN_VERSION_MINOR=0",
+                "CONFIG_KERN_VERSION_PATCH=3",
+                "CONFIG_KERN_MAXARGS=65535"
             ],
             "compilerPath": "~/opt/cross/bin/i686-elf-gcc",
             "cStandard": "gnu17",
