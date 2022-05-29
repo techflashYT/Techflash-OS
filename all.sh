@@ -8,13 +8,18 @@ then
 	echo "Uh oh!  Looks like you never installed the i686-elf-gcc cross compiler!  Please follow the steps in the wiki to install it."
 	exit 1
 fi
+if [ ! -f .config ]
+then
+	echo "Uh oh!  Looks like never ran ./configure!  Please run ./configure and then run this script again."
+	exit 2
+fi
 clear
 ./clean.sh
 if ! ./build.sh
 then
 	sleep 0.05
 	echo "Uh oh!  Looks like something failed to build!  Please check the above output to see what went wrong."
-	exit 2
+	exit 3
 fi
 echo "ISO"
 ./iso.sh

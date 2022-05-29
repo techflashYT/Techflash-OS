@@ -2,7 +2,7 @@
 if [ "$1" = "" ]
 then
 	echo "This script is not meant to be run standalone!  This is a helper script for the Makefile!"
-	exit 1
+	exit 2
 fi
 
 # Seperate the args into variables
@@ -15,8 +15,8 @@ EXPECTED_KERN_VERSION_PATCH=$6
 
 if [ "$CONFIGURE_KERN_VERSION_MAJOR" = "$EXPECTED_KERN_VERSION_MAJOR" ] && [ "$CONFIGURE_KERN_VERSION_MINOR" = "$EXPECTED_KERN_VERSION_MINOR" ] && [ "$CONFIGURE_KERN_VERSION_PATCH" = "$EXPECTED_KERN_VERSION_PATCH" ]
 then
-	exit 0
+	printf 0
 else
-	exit 1
+	printf 1
 fi
 

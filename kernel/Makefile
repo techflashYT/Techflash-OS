@@ -20,11 +20,15 @@ LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
 ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
-CONFIG_KERN_VERSION_MAJOR=0
-CONFIG_KERN_VERSION_MINOR=0
-CONFIG_KERN_VERSION_PATCH=3
+EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
+EXPECTED_CONFIG_KERN_VERSION_MINOR=0
+EXPECTED_CONFIG_KERN_VERSION_PATCH=3
+CONFIG_KERN_VERSION_MAJOR=NULL
+CONFIG_KERN_VERSION_MINOR=NULL
+CONFIG_KERN_VERSION_PATCH=NULL
+
 include ../.config
-CFLAGS:=$(CFLAGS)
+CFLAGS:=$(CFLAGS) -DCONFIG_KERN_VERSION_MAJOR=$(CONFIG_KERN_VERSION_MAJOR) -DCONFIG_KERN_VERSION_MINOR=$(CONFIG_KERN_VERSION_MINOR) -DCONFIG_KERN_VERSION_PATCH=$(CONFIG_KERN_VERSION_PATCH) -DCONFIG_KERN_MAXARGS=$(CONFIG_KERN_MAXARGS)
 CPPFLAGS:=$(CPPFLAGS)
 LDFLAGS:=$(LDFLAGS)-s
 LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
@@ -58,18 +62,17 @@ clean:
 	@rm -f tfos.elf
 	@rm -f $(OBJS) *.o */*.o */*/*.o
 	@rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
-	
+
 .PHONY: all install install-headers install-kernel
 .SUFFIXES: .o .c .S
 
 all: tfos.elf
-checkversion:
-	RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) 0 0 3; echo $$?)
-	ifeq ($(RET),1)
-		$(error "Kernel Version Mismatch!  Expected: 0.0.3  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH)")
-	endif
+RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) 0 0 3)
+ifneq ($(strip $(RET)),0)
+$(error Kernel Version Mismatch!  Expected: 0.0.3  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH) Error code: $(RET))
+endif
 
-tfos.elf: checkversion $(OBJS) $(ARCHDIR)/linker.ld
+tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	@echo "LINK   $(LINK_LIST)    $@"
 	@$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
