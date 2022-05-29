@@ -10,5 +10,5 @@ int strcmp(const char* str1, const char* str2) {
 			return 1;
 		}
 	}
-	return 2;
+	return 0;
 }
