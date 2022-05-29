@@ -1,25 +1,26 @@
 #include <stddef.h>
 #include <stdint.h>
 char* itoa(int res) {
-    uint8_t size = 0;
-	if (res > 100) {
-		size = 3;
-	}
-	else if (res > 10) {
-		size = 2;
+	int testnum = res;
+	int count = 0;
+	if(res == 0) {
+		count = 1;
 	}
 	else {
-		size = 1;
+		while (testnum != 0) {
+			testnum = testnum / 10;
+			++count;
+		}
 	}
 	static char ret[4];
 	for (uint8_t i = 0; i < 4; i++) {
 		ret[i] = '\0';
 	}
 
-	for (uint8_t i = 0; i < size; i++) {
-		ret[size - i] = (char)((res % 10) + '0');
+	for (uint8_t i = 0; i < count; i++) {
+		ret[count - i] = (char)((res % 10) + '0');
 		res /= 10;	
 	}
 
-    return ret;
+	return ret;
 }
