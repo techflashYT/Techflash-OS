@@ -1,0 +1,44 @@
+#!/bin/bash
+printf "Techflash OS Configure Script v0.0.1 starting, built for Techflash OS v0.0.2...\r\n"
+if [ "$1" != "--vga" ] && [ "$2" != "--vga" ] && [ "$3" != "--vga" ] && [ "$4" != "--vga" ]
+then
+	if [ "$(tput cols)" -lt 100 ]
+	then
+		echo "Your terminal is too small. Please resize it to at least 100 columns."
+		echo "If you're stuck on 80 columns (VGA), please run the script with --vga."
+		exit 1
+	fi
+	if [ "$(tput lines)" -lt 30 ]
+	then
+		echo "Your terminal is too small. Please resize it to at least 30 lines."
+		echo "If you're stuck on 25 lines (VGA), please run the script with --vga."
+		exit 1
+	fi
+fi
+kernel() {
+	printf "=====================KERNEL=====================\r\n"
+	printf "__K_CONFIG_MAXARGS     Limit in chars of the length of args from GRUB, 100-65535\r\n(default: 65535): "
+	read -r __K_CONFIG_MAXARGS
+	# Check if the value is blank
+	if [ -z "$__K_CONFIG_MAXARGS" ]
+	then
+		__K_CONFIG_MAXARGS="65535"
+	fi
+	# Check if the value is a valid number less than or equal to 65535 and not negative
+	if ! [[ "$__K_CONFIG_MAXARGS" =~ ^[0-9]+$ ]] || [ "$__K_CONFIG_MAXARGS" -lt 100 ] || [ "$__K_CONFIG_MAXARGS" -gt 65535 ]
+	then
+		clear
+		echo "Invalid value. Please enter a valid number between 100 and 65535."
+		return 1
+	fi
+	return 0
+}
+
+run() {
+	# Run kernel function and check if the return value is 1
+	if ! kernel
+	then
+		run
+	fi
+}
+run
