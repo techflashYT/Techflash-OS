@@ -12,11 +12,11 @@ extern int _testasm();
 static sourceFileInfo fileInfo = {
 	.fileName       = "kernel/kernel.c",
 	.lastEditor     = "Techflash",
-	.lastEditDate   = "May 14th, 2022",
-	.lastEditReason = "Add beginning of handler, and rename the function from kernel_main to kernelMain.",
+	.lastEditDate   = "May 29th, 2022",
+	.lastEditReason = "Add GRUB arguments, and add a super basic (as in absolutely nothing) arguments handler",
 	.versionMajor   = 0,
 	.versionMinor   = 0,
-	.versionPatch   = 2
+	.versionPatch   = 3
 };
 void kernelMain(void* grubCMDline) {
 	terminalInit();
@@ -33,7 +33,7 @@ void kernelMain(void* grubCMDline) {
 		printf("PASSED\r\n");
 	}
 	printf("[ %d.%d ] KERN_ARGS: %s\r\n", timer.now.seconds(), timer.now.milliseconds(), (strcmp(grubCMDline, "") == 0) ? "NONE" : grubCMDline);
-	for (uint16_t i = 0; i < CONFIG_MAXARGS) {
+	for (uint16_t i = 0; i < CONFIG_MAXARGS; i++) {
 
 	}
 	printf("Welcome to Techflash OS v%d.%d.%d!\r\n", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
