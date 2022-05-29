@@ -14,9 +14,9 @@ static sourceFileInfo fileInfo = {
 	.lastEditor     = "Techflash",
 	.lastEditDate   = "May 29th, 2022",
 	.lastEditReason = "Add GRUB arguments, and add a super basic (as in absolutely nothing) arguments handler",
-	.versionMajor   = 0,
-	.versionMinor   = 0,
-	.versionPatch   = 3
+	.versionMajor   = CONFIG_KERN_VERSION_MAJOR,
+	.versionMinor   = CONFIG_KERN_VERSION_MINOR,
+	.versionPatch   = CONFIG_KERN_VERSION_PATCH
 };
 void kernelMain(void* grubCMDline) {
 	terminalInit();
@@ -33,7 +33,7 @@ void kernelMain(void* grubCMDline) {
 		printf("PASSED\r\n");
 	}
 	printf("[ %d.%d ] KERN_ARGS: %s\r\n", timer.now.seconds(), timer.now.milliseconds(), (strcmp(grubCMDline, "") == 0) ? "NONE" : grubCMDline);
-	for (uint16_t i = 0; i < CONFIG_MAXARGS; i++) {
+	for (uint16_t i = 0; i < CONFIG_KERN_MAXARGS; i++) {
 
 	}
 	printf("Welcome to Techflash OS v%d.%d.%d!\r\n", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
