@@ -25,9 +25,11 @@ export SYSTEM_HEADER_PROJECTS
 SYSROOT="$(pwd)/sysroot"
 export SYSROOT
 export CC="$CC --sysroot=$SYSROOT"
+export CXX="$CXX --sysroot=$SYSROOT"
 
 # Work around that the -elf gcc targets doesn't have a system include directory
 # because it was configured with --without-headers rather than --with-sysroot.
 if echo "$HOST" | grep -Eq -- '-elf($|-)'; then
-  export CC="$CC -isystem=$INCLUDEDIR"
+	export CC="$CC -isystem=$INCLUDEDIR"
+	export CXX="$CXX -isystem=$INCLUDEDIR"
 fi
