@@ -1,14 +1,15 @@
 #!/bin/bash
-CONFIGURE_VERSION=0.0.1
+CONFIGURE_VERSION=0.0.3
 TFOS_VERSION_MAJOR=0
 TFOS_VERSION_MINOR=0
-TFOS_VERSION_PATCH=3
+TFOS_VERSION_PATCH=4
 TFOS_VERSION=$TFOS_VERSION_MAJOR.$TFOS_VERSION_MINOR.$TFOS_VERSION_PATCH
-printf "Techflash OS Configure Script v%s starting, built for Techflash OS v%s.%s.%s...\r\n" $CONFIGURE_VERSION $TFOS_VERSION
+printf "Techflash OS Configure Script v%s starting, built for Techflash OS v%s...\r\n" $CONFIGURE_VERSION $TFOS_VERSION
 
 kernel_done=false
 libc_done=false
 userspace_done=false
+grub_done=false
 if [ "$1" != "--no-max-screen" ]
 then
 	if [ "$(tput cols)" -lt 100 ]
@@ -27,6 +28,113 @@ else
 	echo "This option is not supported!!!"
 	echo "Be warned.  Things will look weird."
 fi
+grub() {
+	printf "======================GRUB=======================\r\n"
+	printf "CONFIG_GRUB_OUTER_BG_COL       Background color (GRUB color name) for around the boot menu, (default: black): "
+	read -r CONFIG_GRUB_OUTER_BG_COL
+	if [ -z "$CONFIG_GRUB_OUTER_BG_COL" ]
+	then
+		CONFIG_GRUB_OUTER_BG_COL="black"
+	fi
+	echo "$CONFIG_GRUB_OUTER_BG_COL"
+	if ! {
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "black" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "blue" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "green" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "cyan" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "red" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "magenta" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "brown" ] ||
+		[ "$CONFIG_GRUB_OUTER_BG_COL" = "light-gray" ]
+	}
+	then
+		clear
+		echo "Invalid color name. Please use a valid color name."
+		return 1
+	fi
+	printf "CONFIG_GRUB_OUTER_FG_COL       Foreground color (GRUB color name) for around the boot menu, (default: white): "
+	read -r CONFIG_GRUB_OUTER_FG_COL
+	if [ -z "$CONFIG_GRUB_OUTER_FG_COL" ]
+	then
+		CONFIG_GRUB_OUTER_FG_COL="white"
+	fi
+	echo "$CONFIG_GRUB_OUTER_FG_COL"
+	if ! {
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "black" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "blue" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "green" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "cyan" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "red" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "magenta" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "brown" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-gray" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "dark-gray" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-blue" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-green" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-cyan" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-red" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "light-magenta" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "yellow" ] ||
+		[ "$CONFIG_GRUB_OUTER_FG_COL" = "white" ]
+	}
+	then
+		echo "Invalid color name. Please use a valid color name."
+		return 1
+	fi
+	printf "CONFIG_GRUB_MENU_BG_COL        Background color (GRUB color name) for the boot menu, (default: light-gray): "
+	read -r CONFIG_GRUB_MENU_BG_COL
+	if [ -z "$CONFIG_GRUB_MENU_BG_COL" ]
+	then
+		CONFIG_GRUB_MENU_BG_COL="light-gray"
+	fi
+	echo "$CONFIG_GRUB_MENU_BG_COL"
+	if ! {
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "black" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "blue" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "green" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "cyan" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "red" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "magenta" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "brown" ] ||
+		[ "$CONFIG_GRUB_MENU_BG_COL" = "light-gray" ]
+	}
+	then
+		clear
+		echo "Invalid color name. Please use a valid color name."
+		return 1
+	fi
+	printf "CONFIG_GRUB_MENU_FG_COL        Foreground color (GRUB color name) for the boot menu, (default: white): "
+	read -r CONFIG_GRUB_MENU_FG_COL
+		if [ -z "$CONFIG_GRUB_MENU_FG_COL" ]
+	then
+		CONFIG_GRUB_MENU_FG_COL="white"
+	fi
+	echo "$CONFIG_GRUB_MENU_FG_COL"
+	if ! {
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "black" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "blue" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "green" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "cyan" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "red" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "magenta" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "brown" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-gray" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "dark-gray" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-blue" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-green" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-cyan" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-red" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "light-magenta" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "yellow" ] ||
+		[ "$CONFIG_GRUB_MENU_FG_COL" = "white" ]
+	}
+	then
+		clear
+		echo "Invalid color name. Please use a valid color name."
+		return 1
+	fi
+	return 0;
+}
 kernel() {
 	printf "=====================KERNEL======================\r\n"
 	printf "CONFIG_KERN_MAXARGS     Limit in chars of the length of args from GRUB, 100-65535,  (default: 65535): "
@@ -70,26 +178,34 @@ CONFIG_KERN_VERSION_MAJOR=$TFOS_VERSION_MAJOR
 CONFIG_KERN_VERSION_MINOR=$TFOS_VERSION_MINOR
 CONFIG_KERN_VERSION_PATCH=$TFOS_VERSION_PATCH
 CONFIG_KERN_MAXARGS=$CONFIG_KERN_MAXARGS
+CONFIG_GRUB_OUTER_BG_COL=$CONFIG_GRUB_OUTER_BG_COL
+CONFIG_GRUB_OUTER_FG_COL=$CONFIG_GRUB_OUTER_FG_COL
+CONFIG_GRUB_MENU_BG_COL=$CONFIG_GRUB_MENU_BG_COL
+CONFIG_GRUB_MENU_FG_COL=$CONFIG_GRUB_MENU_FG_COL
 
 ####### END AUTOGENERATED CONFIG #######
 
 EOF
 }
 run() {
-	# Run kernel function and check if the return value is 1
-	if ! kernel && [ "$kernel_done" != true ]
+	if ! grub && [ "$grub_done" != true ] 
 	then
 		run
 	else
-		if ! libc && [ "$libc_done" != true ]
+		if ! kernel && [ "$kernel_done" != true ]
 		then
 			run
 		else
-			if ! userspace && [ "$userspace_done" != true ]
+			if ! libc && [ "$libc_done" != true ]
 			then
 				run
 			else
-				end
+				if ! userspace && [ "$userspace_done" != true ]
+				then
+					run
+				else
+					end
+				fi
 			fi
 		fi
 	fi
