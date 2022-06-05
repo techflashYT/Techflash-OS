@@ -6,78 +6,78 @@
 #include <kernel/tty.h>
 #include "vga.h"
 
+uint8_t vgaEntryColor(enum vgaColor fg, enum vgaColor bg) {
+	return (uint8_t)(fg | bg << 4);
+}
+
+uint16_t vgaEntry(unsigned char uc, uint8_t color) {
+	return (uint16_t) uc | (uint16_t) color << 8;
+}
+
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
-static uint16_t* const VGA_MEMORY = (uint16_t*) 0xB8000;
 
-static size_t terminalRow;
-static size_t terminalCol;
-static uint8_t terminalColor;
-static uint16_t* terminalBuf;
+size_t vgaIndex(size_t x, size_t y) {
+	return y * VGA_WIDTH + x;
+}
+
+size_t terminalRow;
+size_t terminalColumn;
+uint8_t terminalColor;
+uint16_t* terminalBuffer;
 
 void terminalInit(void) {
 	terminalRow = 0;
-	terminalCol = 0;
-	terminalColor = vgaEntryColor(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	terminalBuf = VGA_MEMORY;
+	terminalColumn = 0;
+	terminalColor = vgaEntryColor(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK);
+	terminalBuffer = (uint16_t*) 0xB8000;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminalBuf[index] = vgaEntry(' ', terminalColor);
+			terminalBuffer[index] = vgaEntry(' ', terminalColor);
 		}
+	}
+}
+
+
+
+void terminalScrollDown() {
+	size_t x, y;
+	for(y = 0; y < VGA_HEIGHT - 1; y++) {
+		for (x = 0; x < VGA_WIDTH; x++) {
+			terminalBuffer[vgaIndex(x,y)] = terminalBuffer[vgaIndex(x,y+1)];
+		}
+	}
+	for (x = 0; x < VGA_WIDTH; x++) {
+		terminalBuffer[vgaIndex(x,y)] = vgaEntry(' ', terminalColor);
 	}
 }
 
 void terminalSetColor(uint8_t color) {
 	terminalColor = color;
 }
-
-void terminalPutCharAt(unsigned char c, uint8_t color, size_t x, size_t y) {
-	if (c == '\r' || c == '\n') {
-		return;
-	}
-	const size_t index = y * VGA_WIDTH + x;
-	terminalBuf[index] = vgaEntry(c, color);
+ 
+void terminalPutEntryAt(char c, uint8_t color, size_t x, size_t y) {
+	terminalBuffer[vgaIndex(x,y)] = vgaEntry((unsigned char)c, color);
 }
-void terminalMove(size_t x, size_t y) {
-	terminalRow = y;
-	terminalCol = x;
-}
-size_t terminalGetX() {
-	return terminalCol;
-}
-size_t terminalGetY() {
-	return terminalRow;
-}
-bool checkIfNextCharIsNewline = false;
 void terminalPutchar(char c) {
-	unsigned char uc = (unsigned char)c;
 	if (c == '\r') {
-		checkIfNextCharIsNewline = true;                  // Begin check for newline next time this function is called
+		terminalColumn = 0;
 		return;
 	}
-	else if (c == '\n' && checkIfNextCharIsNewline) {     // If the current character to print is a newline and the previous character was a carriage return    (CRLF)  (Windows)
+	if (c == '\n') {
 		terminalRow++;
-		terminalCol = 0;
-		checkIfNextCharIsNewline = false;
 		return;
 	}
-	else if (c != '\n' && checkIfNextCharIsNewline) {    // If the current character to print is not a newline and the previous character was a carriage return (CR)    (Mac)
-		terminalRow++;
-		terminalCol = 0;
-		checkIfNextCharIsNewline = false;
-		return;
-	}
-	else if (c == '\n') {                                // If the current character to print is a newline and the previous character was not a carriage return (LF)    (Unix)
-		terminalRow++;
-		terminalCol = 0;
-		return;
-	}
-	terminalPutCharAt(uc, terminalColor, terminalCol, terminalRow);
-	if (++terminalCol == VGA_WIDTH) {
-		terminalCol = 0;
-		if (++terminalRow == VGA_HEIGHT) {
-			terminalRow = 0;
+	
+	terminalPutEntryAt(c, terminalColor, terminalColumn, terminalRow);
+	
+	if (++terminalColumn == VGA_WIDTH) {
+		terminalColumn = 0;
+		++terminalRow;
+		if (terminalRow == VGA_HEIGHT) {
+			--terminalRow;
+			terminalScrollDown();
 		}
 	}
 }
@@ -88,6 +88,6 @@ void terminalWrite(const char* data, size_t size) {
 	}
 }
 
-void terminalWritestring(const char* data) {
+void terminalWriteString(const char* data) {
 	terminalWrite(data, strlen(data));
 }
