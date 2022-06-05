@@ -33,12 +33,6 @@ void kernelMain(unsigned long magicnum, unsigned long mutliboot2info) {
 		panic("See above message");
 	}
 	size = *(unsigned *) mutliboot2info;
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wsign-conversion"
-	#pragma GCC diagnostic ignored "-Wconversion"
-	#pragma GCC diagnostic ignored "-Wpointer-arith"
-	#pragma GCC diagnostic ignored "-Wpedantic"
-	#pragma GCC diagnostic pop
 	GDTinit();
 	printf("[ %d.%d ] Global Descriptor Table initialized\r\n", 0, 0);
 	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", 0, 0);
