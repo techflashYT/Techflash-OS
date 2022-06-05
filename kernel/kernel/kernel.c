@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <stdbool.h>
+#include "../arch/i386/vga.h"
 #include <kernel/tty.h>
 #include <kernel/sourceFileInfo.h>
-#include <kernel/timer.h>
 #include <kernel/GDT.h>
 #include <kernel/debug.h>
+#include <kernel/multiboot2.h>
 #include <kernel/panic.h>
 
 extern int _testasm();
@@ -18,27 +19,56 @@ static sourceFileInfo fileInfo = {
 	.versionMinor   = CONFIG_KERN_VERSION_MINOR,
 	.versionPatch   = CONFIG_KERN_VERSION_PATCH
 };
-void kernelMain(void* grubCMDline) {
+void kernelMain(unsigned long magicnum, unsigned long mutliboot2info) {
+	struct multiboot_tag *mbtag;
+	unsigned int __attribute__ ((unused)) size = 0;
 	terminalInit();
-	printf("[ %d.%d ] Terminal initialized\r\n", timer.now.seconds(), timer.now.milliseconds());
+	printf("[ %d.%d ] Terminal initialized\r\n", 0, 0);
+	if (magicnum != MULTIBOOT2_BOOTLOADER_MAGIC) {
+		printf("Invalid multiboot2 magic number (not in hex sorry: %d)!\r\n", magicnum);
+		panic("See above message");
+	}
+	if (mutliboot2info & 7) {
+		printf("Unaligned MBI (not in hex sorry: %d)!\r\n", magicnum);
+		panic("See above message");
+	}
+	size = *(unsigned *) mutliboot2info;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wsign-conversion"
+	#pragma GCC diagnostic ignored "-Wconversion"
+	#pragma GCC diagnostic ignored "-Wpointer-arith"
+	#pragma GCC diagnostic ignored "-Wpedantic"
+	#pragma GCC diagnostic pop
 	GDTinit();
-	printf("[ %d.%d ] Global Descriptor Table initialized\r\n", timer.now.seconds(), timer.now.milliseconds());
-	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", timer.now.seconds(), timer.now.milliseconds());
+	printf("[ %d.%d ] Global Descriptor Table initialized\r\n", 0, 0);
+	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", 0, 0);
 	
 	if (_testasm() != 0x12345678) {
 		printf("FAILED\r\n");
-		panic("Handwritten ASM test returned a non-305,419,896 value");
+		panic("Handwritten ASM test returned a non-0x12345678 value");
 	}
 	else {
 		printf("PASSED\r\n");
 	}
-	printf("[ %d.%d ] KERN_ARGS: %s\r\n", timer.now.seconds(), timer.now.milliseconds(), (strcmp(grubCMDline, "") == 0) ? "NONE" : grubCMDline);
+	mbtag = (struct multiboot_tag *) (mutliboot2info + 8);
+	// TODO: **GET THIS WORKING AGAIN!!!!**
+	const char *cmdline = {((struct multiboot_tag_string *) mbtag)->string};
+	printf("[ %d.%d ] KERN_ARGS: %s\r\n", 0, 0, strcmp(cmdline, NULL) ? cmdline : "NONE");
 	for (uint16_t i = 0; i < CONFIG_KERN_MAXARGS; i++) {
 
 	}
-	printf("Welcome to Techflash OS v%d.%d.%d!\r\n", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
+	terminalWriteString("Welcome to ");
+	terminalSetColor(VGA_COLOR_WHITE);
+	terminalWriteString("Techflash OS ");
+	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+	terminalPutchar('v');
+	terminalSetColor(VGA_COLOR_CYAN);
+	printf("%d.%d.%d", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
+	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+	printf("!\r\n");
 	printf("> \r\n");
-	kernelDebug((const char*)"The kernel has reached the end of execution.  The system will now halt.", fileInfo, __LINE__);
+	printf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%%^&*()_-+={}|[]\\:\";'<>?,./\r\n");
+	// kernelDebug((const char*)"The kernel has reached the end of execution.  The system will now halt.", fileInfo, __LINE__);
 	for (;;) {
 		
 	}
