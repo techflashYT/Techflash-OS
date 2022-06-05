@@ -13,8 +13,8 @@ EXEC_PREFIX?=$(PREFIX)
 BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
 
-CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra  -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
-CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude  -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
+CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
+CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
 LDFLAGS:=$(LDFLAGS)
 LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
 ARCHDIR=arch/$(HOSTARCH)
@@ -22,7 +22,7 @@ ARCHDIR=arch/$(HOSTARCH)
 include $(ARCHDIR)/make.config
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
 EXPECTED_CONFIG_KERN_VERSION_MINOR=0
-EXPECTED_CONFIG_KERN_VERSION_PATCH=3
+EXPECTED_CONFIG_KERN_VERSION_PATCH=4
 CONFIG_KERN_VERSION_MAJOR=NULL
 CONFIG_KERN_VERSION_MINOR=NULL
 CONFIG_KERN_VERSION_PATCH=NULL
@@ -38,14 +38,16 @@ $(KERNEL_ARCH_OBJS)\
 kernel/kernel.o \
 kernel/stack.o \
 kernel/panic.o \
-kernel/timer.o \
 kernel/debug.o \
 kernel/hardware/cpu/GDT.o
+
+KERNEL_CXX_OBJS=\
 
 OBJS=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(KERNEL_CXX_OBJS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 
@@ -54,6 +56,7 @@ $(LDFLAGS) \
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(KERNEL_CXX_OBJS) \
 $(LIBS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
@@ -64,12 +67,12 @@ clean:
 	@rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 .PHONY: all install install-headers install-kernel
-.SUFFIXES: .o .c .S
+.SUFFIXES: .o .c .cpp .S
 
 all: tfos.elf
-RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) 0 0 3)
+RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) $(EXPECTED_CONFIG_KERN_VERSION_MAJOR) $(EXPECTED_CONFIG_KERN_VERSION_MINOR) $(EXPECTED_CONFIG_KERN_VERSION_PATCH))
 ifneq ($(strip $(RET)),0)
-$(error Kernel Version Mismatch!  Expected: 0.0.3  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH) Error code: $(RET))
+$(error Kernel Version Mismatch!  Expected: $(EXPECTED_CONFIG_KERN_VERSION_MAJOR).$(EXPECTED_CONFIG_KERN_VERSION_MINOR).$(EXPECTED_CONFIG_KERN_VERSION_PATCH)  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH) Error code: $(RET))
 endif
 
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
@@ -77,20 +80,23 @@ tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	@$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)
-	@grub-file --is-x86-multiboot ../sysroot/boot/tfos.elf
+	@grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
 	@echo "CLEAN"
 	@make softclean --quiet
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	@OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
+.cpp.o:
+	@echo "CXX   $@"
+	@$(CXX) -c $< -o $@ -std=gnu++20 $(CFLAGS) $(CPPFLAGS)
 .c.o:
 	@echo "CC    $@"
-	@$(CC)  -c $< -o $@ -std=gnu17 $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu17 $(CFLAGS) $(CPPFLAGS)
 
 .S.o:
 	@echo "CC    $@"
-	@$(CC)  -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 
 
