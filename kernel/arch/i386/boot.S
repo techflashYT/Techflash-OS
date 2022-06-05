@@ -1,17 +1,44 @@
-# Declare constants for the multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
+# Constants for multiboot 2 Header
+.set MAGIC,    0xE85250D6    # magic number
+.set ARCH,     0x00000000    # 32-bit x86
+.set HEAD_LEN, 0x00000010    # Header length
+.set CHECKSUM, -(HEAD_LEN + ARCH + MAGIC) # checksum, must be a uint32 that, when the above things are added to it, equals 0.  So all we do is do the exact same thing, but make it negative.  Like how -1 + 1 = 0, the same principle applies here.
 
-# Declare a header as in the Multiboot Standard.
+# Multiboot 2 header
 .section .multiboot
-.align 4
 .long MAGIC
-.long FLAGS
+.long ARCH
+.long HEAD_LEN
 .long CHECKSUM
-
+# ###### FLAGS FOR REAL 640x480 FRAMEBUFFER #####
+# .long 0
+# .short 5 # type = 5
+# .short 0 # flags = 0
+# .long 20 # size = 20
+# .long 640 # width
+# .long 480 # height
+# .long 8 # depth
+# .long 0 # END
+# But rather than that, lets just use basic console because it's so much easier to use
+.word 4
+.word 0
+.long 12
+.long 0x03
+.balign 8
+# Request some info
+.word 1
+.word 0
+.long 4*6+8
+.long 5 # BIOS boot device
+.long 1 # command line
+.long 3 # modules
+.long 9 # ELF symbols
+.long 6 # memory map
+.long 10 # APM table
+.balign 8
+.long 0
+.long 0
+.long 0
 # Reserve a stack for the initial thread.
 .section .bss
 .align 16
@@ -25,9 +52,11 @@ stackTop:
 .global _disableCursor
 .type _disableCursor, @function
 .type _start, @function
+
 _start:
 	movl $stackTop, %esp
-	movl 16(%ebx), %ecx
+	pushl %ebx
+	pushl %eax
 
 	# Call the global constructors.
 	call _init
@@ -71,12 +100,11 @@ __bootstg2:
 	# Also just in case, clear all the regs
 	xor %eax, %eax
 	xor %ebx, %ebx
-	xor %edx, %edx
 	xor %esi, %esi
 	xor %edi, %edi
 	xor %ebp, %ebp
-	push %ecx # Push the grub args to the stack before zeroing ecx
 	xor %ecx, %ecx
+	xor %edx, %edx
 	# Transfer control to the main kernel.
 	call kernelMain
 
