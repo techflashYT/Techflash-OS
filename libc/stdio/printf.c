@@ -32,6 +32,9 @@ static bool print(const char* data, size_t length) {
 }
 
 int printf(const char* restrict format, ...) {
+	if (*format == '\0') {
+		return 0;
+	}
 	va_list parameters;
 	va_start(parameters, format);
 
