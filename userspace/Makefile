@@ -30,7 +30,8 @@ FREEOBJS=\
 $(ARCH_FREEOBJS)
 
 FREEOBJS_CXX=\
-apps/terminal/term.o
+apps/terminal/term.o \
+apps/shell/shell.o
 
 ALL_FREEOBJS=\
 $(FREEOBJS_CXX) \
@@ -60,19 +61,19 @@ libuser.a: $(USERSPACE_OBJS)
 
 .cpp.o:
 	@echo "CXX    $@"
-	@$(CXX) -c $< -o $@ -std=gnu++20 $(CPPFLAGS)
+	@$(CXX) -c $< -o $@ -std=gnu++2b $(CPPFLAGS)
 
 .c.o:
 	@echo "CC     $@"
-	@$(CC) -c $< -o $@ -std=gnu17 $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu2x $(CFLAGS) $(CPPFLAGS)
 
 .cpp.libuser.o:
 	@echo "CXX    $@"
-	@$(CXX) -c $< -o $@ -std=gnu++20 $(USERSPACE_CFLAGS) $(USERSPACE_CPPFLAGS)
+	@$(CXX) -c $< -o $@ -std=gnu++2b $(USERSPACE_CFLAGS) $(USERSPACE_CPPFLAGS)
 
 .c.libuser.o:
 	@echo "CC     $@"
-	@$(CC) -c $< -o $@ -std=gnu17 $(USERSPACE_CFLAGS) $(USERSPACE_CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu2x $(USERSPACE_CFLAGS) $(USERSPACE_CPPFLAGS)
 
 .S.libuser.o:
 	@echo "CC     $@"

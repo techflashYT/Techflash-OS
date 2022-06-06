@@ -37,7 +37,8 @@ string/memcpy.o \
 string/memmove.o \
 string/memset.o \
 string/strlen.o \
-string/strcmp.o
+string/strcmp.o \
+math/sqrt.o 
 
 FREEOBJS_CXX=\
 stdio/putchar.o
@@ -75,11 +76,11 @@ libk.a: $(LIBK_OBJS)
 
 .cpp.o:
 	@echo "CXX   $@"
-	@$(CXX) -c $< -o $@ -std=gnu++17 $(CPPFLAGS)
+	@$(CXX) -c $< -o $@ -std=gnu++2b $(CPPFLAGS)
 
 .c.o:
 	@echo "CC    $@"
-	@$(CC) -c $< -o $@ -std=gnu17 $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu2x $(CFLAGS) $(CPPFLAGS)
 
 .c.S:
 	@echo "CC    $@"
@@ -87,11 +88,11 @@ libk.a: $(LIBK_OBJS)
 
 .c.libk.o:
 	@echo "CC    $@"
-	@$(CC) -c $< -o $@ -std=gnu17 $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu2x $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
 
 .cpp.libk.o:
 	@echo "CC    $@"
-	@$(CC) -c $< -o $@ -std=gnu++20 $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)	
+	@$(CC) -c $< -o $@ -std=gnu++2b $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)	
 
 .S.libk.o:
 	@echo "CC    $@"

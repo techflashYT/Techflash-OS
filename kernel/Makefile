@@ -89,10 +89,10 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 
 .cpp.o:
 	@echo "CXX   $@"
-	@$(CXX) -c $< -o $@ -std=gnu++20 $(CFLAGS) $(CPPFLAGS)
+	@$(CXX) -c $< -o $@ -std=gnu++2b $(CFLAGS) $(CPPFLAGS)
 .c.o:
 	@echo "CC    $@"
-	@$(CC) -c $< -o $@ -std=gnu17 $(CFLAGS) $(CPPFLAGS)
+	@$(CC) -c $< -o $@ -std=gnu2x $(CFLAGS) $(CPPFLAGS)
 
 .S.o:
 	@echo "CC    $@"
