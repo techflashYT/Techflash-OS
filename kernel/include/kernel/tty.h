@@ -10,4 +10,5 @@ void terminalPutEntryAt(char c, uint8_t color, size_t x, size_t y);
 void terminalPutchar(char c);
 void terminalWrite(const char* data, size_t size);
 void terminalWriteString(const char* data);
+void terminalClear();
 #endif
