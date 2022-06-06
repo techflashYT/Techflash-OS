@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <kernel/tty.h>
-#include "vga.h"
+#include <kernel/arch/i386/vga.h>
 
 uint8_t vgaEntryColor(enum vgaColor fg, enum vgaColor bg) {
 	return (uint8_t)(fg | bg << 4);
@@ -90,4 +90,14 @@ void terminalWrite(const char* data, size_t size) {
 
 void terminalWriteString(const char* data) {
 	terminalWrite(data, strlen(data));
+}
+
+void terminalClear() {
+	terminalRow = 0;
+	terminalColumn = 0;
+	for (uint8_t y = 0; y < VGA_HEIGHT; y++) {
+		for (uint8_t x = 0; x < VGA_WIDTH; x++) {
+			terminalBuffer[y * VGA_WIDTH + x] = 0;
+		}
+	}
 }
