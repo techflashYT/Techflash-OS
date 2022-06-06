@@ -23,4 +23,4 @@ then
 fi
 echo "ISO"
 ./iso.sh
-echo "Done!  Boot iso is in bin/TFOS_ISO.iso"
+echo "Done!  Boot ISO is in bin/TFOS_ISO.iso"
