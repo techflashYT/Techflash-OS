@@ -43,7 +43,7 @@
 .section .bss
 .align 16
 stackBottom:
-.skip 16384 # 16 KiB
+.skip 131072 # 128K of stack
 stackTop:
 
 # The kernel entry point.
