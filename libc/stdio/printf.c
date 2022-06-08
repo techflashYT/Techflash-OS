@@ -8,9 +8,6 @@
 #include <kernel/sourceFileInfo.h>
 
 
-char* itoa(int res);
-
-
 __attribute__ ((unused)) static sourceFileInfo fileInfo = {
 	.fileName = "libc/stdio/printf.c",
 	.lastEditor = "Techflash",
