@@ -1,6 +1,6 @@
 #include <kernel/arch/i386/io.h>
 #include <stdint.h>
-void activateChannel(uint8_t channel, uint8_t frequency) {
+void pitActivateChannel(uint8_t channel, uint8_t frequency) {
 	unsigned int divider = 1193180 / frequency;
 
 	outb(0x43, channel == 0 ? 0x36 : 0xB6);
