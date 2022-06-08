@@ -17,6 +17,7 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NUMLOCK); // Turn on numlock
 	struct multiboot_tag *mbtag;
+	
 	unsigned int __attribute__ ((unused)) size = 0;
 	terminalInit();
 	terminalPutEntryAt('.', VGA_COLOR_LIGHT_BLUE, 32, 0);
@@ -30,21 +31,22 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 		printf("Unaligned MBI (not in hex sorry: %d)!\r\n", magicnum);
 		panic("See above message");
 	}
-	size = *(unsigned *) mutliboot2info;
+	size = *(unsigned int *) mutliboot2info;
 	GDTinit();
 	printf("[ %d.%d ] Global Descriptor Table initialized\r\n", 0, 0);
 	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", 0, 0);
-	
-	if (_testasm() != 0x12345678) {
-		terminalSetColor(VGA_COLOR_RED);
-		printf("FAILED\r\n");
+	int ret = _testasm();
+	__asm__("xchgw %bx, %bx");
+	if (ret == 438) {
+		terminalSetColor(VGA_COLOR_GREEN);
+		printf("PASSED (%d)\r\n", ret);
 		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
-		// panic("Handwritten ASM test returned a non-0x12345678 value");
 	}
 	else {
-		terminalSetColor(VGA_COLOR_GREEN);
-		printf("PASSED\r\n");
+		terminalSetColor(VGA_COLOR_RED);
+		printf("FAILED (%d)\r\n", ret);
 		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		panic("Handwritten ASM test returned a non-438 value");
 	}
 	isrInstall();
 	printf("[ %d.%d ] Interrupt Service Routines initialized\r\n", 0, 0);

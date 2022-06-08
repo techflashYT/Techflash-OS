@@ -1,9 +1,10 @@
 .global _testasm
 .type _testasm, @function
 _testasm:
-	push %edx
-	mov $1234, %edx
-	imul $59424, %edx
-	movl %edx, %eax
-	pop %edx
+	movl $1, %eax
+	add %eax, %eax
+	mul %eax
+	mul %eax
+	mul %eax
+	add $182, %eax
 	ret 
