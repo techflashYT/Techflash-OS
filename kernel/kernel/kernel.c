@@ -6,6 +6,7 @@
 #include <kernel/arch/i386/GDT.h>
 #include <kernel/multiboot2.h>
 #include <kernel/panic.h>
+#include <kernel/arch/i386/pit.h>
 #include <kernel/arch/i386/io.h>
 #include <kernel/arch/i386/kbd.h>
 #include <kernel/arch/i386/ISR.h>
@@ -32,11 +33,15 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 		panic("See above message");
 	}
 	size = *(unsigned int *) mutliboot2info;
+	printf("[ %d.%d ] Initializing the Global Descriptor Table...\r\n", 0, 0);
+	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 74, 3);
+	terminalPutEntryAt(']', VGA_COLOR_LIGHT_GRAY, 80, 3);
 	GDTinit();
-	printf("[ %d.%d ] Global Descriptor Table initialized\r\n", 0, 0);
+	terminalPutEntryAt('O', VGA_COLOR_GREEN, 76, 3);
+	terminalPutEntryAt('K', VGA_COLOR_GREEN, 77, 3);
+	printf("[ %d.%d ] Initializing the programable interrupt timer...\r\n", 0, 0);
 	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", 0, 0);
 	int ret = _testasm();
-	__asm__("xchgw %bx, %bx");
 	if (ret == 438) {
 		terminalSetColor(VGA_COLOR_GREEN);
 		printf("PASSED (%d)\r\n", ret);
