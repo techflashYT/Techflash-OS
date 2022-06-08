@@ -38,7 +38,8 @@ string/memmove.o \
 string/memset.o \
 string/strlen.o \
 string/strcmp.o \
-math/sqrt.o 
+math/sqrt.o \
+string/strcpy.o
 
 FREEOBJS_CXX=\
 stdio/putchar.o

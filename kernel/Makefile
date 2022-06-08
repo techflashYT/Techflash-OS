@@ -16,7 +16,11 @@ INCLUDEDIR?=$(PREFIX)/include
 CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
 LDFLAGS:=$(LDFLAGS)
-LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
+ifeq ($(strip $(LIBS)),)
+    LIBS:=-nostdlib -lk -lgcc -luser
+else
+    LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
+endif
 ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
@@ -38,8 +42,7 @@ $(KERNEL_ARCH_OBJS)\
 kernel/kernel.o \
 kernel/stack.o \
 kernel/panic.o \
-kernel/debug.o \
-kernel/hardware/cpu/GDT.o
+kernel/debug.o
 
 KERNEL_CXX_OBJS=\
 
@@ -52,14 +55,12 @@ $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 
 LINK_LIST=\
-$(LDFLAGS) \
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
-$(KERNEL_OBJS) \
-$(KERNEL_CXX_OBJS) \
-$(LIBS) \
+$(KERNEL_OBJS)\
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
+$(LIBS)
 
 clean:
 	@rm -f tfos.elf
@@ -76,8 +77,8 @@ $(error Kernel Version Mismatch!  Expected: $(EXPECTED_CONFIG_KERN_VERSION_MAJOR
 endif
 
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
-	@echo "LINK   $(LINK_LIST)    $@"
-	@$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
+	@echo "LINK $(LDFLAGS) $(LINK_LIST) ===> $@"
+	@$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LDFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)
 	@grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
