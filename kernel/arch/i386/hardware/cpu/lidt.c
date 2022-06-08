@@ -1,5 +1,5 @@
 #include <stdint.h>
-static inline void lidt(void* base, uint16_t size) {   // This function works in 32 and 64bit mode
+void lidt(void* base, uint16_t size) {   // This function works in 32 and 64bit mode
 	struct {
 		uint16_t length;
 		void*    base;
