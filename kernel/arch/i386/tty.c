@@ -27,14 +27,14 @@ uint8_t terminalColor;
 uint16_t* terminalBuffer;
 
 void terminalInit(void) {
-	terminalRow = 0;
+	terminalRow = 1;
 	terminalColumn = 0;
 	terminalColor = vgaEntryColor(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK);
 	terminalBuffer = (uint16_t*) 0xB8000;
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+	for (size_t y = 1; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminalBuffer[index] = vgaEntry(' ', terminalColor);
+			terminalBuffer[index] = vgaEntry('\0', terminalColor);
 		}
 	}
 }
