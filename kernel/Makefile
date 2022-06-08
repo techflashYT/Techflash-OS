@@ -42,7 +42,6 @@ $(KERNEL_ARCH_OBJS)\
 kernel/kernel.o \
 kernel/stack.o \
 kernel/panic.o \
-kernel/debug.o
 
 KERNEL_CXX_OBJS=\
 
