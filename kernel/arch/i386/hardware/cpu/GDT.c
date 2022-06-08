@@ -2,17 +2,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <kernel/sourceFileInfo.h>
-__attribute__ ((unused)) static sourceFileInfo fileInfo = {
-	.fileName = "kernel/kernel/hardware/cpu/GDT.c",
-	.lastEditor = "Techflash",
-	.lastEditDate = "May 16th, 2022",
-	.lastEditReason = "Remove <kernel/assert.h> as it no long exists",
-	.versionMajor = 0,
-	.versionMinor = 0,
-	.versionPatch = 1
-};
-
 
 // Each define here is for a specific flag in the descriptor.
 // Refer to the intel documentation for a description of what each one does.

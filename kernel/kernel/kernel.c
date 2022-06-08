@@ -3,9 +3,7 @@
 #include <stdbool.h>
 #include <kernel/arch/i386/vga.h>
 #include <kernel/tty.h>
-#include <kernel/sourceFileInfo.h>
 #include <kernel/arch/i386/GDT.h>
-#include <kernel/debug.h>
 #include <kernel/multiboot2.h>
 #include <kernel/panic.h>
 #include <kernel/arch/i386/io.h>
@@ -13,15 +11,6 @@
 #include <kernel/arch/i386/ISR.h>
 #include <math.h>
 extern int _testasm();
-static sourceFileInfo fileInfo = {
-	.fileName       = "kernel/kernel.c",
-	.lastEditor     = "Techflash",
-	.lastEditDate   = "June 8th, 2022",
-	.lastEditReason = "IDT, ISRs, and VGA tester",
-	.versionMajor   = CONFIG_KERN_VERSION_MAJOR,
-	.versionMinor   = CONFIG_KERN_VERSION_MINOR,
-	.versionPatch   = CONFIG_KERN_VERSION_PATCH
-};
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NONE); // Turn all LEDs off	
@@ -80,7 +69,7 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	terminalPutchar('v');
 	terminalSetColor(VGA_COLOR_CYAN);
-	printf("%d.%d.%d", fileInfo.versionMajor, fileInfo.versionMinor, fileInfo.versionPatch);
+	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	printf("!\r\n");
 	printf("Lets test your VGA colors, do you see a rainbow of colors here?\r\n");

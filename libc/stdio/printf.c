@@ -5,18 +5,6 @@
 #include <string.h>
 
 #include <kernel/tty.h>
-#include <kernel/sourceFileInfo.h>
-
-
-__attribute__ ((unused)) static sourceFileInfo fileInfo = {
-	.fileName = "libc/stdio/printf.c",
-	.lastEditor = "Techflash",
-	.lastEditDate = "May 16th, 2022",
-	.lastEditReason = "Remove <kernel/assert.h> as it no long exists",
-	.versionMajor = 0,
-	.versionMinor = 0,
-	.versionPatch = 2
-};
 
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*)data;
