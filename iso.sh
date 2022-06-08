@@ -16,5 +16,10 @@ $(cat ISO_GRUB_CFG.cfg)
 EOF
 cp grub_bg.png isodir/boot/bg.png
 cp font.pf2 isodir/boot/grub/fonts/unicode.pf2
-grub-mkrescue -o bin/TFOS_ISO.iso isodir &> /dev/null
-rm -r isodir
+grub-mkrescue -o bin/TFOS_ISO.iso isodir
+if [ $? != 0 ]
+then
+	exit 1
+else
+	rm -r isodir
+fi
