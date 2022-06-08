@@ -11,4 +11,8 @@ void terminalPutchar(char c);
 void terminalWrite(const char* data, size_t size);
 void terminalWriteString(const char* data);
 void terminalClear();
+extern size_t terminalRow;
+extern size_t terminalColumn;
+extern uint8_t terminalColor;
+extern uint16_t* terminalBuffer;
 #endif
