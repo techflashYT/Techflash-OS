@@ -42,6 +42,7 @@ $(KERNEL_ARCH_OBJS)\
 kernel/kernel.o \
 kernel/stack.o \
 kernel/panic.o \
+kernel/bootDisplay.o
 
 KERNEL_CXX_OBJS=\
 

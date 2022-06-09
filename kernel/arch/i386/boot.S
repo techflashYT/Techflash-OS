@@ -95,17 +95,17 @@ _start:
 	movb $0x69, 48(%ebx) # i
 	movb $0x6E, 50(%ebx) # n
 	movb $0x67, 52(%ebx) # g
-	movb $0x2E, 54(%ebx) # .
+	movb $0xFE, 54(%ebx) # .
 	movb $0x04, 55(%ebx) # red
 
 	# Call the global constructors.
 	call _init
-	movb $0x2E, 56(%ebx) # .
+	movb $0xFE, 56(%ebx) # .
 	movb $0x06, 57(%ebx) # brown (orange)
 	# Initialize the floating point unit.
 	finit
-	movb $0x2E, 58(%ebx) # .
-	movb $0x07, 59(%ebx) # yellow
+	movb $0xFE, 58(%ebx) # .
+	movb $0x0E, 59(%ebx) # yellow
 	# TODO: Initialize the PIC and PIT
 	
 	
@@ -117,7 +117,7 @@ _start:
 	mov %esi, (%esi)     # (if A20 line is cleared the two pointers would point to the address 0x012345 that would contain 0x112345 (edi)) 
 	cmpsd             # compare addresses to see if the're equivalent.
 	popal
-	movb $0x2E, 60(%ebx) # .
+	movb $0xFE, 60(%ebx) # .
 	movb $0x0A, 61(%ebx) # lightgreen
 	jne __bootstg2 # if A20 is on, jmp to call boot stage2.
 	# Enable A20 Gate if it's not enabled.
@@ -147,7 +147,7 @@ nofpu:
 	mov $0x0, %eax
 	ret
 __bootstg2:
-	movb $0x2E, 62(%ebx) # .
+	movb $0xFE, 62(%ebx) # .
 	movb $0x02, 63(%ebx) # green
 	call _disableCursor
 	# Just in case interrupts are enabled, disable them.
@@ -161,7 +161,7 @@ __bootstg2:
 	xor %ecx, %ecx
 	xor %edx, %edx
 	# Transfer control to the main kernel.
-	movb $0x2E, 64(%ebx) # .
+	movb $0xFE, 64(%ebx) # .
 	movb $0x03, 65(%ebx) # yellow
 	call kernelMain
 

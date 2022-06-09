@@ -1,17 +1,22 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <kernel/arch/i386/vga.h>
-#include <kernel/tty.h>
-#include <kernel/arch/i386/GDT.h>
-#include <kernel/multiboot2.h>
-#include <kernel/panic.h>
-#include <kernel/arch/i386/pit.h>
-#include <kernel/arch/i386/io.h>
-#include <kernel/arch/i386/kbd.h>
-#include <kernel/arch/i386/ISR.h>
-#include <math.h>
-extern int _testasm();
+extern "C" {
+	#include <stdio.h>
+	#include <string.h>
+	#include <stdbool.h>
+	#include <kernel/arch/i386/vga.h>
+	#include <kernel/arch/i386/GDT.h>
+	#include <kernel/multiboot2.h>
+	#include <kernel/panic.h>
+	#include <kernel/arch/i386/pit.h>
+	#include <kernel/arch/i386/io.h>
+	#include <kernel/arch/i386/kbd.h>
+	#include <kernel/arch/i386/ISR.h>
+	#include <kernel/bootDisplay.h>
+	#include <math.h>
+
+	extern int _testasm();
+	void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
+}
+#include <kernel/tty.hpp>
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NONE); // Turn all LEDs off	
@@ -21,9 +26,11 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	
 	unsigned int __attribute__ ((unused)) size = 0;
 	terminalInit();
-	terminalPutEntryAt('.', VGA_COLOR_LIGHT_BLUE, 32, 0);
+	terminalPutEntryAt(0xFE, VGA_COLOR_LIGHT_BLUE, 32, 0);
 	// __asm__("cli\nhlt");
 	printf("[ %d.%d ] Terminal initialized\r\n", 0, 0);
+	bootDisplayMakeBrackets(1);
+	bootDisplayOK(1);
 	if (magicnum != MULTIBOOT2_BOOTLOADER_MAGIC) {
 		printf("Invalid multiboot2 magic number (not in hex sorry: %d)!\r\n", magicnum);
 		panic("See above message");
@@ -34,35 +41,42 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	}
 	size = *(unsigned int *) mutliboot2info;
 	printf("[ %d.%d ] Initializing the Global Descriptor Table...\r\n", 0, 0);
-	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 74, 3);
-	terminalPutEntryAt(']', VGA_COLOR_LIGHT_GRAY, 80, 3);
+	bootDisplayMakeBrackets(2);
 	GDTinit();
-	terminalPutEntryAt('O', VGA_COLOR_GREEN, 76, 3);
-	terminalPutEntryAt('K', VGA_COLOR_GREEN, 77, 3);
+	bootDisplayOK(2);
+
 	printf("[ %d.%d ] Initializing the programable interrupt timer...\r\n", 0, 0);
-	printf("[ %d.%d ] Test that calling a handwritten ASM function works: ", 0, 0);
+	bootDisplayMakeBrackets(3);
+	pitActivateChannel(0, 60);
+	bootDisplayOK(3);
+	printf("[ %d.%d ] Testing that calling a handwritten ASM function works...\r\n", 0, 0);
+	bootDisplayMakeBrackets(4);
 	int ret = _testasm();
 	if (ret == 438) {
-		terminalSetColor(VGA_COLOR_GREEN);
-		printf("PASSED (%d)\r\n", ret);
-		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		bootDisplayOK(4);
 	}
 	else {
-		terminalSetColor(VGA_COLOR_RED);
-		printf("FAILED (%d)\r\n", ret);
-		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		bootDisplayFAIL(4);
 		panic("Handwritten ASM test returned a non-438 value");
 	}
+	printf("[ %d.%d ] Initializing Interrupt Service Routines...\r\n", 0, 0);
+	bootDisplayMakeBrackets(5);
 	isrInstall();
-	printf("[ %d.%d ] Interrupt Service Routines initialized\r\n", 0, 0);
+	bootDisplayOK(5);
 	mbtag = (struct multiboot_tag *) (mutliboot2info + 8);
 	mbtag = (struct multiboot_tag *) ((multiboot_uint8_t *) mbtag + ((mbtag->size + 7) & ~(uint32_t)7));
 	const char *cmdline = {((struct multiboot_tag_string *) mbtag)->string};
-	outb(0xE9, 'A');
 	printf("[ %d.%d ] KERN_ARGS: %s\r\n", 0, 0, strcmp(cmdline, NULL) ? cmdline : "NONE");
 	const int root = (int)sqrt(CONFIG_KERN_MAXARGS);
 	printf("sqrt of max_args: %d\r\n", root);
+	#ifdef __cplusplus
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wvla"
+	#endif
 	char args[root][root];
+	#ifdef __cplusplus
+	#pragma GCC diagnostic pop
+	#endif
 	(void)args;
 	for (uint16_t x = 0; x < root; x++) {
 		for (uint16_t y = 0; y < root; y++) {
@@ -70,9 +84,9 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 			args[x][y] = '\0';  // Zero out the string so we are sure that we aren't garbling everything
 		}
 	}
-	terminalWriteString("Welcome to ");
+	terminalWrite("Welcome to ", sizeof("Welcome to "));
 	terminalSetColor(VGA_COLOR_WHITE);
-	terminalWriteString("Techflash OS ");
+	terminalWrite("Techflash OS ", sizeof("Techflash OS "));
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	terminalPutchar('v');
 	terminalSetColor(VGA_COLOR_CYAN);
