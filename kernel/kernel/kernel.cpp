@@ -94,7 +94,7 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	printf("!\r\n");
 	printf("Lets test your VGA colors, do you see a rainbow of colors here?\r\n");
-	terminalColumn = 24;
+	terminalColumn = 24; // FIXME: This isn't centered!
 	terminalSetColor(VGA_COLOR_LIGHT_RED);
 	putchar('#');
 	terminalSetColor(VGA_COLOR_RED);
