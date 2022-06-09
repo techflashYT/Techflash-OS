@@ -9,3 +9,4 @@ copyFromOldPC.bat
 *.elf
 *.a
 sysroot
+isodir
