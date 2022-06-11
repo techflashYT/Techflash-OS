@@ -3,9 +3,9 @@ if [ "$1" != "--no-pull" ]
 then
 	git pull
 fi
-if ! command -v i686-elf-gcc > /dev/null || ! command -v i686-elf-as > /dev/null || ! command -v i686-elf-ld > /dev/null
+if ! command -v i686-elf-gcc > /dev/null || ! command -v i686-elf-as > /dev/null || ! command -v i686-elf-ld > /dev/null || ! command -v x86_64-elf-gcc > /dev/null || ! command -v x86_64-elf-as > /dev/null || ! command -v x86_64-elf-ld > /dev/null 
 then
-	echo "Uh oh!  Looks like you never installed the i686-elf-gcc cross compiler!  Please follow the steps in the wiki to install it."
+	echo "Uh oh!  Looks like you never installed the i686-elf-gcc/x86_64-elf-gcc cross compiler!  Please follow the steps in the wiki to install it."
 	exit 1
 fi
 if [ ! -f .config ]

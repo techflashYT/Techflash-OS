@@ -1,7 +1,10 @@
 #include <kernel/arch/i386/vga.h>
 #include <kernel/tty.h>
+#include <kernel/panic.h>
 #include <stdint.h>
-
+#define BOOTDISPLAY_NUM_ACTIONS 4
+extern uint8_t bootProgress;
+uint8_t bootDisplayProgressBarLastLocation = 1;
 void bootDisplayMakeBrackets(uint8_t y) {
 	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 71, y);
 	terminalPutEntryAt('W', VGA_COLOR_YELLOW, 72, y);
@@ -30,4 +33,31 @@ void bootDisplayFAIL(uint8_t y) {
 	terminalPutEntryAt(']', VGA_COLOR_YELLOW, 76, y);
 	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 77, y);
 	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 78, y);
+}
+void bootDisplayMakeProgressBar(void) {
+	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 0, 20);
+	terminalPutEntryAt(']', VGA_COLOR_LIGHT_GRAY, 79, 20);
+	for (uint8_t i = 1; i <= 78; i++) {
+		terminalPutEntryAt('#', VGA_COLOR_DARK_GRAY, i, 20);
+	}
+}
+uint8_t bootDisplayProgressToLocation(void) {
+	uint8_t e = (uint8_t)((bootProgress * 78) / BOOTDISPLAY_NUM_ACTIONS);
+	if (e >= 80) {
+		panic("Progress bar went too far!");
+	}
+	return e;
+}
+void bootDisplayProgressBarFail(void) {
+		for (uint8_t i = 0; i <= bootDisplayProgressToLocation(); i++) {
+		terminalPutEntryAt('#', VGA_COLOR_RED, i, 20);
+	}
+}
+void bootDisplayProgressBarUpdate(void) {
+	uint8_t i;
+
+	for (i = bootDisplayProgressBarLastLocation; i <= bootDisplayProgressToLocation(); i++) {
+		terminalPutEntryAt('#', VGA_COLOR_WHITE, i, 20);
+	}
+	bootDisplayProgressBarLastLocation = i;
 }

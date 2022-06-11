@@ -9,7 +9,6 @@ extern "C" {
 	#include <kernel/arch/i386/pit.h>
 	#include <kernel/arch/i386/io.h>
 	#include <kernel/arch/i386/kbd.h>
-	#include <kernel/arch/i386/ISR.h>
 	#include <kernel/bootDisplay.h>
 	#include <math.h>
 
@@ -17,7 +16,9 @@ extern "C" {
 	void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
 }
 #include <kernel/tty.hpp>
+uint8_t bootProgress = 0;
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
+	terminalRow++;
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NONE); // Turn all LEDs off	
 	outb(KBD_PORT, 0xED);
@@ -26,7 +27,7 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	
 	unsigned int __attribute__ ((unused)) size = 0;
 	terminalInit();
-	terminalPutEntryAt(0xFE, VGA_COLOR_LIGHT_BLUE, 32, 0);
+	terminalPutEntryAt(0xFE, VGA_COLOR_LIGHT_BLUE, 33, 0);
 	// __asm__("cli\nhlt");
 	printf("[ %d.%d ] Terminal initialized\r\n", 0, 0);
 	bootDisplayMakeBrackets(1);
@@ -40,29 +41,6 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 		panic("See above message");
 	}
 	size = *(unsigned int *) mutliboot2info;
-	printf("[ %d.%d ] Initializing the Global Descriptor Table...\r\n", 0, 0);
-	bootDisplayMakeBrackets(2);
-	GDTinit();
-	bootDisplayOK(2);
-
-	printf("[ %d.%d ] Initializing the programable interrupt timer...\r\n", 0, 0);
-	bootDisplayMakeBrackets(3);
-	pitActivateChannel(0, 60);
-	bootDisplayOK(3);
-	printf("[ %d.%d ] Testing that calling a handwritten ASM function works...\r\n", 0, 0);
-	bootDisplayMakeBrackets(4);
-	int ret = _testasm();
-	if (ret == 438) {
-		bootDisplayOK(4);
-	}
-	else {
-		bootDisplayFAIL(4);
-		panic("Handwritten ASM test returned a non-438 value");
-	}
-	printf("[ %d.%d ] Initializing Interrupt Service Routines...\r\n", 0, 0);
-	bootDisplayMakeBrackets(5);
-	isrInstall();
-	bootDisplayOK(5);
 	mbtag = (struct multiboot_tag *) (mutliboot2info + 8);
 	mbtag = (struct multiboot_tag *) ((multiboot_uint8_t *) mbtag + ((mbtag->size + 7) & ~(uint32_t)7));
 	const char *cmdline = {((struct multiboot_tag_string *) mbtag)->string};
@@ -84,17 +62,101 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 			args[x][y] = '\0';  // Zero out the string so we are sure that we aren't garbling everything
 		}
 	}
-	terminalWrite("Welcome to ", sizeof("Welcome to "));
+	// Seperate the cmdline into the args array, seperating on spaces
+	uint16_t numargs = 0;
+	uint16_t y = 0;
+	if (strlen(cmdline) > 0) {
+		numargs = 1;
+		for (size_t i = 0; i < strlen(cmdline); i++) {
+			if (cmdline[i] == ' ') {
+				numargs++;
+				y = 0;
+			}
+			else {
+				args[numargs][y] = cmdline[i];
+				y++;
+			}
+		}
+		for (uint16_t i = 0; i < numargs; i++) {
+			printf(args[i]);
+			/* TODO: More args to be handled:
+			loglevel=X: 0: Debug+   1: Info+  2: Warning+  3: Error+   4. Nothing at all, not even Errors, only if you get a kernel panic does that show up
+			verbose: Equivalent to loglevel=0
+			*none*: Equivalent to loglevel=2
+			quiet: Equivalent to loglevel=3
+			silent: Equivalent to loglevel=4
+			TODO: Think of more useful ones to put here
+			*/
+		}
+	}
+	terminalClear();
+	bootDisplayMakeProgressBar();
+	printf("[ %d.%d ] Initializing the Global Descriptor Table...\r\n", 0, 0);
+	bootDisplayMakeBrackets(2 + numargs);
+	GDTinit();
+	bootProgress++;
+	bootDisplayProgressBarUpdate();
+	bootDisplayOK(2 + numargs);
+
+	printf("[ %d.%d ] Initializing the programable interrupt timer...\r\n", 0, 0);
+	bootDisplayMakeBrackets(3 + numargs);
+	// pitInit();
+	bootProgress++;
+	bootDisplayProgressBarUpdate();
+	bootDisplayOK(3 + numargs);
+
+	printf("[ %d.%d ] Testing that calling a handwritten ASM function works...\r\n", 0, 0);
+	bootDisplayMakeBrackets(4 + numargs);
+	int ret = _testasm();
+	if (ret == 438) {
+			bootDisplayOK(4 + numargs);
+	}
+	else {
+		bootDisplayFAIL(4 + numargs);
+		bootDisplayProgressBarFail();
+		panic("Handwritten ASM test returned a non-438 value");
+	}
+	bootProgress++;
+	bootDisplayProgressBarUpdate();
+	terminalWrite("Welcome to", sizeof("Welcome to"));
 	terminalSetColor(VGA_COLOR_WHITE);
-	terminalWrite("Techflash OS ", sizeof("Techflash OS "));
+	terminalWrite("Techflash OS", sizeof("Techflash OS"));
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	terminalPutchar('v');
 	terminalSetColor(VGA_COLOR_CYAN);
 	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
 	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
-	printf("!\r\n");
+	#ifdef __GNUC__
+		printf("!\r\nCompiled on");
+		terminalSetColor(VGA_COLOR_LIGHT_BLUE);
+		terminalWriteString(__DATE__);
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		terminalWriteString(", ");
+		terminalSetColor(VGA_COLOR_LIGHT_BLUE);
+		terminalWriteString(__TIME__);
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		terminalWriteString(" using ");
+		terminalSetColor(VGA_COLOR_GREEN);
+		terminalWriteString((CONFIG_BITS == 64 ? "x86_64-elf-gcc" : "i686-elf-gcc"));
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		terminalWriteString(" version ");
+		printf("%d.%d.%d\r\n", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+	#else
+		printf("!\r\nCompiled on");
+		terminalSetColor(VGA_COLOR_LIGHT_BLUE);
+		terminalWriteString(__DATE__);
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		terminalWriteString(", ");
+		terminalSetColor(VGA_COLOR_LIGHT_BLUE);
+		terminalWriteString(__TIME__);
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+		terminalWriteString(" using ");
+		terminalSetColor(VGA_COLOR_RED);
+		terminalWriteString("*unkown compiler*");
+		terminalSetColor(VGA_COLOR_LIGHT_GRAY);
+	#endif
 	printf("Lets test your VGA colors, do you see a rainbow of colors here?\r\n");
-	terminalColumn = 24; // FIXME: This isn't centered!
+	terminalColumn = 32; // FIXME: This isn't centered!
 	terminalSetColor(VGA_COLOR_LIGHT_RED);
 	putchar('#');
 	terminalSetColor(VGA_COLOR_RED);
@@ -127,20 +189,23 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	putchar('#');
 	terminalSetColor(VGA_COLOR_WHITE);
 	putchar('#');
-	terminalColumn = 38;
+	terminalColumn = 46;
 	terminalRow++;
 	putchar(0x1E);
-	terminalColumn = 38;
+	terminalColumn = 46;
 	terminalRow++;
 	putchar('|');
-	terminalColumn = 38;
+	terminalColumn = 46;
 	terminalRow++;
 	putchar('|');
 	terminalRow++;
-	terminalColumn = 30;
-	printf("Should be black (invisible)");
+	terminalColumn = 36;
+	printf("Should be black (invisible)\r\n");
 	// printf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%%^&*()_-+={}|[]\\:\";'<>?,./\r\n");
 	// kernelDebug((const char*)"The kernel has reached the end of execution.  The system will now halt.", fileInfo, __LINE__);
+	terminalSetColor(VGA_COLOR_LIGHT_GRAY);
 	for (;;) {
+		printf("Hey!  Sleep is working!\r\n");
+		// pitWait(10);
 	}
 }

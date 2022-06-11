@@ -56,12 +56,19 @@ __bootstg2:
 	movb $0xFE, 62(%edx) # .
 	movb $0x02, 63(%edx) # green
 	call _disableCursor
+	call _checkForLongModeCPUID # Call a function that checks if we have 64-bit long mode availible by using the `cpuid` instruction
 	movb $0xFE, 64(%edx) # .
 	movb $0x01, 65(%edx) # blue
-	# Just in case interrupts are enabled, disable them.
-	cli
+	pushal
+	call IDTinit
+	popal
+	# Just in case, lets zero out the stack
+	call _enablePaging
 	movb $0xFE, 66(%edx) # .
 	movb $0x09, 67(%edx) # lightblue
+	call _goLong
+	# Just in case interrupts are enabled, disable them.
+	cli
 	# Also just in case, clear all the regs
 	xor %eax, %eax
 	xor %ebx, %ebx
@@ -71,8 +78,8 @@ __bootstg2:
 	xor %edi, %edi
 	xor %ebp, %ebp
 	# Transfer control to the main kernel.
-	# movb $0xFE, 68(%edx) # .
-	# movb $0x03, 69(%edx) # yellow
+	movb $0xFE, 68(%edx) # .
+	movb $0x03, 69(%edx) # yellow
 	call kernelMain
 
 	# Hang if kernelMain unexpectedly returns.
