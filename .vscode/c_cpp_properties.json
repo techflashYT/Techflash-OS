@@ -12,8 +12,9 @@
                 "__is_libk",
                 "CONFIG_KERN_VERSION_MAJOR=0",
                 "CONFIG_KERN_VERSION_MINOR=0",
-                "CONFIG_KERN_VERSION_PATCH=5",
-                "CONFIG_KERN_MAXARGS=1024"
+                "CONFIG_KERN_VERSION_PATCH=6",
+                "CONFIG_KERN_MAXARGS=1024",
+                "CONFIG_BITS=64"
             ],
             "compilerPath": "~/opt/cross/bin/i686-elf-gcc",
             "cStandard": "gnu17",
@@ -21,7 +22,8 @@
             "intelliSenseMode": "linux-gcc-x86",
             "compilerArgs": [
                 "-ffreestanding",
-                "-Ofast"
+                "-Ofast",
+                "-g"
             ]
         }
     ],
