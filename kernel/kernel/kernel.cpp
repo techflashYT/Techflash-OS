@@ -14,10 +14,16 @@ extern "C" {
 
 	extern int _testasm();
 	void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
+	uint8_t kernVerMa;
+	uint8_t kernVerMi;
+	uint8_t kernVerPa;
 }
 #include <kernel/tty.hpp>
 uint8_t bootProgress = 0;
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
+	kernVerMa = CONFIG_KERN_VERSION_MAJOR;
+	kernVerMi = CONFIG_KERN_VERSION_MINOR;
+	kernVerPa = CONFIG_KERN_VERSION_PATCH;
 	terminalRow++;
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NONE); // Turn all LEDs off	
@@ -40,8 +46,15 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 		printf("Unaligned MBI (not in hex sorry: %d)!\r\n", magicnum);
 		panic("See above message");
 	}
+	#if CONFIG_BITS == 64
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+	#endif
 	size = *(unsigned int *) mutliboot2info;
 	mbtag = (struct multiboot_tag *) (mutliboot2info + 8);
+	#if CONFIG_BITS == 64
+		#pragma GCC diagnostic pop
+	#endif
 	mbtag = (struct multiboot_tag *) ((multiboot_uint8_t *) mbtag + ((mbtag->size + 7) & ~(uint32_t)7));
 	const char *cmdline = {((struct multiboot_tag_string *) mbtag)->string};
 	printf("[ %d.%d ] KERN_ARGS: %s\r\n", 0, 0, strcmp(cmdline, NULL) ? cmdline : "NONE");

@@ -1,0 +1,23 @@
+.global isr1
+.type isr1, @function
+.global loadIDT
+.type loadIDT, @function
+
+.global isr1Handler
+
+.global _idt
+idtDescriptor:
+	.short 0xFFF
+	.short _idt
+
+isr1:
+	call pushall
+	call isr1Handler
+	call popall
+	iretq
+
+
+loadIDT:
+	lidt idtDescriptor
+	sti
+	ret

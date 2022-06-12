@@ -1,4 +1,4 @@
-#include "multiboot2header.inc"
+#include "multiboot2header.S"
 # Reserve a stack for the initial thread.
 .global stackTop
 .section .bss

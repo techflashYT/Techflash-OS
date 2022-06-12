@@ -1,0 +1,32 @@
+.global _bootmsg
+.type _bootmsg, @function
+
+.global kernVerMa
+.global kernVerMi
+.global kernVerPa
+__bootmsgp1_ascii:
+	.asciz "Techflash OS v"
+__bootmsgp2_ascii:
+	.asciz " Booting"
+_bootmsg:
+	call terminalInit
+	push $__bootmsgp1_ascii
+	call terminalWriteString
+	mov $0xB8000, %rdx
+	movb $0x30 + kernVerMa, 28(%rdx)
+	movb $0x03, 29(%rdx) # cyan
+	movb $0x2E, 30(%rdx) # .
+	movb $0x03, 31(%rdx) # cyan
+	movb $0x30 + kernVerMi, 32(%rdx)
+	movb $0x03, 33(%rdx) # cyan
+	movb $0x2E, 34(%rdx) # .
+	movb $0x03, 35(%rdx) # cyan
+	movb $0x30 + kernVerPa, 36(%rdx)
+	movb $0x03, 37(%rdx) # cyan
+	push $0
+	push $19
+	call terminalMove
+	push $__bootmsgp2_ascii
+	call terminalWriteString
+	movb $0xFE, 54(%rdx) # .
+	movb $0x04, 55(%rdx) # red
