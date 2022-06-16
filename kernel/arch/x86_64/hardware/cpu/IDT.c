@@ -19,11 +19,8 @@ typedef struct {
 extern IDT64 _idt[256];
 extern uint64_t isr1;
 extern void loadIDT();
-void isr1Handler() { // Keyboard
-	putchar(inb(0x60));
-	outb(0x20, 0x20);
-	outb(0xA0, 0x20);
-}
+
+
 void IDTinit() {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtype-limits"
@@ -42,4 +39,10 @@ void IDTinit() {
 	outb(0xA1, 0xFF);
 
 	loadIDT();
+}
+
+void isr1Handler() { // Keyboard
+	putchar(inb(0x60));
+	outb(0x20, 0x20);
+	outb(0xA0, 0x20);
 }

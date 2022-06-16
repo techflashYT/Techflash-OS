@@ -45,13 +45,10 @@ kernel/stack.o \
 kernel/panic.o \
 kernel/bootDisplay.o
 
-KERNEL_CXX_OBJS=\
-
 OBJS=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
-$(KERNEL_CXX_OBJS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 
@@ -82,7 +79,7 @@ tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	@$(CC) -T $(ARCHDIR)/linker.ld -mno-red-zone -o $@ $(CFLAGS) $(LDFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)
-	@grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
+	# @grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
 	@echo "CLEAN"
 	@make softclean --quiet
 
@@ -90,7 +87,7 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	@OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 .cpp.o:
-	@echo "CXX   $@"
+	@echo "CXX -c $< -o $@ -std=gnu++2b $(CFLAGS) $(CPPFLAGS)"
 	@$(CXX) -c $< -o $@ -std=gnu++2b $(CFLAGS) $(CPPFLAGS)
 .c.o:
 	@echo "CC    $@"

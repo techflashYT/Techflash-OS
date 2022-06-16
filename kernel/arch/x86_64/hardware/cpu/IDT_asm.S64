@@ -6,16 +6,16 @@
 .global isr1Handler
 
 .global _idt
+.section .data
 idtDescriptor:
 	.short 0xFFF
-	.short _idt
-
+	.quad _idt
+.section .text
 isr1:
 	call pushall
 	call isr1Handler
 	call popall
 	iretq
-
 
 loadIDT:
 	lidt idtDescriptor

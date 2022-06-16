@@ -60,7 +60,10 @@ extern "C" {
 	}
 	
 	void terminalPutEntryAt(uint8_t c, uint8_t color, size_t x, size_t y) {
-		terminalBuffer[vgaIndex(x,y)] = vgaEntry(c, color);
+		psf2_t *font = (psf2_t*)&_binary_font_psf_start;
+    	int x,y,kx=0,line,mask,offs;
+    	int bpl=(font->width+7)/8;
+
 	}
 	void terminalPutchar(uint8_t c) {
 		if (c == '\r') {

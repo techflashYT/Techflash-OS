@@ -14,16 +14,13 @@ extern "C" {
 
 	extern int _testasm();
 	void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
-	uint8_t kernVerMa;
-	uint8_t kernVerMi;
-	uint8_t kernVerPa;
+	uint8_t kernVerMa = CONFIG_KERN_VERSION_MAJOR;
+	uint8_t kernVerMi = CONFIG_KERN_VERSION_MINOR;
+	uint8_t kernVerPa = CONFIG_KERN_VERSION_PATCH;
 }
 #include <kernel/tty.hpp>
 uint8_t bootProgress = 0;
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
-	kernVerMa = CONFIG_KERN_VERSION_MAJOR;
-	kernVerMi = CONFIG_KERN_VERSION_MINOR;
-	kernVerPa = CONFIG_KERN_VERSION_PATCH;
 	terminalRow++;
 	outb(KBD_PORT, 0xED);
 	outb(KBD_PORT, KBD_NONE); // Turn all LEDs off	
