@@ -27,28 +27,28 @@ _start:
 	movb $0x0E, 59(%rdx) # yellow
 	# TODO: Initialize the PIC and PIT
 	
-	
-	# Check if A20 Gate is already enabled from grub 
-	call pushall
-	mov $0x112345, %rdi  # odd megabyte address.
-	mov $0x012345, %rsi  # even megabyte address.
-	mov %rsi, (%rsi)     # making sure that both addresses contain diffrent values.
-	mov %rsi, (%rsi)     # (if A20 line is cleared the two pointers would point to the address 0x012345 that would contain 0x112345 (edi)) 
-	cmpsd             # compare addresses to see if the're equivalent.
-	call popall
-	movb $0xFE, 60(%edx) # .
-	movb $0x0A, 61(%edx) # lightgreen
-	call pushall
-	jne __bootstg2 # if A20 is on, jmp to call boot stage2.
-	call popall
-	# Enable A20 Gate if it's not enabled.
-	in $0x92, %al
-	or $2, %al
-	out %al, $0x92
+	### FIXME: might be useless as bootboot enables it for us ###	
+	# # Check if A20 Gate is already enabled from grub 
+	# call pushall
+	# mov $0x112345, %rdi  # odd megabyte address.
+	# mov $0x012345, %rsi  # even megabyte address.
+	# mov %rsi, (%rsi)     # making sure that both addresses contain diffrent values.
+	# mov %rsi, (%rsi)     # (if A20 line is cleared the two pointers would point to the address 0x012345 that would contain 0x112345 (edi)) 
+	# cmpsd             # compare addresses to see if the're equivalent.
+	# call popall
+	# movb $0xFE, 60(%edx) # .
+	# movb $0x0A, 61(%edx) # lightgreen
+	# call pushall
+	# jne __bootstg2 # if A20 is on, jmp to call boot stage2.
+	# call popall
+	# # Enable A20 Gate if it's not enabled.
+	# in $0x92, %al
+	# or $2, %al
+	# out %al, $0x92
 	jmp __bootstg2
 
 nofpu:
-	mov $0x0, %eax
+	mov $0x0, %rax
 	ret
 
 __bootstg2:
@@ -58,14 +58,8 @@ __bootstg2:
 	# call _checkForLongModeCPUID # Call a function that checks if we have 64-bit long mode availible by using the `cpuid` instruction
 	movb $0xFE, 64(%rdx) # .
 	movb $0x01, 65(%rdx) # blue
-	call pushall
-	call IDTinit
-	call popall
-	# Just in case, lets zero out the stack
-	# call _enablePaging
 	movb $0xFE, 66(%edx) # .
 	movb $0x09, 67(%edx) # lightblue
-	# call _goLong
 	# Just in case interrupts are enabled, disable them.
 	cli
 	# Also just in case, clear all the regs

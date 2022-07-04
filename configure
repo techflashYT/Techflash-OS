@@ -9,7 +9,6 @@ printf "Techflash OS Configure Script v%s starting, built for Techflash OS v%s..
 global_done=false
 kernel_done=false
 libc_done=false
-userspace_done=false
 grub_done=false
 end_done=false
 if [ "$1" != "--no-max-screen" ]
@@ -174,11 +173,6 @@ libc() {
 	libc_done=true
 	return 0
 }
-userspace() {
-	printf "===================USERSPACE=====================\r\n"
-	userspace_done=true
-	return 0
-}
 edit() {
 	clear
 	printf "\
@@ -187,8 +181,7 @@ What would you like to edit?\r\n\
 2. GRUB\r\n\
 3. Kernel\r\n\
 \e[9m4. libc/libk\e[0m\r\n\
-\e[9m5. Userspace\e[0m\r\n\
-6. Review\r\n\
+5. Review\r\n\
 "
 	read -r editChoice
 	case "$editChoice" in
@@ -206,10 +199,6 @@ What would you like to edit?\r\n\
 			return 1
 			;;
 		5)
-			printf "Sorry!  This part doesn't have any configuration options yet!\r\n"
-			return 1
-			;;
-		6)
 			end
 			return 0
 			;;
@@ -292,16 +281,11 @@ run() {
 				then
 					run
 				else
-					if ! userspace && [ "$userspace_done" != true ]
+					if ! end && [ "$end_done" != true ]
 					then
 						run
 					else
-						if ! end && [ "$end_done" != true ]
-						then
-							run
-						else
-							exit 0
-						fi
+						exit 0
 					fi
 				fi
 			fi

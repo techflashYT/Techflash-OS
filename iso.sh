@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
-# Check if sysroot/boot/tfos.elf exists
 if [ ! -f sysroot/boot/tfos.elf ]; then
 	. ./build.sh
 fi
-
-
-#cp sysroot/boot/tfos.elf isodir/boot/install
 cp -r sysroot isodir
 mv isodir/boot/tfos.elf isodir/boot/install
 mkdir -p isodir/boot/grub
@@ -16,11 +12,13 @@ $(cat ISO_GRUB_CFG.cfg)
 EOF
 cp grub_bg.png isodir/boot/bg.png
 cp font.pf2 isodir/boot/grub/fonts/unicode.pf2
+# grub-mkrescue -o bin/TFOS_ISO.iso isodir
 cp bootboot.bin isodir/boot/bootboot.bin
-grub-mkrescue -o bin/TFOS_ISO.iso isodir
+cp bootbootconfig isodir
+cp bootboot.json isodir
+sh -c "cd $(pwd)/isodir&&mkbootimg bootboot.json tfos.img&&exit 1"
+
 if [ $? != 0 ]
 then
 	exit 1
-else
-	rm -r isodir
 fi

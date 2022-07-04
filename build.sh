@@ -8,4 +8,4 @@ done
 
 # Do a little filesystem cleanup
 mkdir -p "$SYSROOT/usr/include/TechflashOS"
-mv "$SYSROOT"/usr/include/{kernel,userspace} "$SYSROOT"/usr/include/TechflashOS/
+mv "$SYSROOT"/usr/include/* "$SYSROOT"/usr/include/TechflashOS/

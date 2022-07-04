@@ -17,12 +17,12 @@ CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra -Wpedantic -Werror -Wshadow -Wfor
 CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude -Wpedantic -Werror -Wshadow -Wformat=2 -Wconversion -Wunused-parameter -fstack-protector-all
 LDFLAGS:=$(LDFLAGS)
 ifeq ($(strip $(LIBS)),)
-    LIBS:=-nostdlib -lk -lgcc -luser
+    LIBS:=-nostdlib -lk -lgcc
 else
-    LIBS:=$(LIBS)-nostdlib -lk -lgcc -luser
+    LIBS:=$(LIBS)-nostdlib -lk -lgcc
 endif
 ARCHDIR=arch/$(HOSTARCH)
-
+CC:=$(CC)
 include $(ARCHDIR)/make.config
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
 EXPECTED_CONFIG_KERN_VERSION_MINOR=0
@@ -66,7 +66,7 @@ clean:
 	@rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 .PHONY: all install install-headers install-kernel
-.SUFFIXES: .o .c .cpp .S .S64
+.SUFFIXES: .o .c .S .S64
 
 all: tfos.elf
 RET := $(shell ./testversion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) $(EXPECTED_CONFIG_KERN_VERSION_MAJOR) $(EXPECTED_CONFIG_KERN_VERSION_MINOR) $(EXPECTED_CONFIG_KERN_VERSION_PATCH))
@@ -76,29 +76,22 @@ endif
 
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	@echo "LINK $(LDFLAGS) $(LINK_LIST) ===> $@"
-	@$(CC) -T $(ARCHDIR)/linker.ld -mno-red-zone -o $@ $(CFLAGS) $(LDFLAGS) $(LINK_LIST)
+	$(CC) -T $(ARCHDIR)/linker.ld -mno-red-zone -o $@ $(CFLAGS) $(LDFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)
-	# @grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
+# @grub-file --is-x86-multiboot2 ../sysroot/boot/tfos.elf
 	@echo "CLEAN"
 	@make softclean --quiet
 
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	@OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
-.cpp.o:
-	@echo "CXX -c $< -o $@ -std=gnu++2b $(CFLAGS) $(CPPFLAGS)"
-	@$(CXX) -c $< -o $@ -std=gnu++2b $(CFLAGS) $(CPPFLAGS)
 .c.o:
 	@echo "CC    $@"
 	@$(CC) -c $< -o $@ -std=gnu2x $(CFLAGS) $(CPPFLAGS)
 
-.S.o:
-	@echo "CC32  $@"
-	@$(CC32) -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
 .S64.o:
-	@echo "CC64  $@"
+	@echo "CC    $@"
 	@$(CC) -x assembler -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 

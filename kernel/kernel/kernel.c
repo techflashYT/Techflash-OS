@@ -1,24 +1,22 @@
-extern "C" {
-	#include <stdio.h>
-	#include <string.h>
-	#include <stdbool.h>
-	#include <kernel/arch/i386/vga.h>
-	#include <kernel/arch/i386/GDT.h>
-	#include <kernel/multiboot2.h>
-	#include <kernel/panic.h>
-	#include <kernel/arch/i386/pit.h>
-	#include <kernel/arch/i386/io.h>
-	#include <kernel/arch/i386/kbd.h>
-	#include <kernel/bootDisplay.h>
-	#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <kernel/arch/i386/vga.h>
+#include <kernel/arch/i386/GDT.h>
+#include <kernel/multiboot2.h>
+#include <kernel/panic.h>
+#include <kernel/arch/i386/pit.h>
+#include <kernel/arch/i386/io.h>
+#include <kernel/arch/i386/kbd.h>
+#include <kernel/bootDisplay.h>
+#include <math.h>
 
-	extern int _testasm();
-	void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
-	uint8_t kernVerMa = CONFIG_KERN_VERSION_MAJOR;
-	uint8_t kernVerMi = CONFIG_KERN_VERSION_MINOR;
-	uint8_t kernVerPa = CONFIG_KERN_VERSION_PATCH;
-}
-#include <kernel/tty.hpp>
+extern int _testasm();
+void kernelMain(uint32_t magicnum, uint32_t mutliboot2info);
+uint8_t kernVerMa = CONFIG_KERN_VERSION_MAJOR;
+uint8_t kernVerMi = CONFIG_KERN_VERSION_MINOR;
+uint8_t kernVerPa = CONFIG_KERN_VERSION_PATCH;
+#include <kernel/tty.h>
 uint8_t bootProgress = 0;
 void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	terminalRow++;
@@ -57,14 +55,7 @@ void kernelMain(uint32_t magicnum, uint32_t mutliboot2info) {
 	printf("[ %d.%d ] KERN_ARGS: %s\r\n", 0, 0, strcmp(cmdline, NULL) ? cmdline : "NONE");
 	const int root = (int)sqrt(CONFIG_KERN_MAXARGS);
 	printf("sqrt of max_args: %d\r\n", root);
-	#ifdef __cplusplus
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wvla"
-	#endif
 	char args[root][root];
-	#ifdef __cplusplus
-	#pragma GCC diagnostic pop
-	#endif
 	(void)args;
 	for (uint16_t x = 0; x < root; x++) {
 		for (uint16_t y = 0; y < root; y++) {

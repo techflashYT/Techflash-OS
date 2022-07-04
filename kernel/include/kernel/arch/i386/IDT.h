@@ -9,7 +9,7 @@ typedef struct {
     uint8_t always0;
     /* First byte
      * Bit 7: "Interrupt is present"
-     * Bits 6-5: Privilege level of caller (0=kernel..3=user)
+     * Bits 6-5: Privilege level of caller (0=kernel,1&2=drivers,3=user programs)
      * Bit 4: Set to 0 for interrupt gates
      * Bits 3-0: bits 1110 = decimal 14 = "32 bit interrupt gate" */
     uint8_t flags; 

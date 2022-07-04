@@ -7,7 +7,7 @@ ENTRY(_start)
 SECTIONS {
 	/* Begin putting sections at 1 MiB, a conventional place for kernels to be
 	   loaded at by the bootloader. */
-	. = 1M;
+	. = 0xffffffffffe02000;
 
 	/* First put the multiboot header, as it is required to be put very early
 	   early in the image or the bootloader won't recognize the file format.
@@ -37,6 +37,17 @@ SECTIONS {
 		*(.bss)
 	}
 
+	.dtors BLOCK(4K) : ALIGN(4K) {
+		*(.dtors)
+	}
+	.eh_frame BLOCK(4K) : ALIGN(4K) {
+		*(.eh_frame)
+	}
+
+	.tm_clone_table BLOCK(4K) : ALIGN(4K) {
+		*(.tm_clone_table)
+	}
+	
 	/* The compiler may produce other sections, put them in the proper place in
 	   in this file, if you'd like to include them in the final kernel. */
 }

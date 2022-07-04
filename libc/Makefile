@@ -28,6 +28,7 @@ LIBK_CPPFLAGS:=$(LIBK_CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 
 FREEOBJS=\
 $(ARCH_FREEOBJS) \
+stdio/putchar.o \
 stdio/printf.o \
 stdio/puts.o \
 stdio/itoa.o \
@@ -42,28 +43,20 @@ string/strcmp.o \
 math/sqrt.o \
 string/strcpy.o
 
-FREEOBJS_CXX=\
-stdio/putchar.o
-
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
 
-ALL_FREEOBJS=\
-$(FREEOBJS_CXX) \
-$(FREEOBJS)
-
 OBJS=\
-$(FREEOBJS_CXX) \
 $(FREEOBJS) \
 $(HOSTEDOBJS) \
 
-LIBK_OBJS=$(ALL_FREEOBJS:.o=.libk.o)
+LIBK_OBJS=$(FREEOBJS:.o=.libk.o)
 
 #BINARIES=libc.a libk.a # Not ready for libc yet.
 BINARIES=libk.a
 
 .PHONY: all clean install install-headers install-libs
-.SUFFIXES: .o .libk.o .c .cpp .S
+.SUFFIXES: .o .libk.o .c .S
 all: $(BINARIES)
 
 libc.a: $(OBJS)
@@ -76,10 +69,6 @@ libk.a: $(LIBK_OBJS)
 	@echo "CLEAN"
 	@make softclean --quiet
 
-.cpp.o:
-	@echo "CXX   $@"
-	@$(CXX) -c $< -o $@ -std=gnu++2b $(CPPFLAGS)
-
 .c.o:
 	@echo "CC    $@"
 	@$(CC) -c $< -o $@ -std=gnu2x $(CFLAGS) $(CPPFLAGS)
@@ -91,10 +80,6 @@ libk.a: $(LIBK_OBJS)
 .c.libk.o:
 	@echo "CC    $@"
 	@$(CC) -c $< -o $@ -std=gnu2x $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
-
-.cpp.libk.o:
-	@echo "CC    $@"
-	@$(CC) -c $< -o $@ -std=gnu++2b $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)	
 
 .S.libk.o:
 	@echo "CC    $@"

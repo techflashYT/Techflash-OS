@@ -5,4 +5,3 @@ then
 else
 	echo "x86_64-elf"
 fi
-echo 

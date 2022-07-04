@@ -5,7 +5,6 @@
             "includePath": [
                 "kernel/include/",
                 "libc/include/",
-                "userspace/include/",
                 "~/opt/cross/lib/gcc/i686-elf/12.1.0/include"
             ],
             "defines": [
