@@ -1,3 +1,5 @@
+# ![Techflash OS Logo](/kernel/kernel/misc/logo_64x64_embed.png) Techflash OS
+
 # What is this?
 
 Yup, I actually did it, I (kinda) made an operating system!  
