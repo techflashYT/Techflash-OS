@@ -2,16 +2,18 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 
-CFLAGS     = -Wall -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include
-LDFLAGS    = -nostdlib -lgcc -T linkerScript.ld
+CFLAGS     = -Wall -Wextra -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include -Ofast
+LDFLAGS    = -nostdlib -lgcc -T linkerScript.ld -static -L../lib -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 
 compile=\
-kernel.o
+kernel.o \
+graphics/debug.o
 
 link=\
-../build/kernel.o \
-../build/font.o
+../build/kernel/kernel.o \
+../build/kernel/graphics/debug.o \
+../build/kernel/font.o
 
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
 EXPECTED_CONFIG_KERN_VERSION_MINOR=0
@@ -27,21 +29,20 @@ endif
 
 all: $(compile)
 	@echo "Building Font..."
-	@x86_64-elf-ld -r -b binary font.psf -o ../build/font.o
+	@x86_64-elf-ld -r -b binary font.psf -o ../build/kernel/font.o
 	@echo "CCLD  $(subst ../build/,,$(link)) => bin/tfos_kernel.elf"
-	@x86_64-elf-gcc $(LDFLAGS) $(link) -o ../bin/tfos_kernel.elf
+	x86_64-elf-gcc $(LDFLAGS) $(link) -o ../bin/tfos_kernel.elf
 	@echo "Stripping Debug Symbols..."
 	@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
 	@make -f ../util/Makefile sysroot
-# @x86_64-elf-readelf -hls mykernel.x86_64.elf >mykernel.x86_64.txt
 
 .c.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/$@
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
 clean:
-	@rm -f *.o *.elf || true
+	@rm -f ../build/kernel/*.o ../bin/*.elf || true
 
 softclean:
-	@rm -f *.o || true
+	@rm -f ../build/kernel/*.o || true
