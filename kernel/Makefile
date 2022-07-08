@@ -2,7 +2,7 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 
-CFLAGS     = -Wall -fpic -ffreestanding -fno-stack-protector -nostdinc -nostdlib -I../../dist/
+CFLAGS     = -Wall -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include
 LDFLAGS    = -nostdlib -lgcc -T linkerScript.ld
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 
