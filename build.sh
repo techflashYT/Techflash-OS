@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+shopt -s extglob
 . ./util/headers.sh
 
 for PROJECT in $PROJECTS; do
@@ -8,4 +9,4 @@ done
 
 # Do a little filesystem cleanup
 mkdir -p "$SYSROOT/usr/include/TechflashOS"
-mv "$SYSROOT"/usr/include/* "$SYSROOT"/usr/include/TechflashOS/
+mv "$SYSROOT"/usr/include/!(TechflashOS) "$SYSROOT"/usr/include/TechflashOS/   # Move everything but the TechflashOS folder into TechflashOS

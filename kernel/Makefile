@@ -2,7 +2,7 @@ DEFAULT_HOST!=../util/default-host.sh
 HOST?=DEFAULT_HOST
 HOSTARCH!=../util/target-triplet-to-arch.sh $(HOST)
 
-CFLAGS?=-Ofast -g
+CFLAGS?=-Ofast -g -mcmodel=kernel
 CPPFLAGS?=
 LDFLAGS?=
 LIBS?=
@@ -23,6 +23,7 @@ else
 endif
 ARCHDIR=arch/$(HOSTARCH)
 CC:=$(CC)
+LD:=$(LD)
 include $(ARCHDIR)/make.config
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
 EXPECTED_CONFIG_KERN_VERSION_MINOR=0
@@ -41,8 +42,8 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS)\
 kernel/kernel.o \
-kernel/stack.o \
 kernel/panic.o \
+kernel/stack.o \
 kernel/bootDisplay.o
 
 OBJS=\
@@ -56,6 +57,7 @@ LINK_LIST=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS)\
+kernel/misc/fontpsf.o \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 $(LIBS)
@@ -76,6 +78,8 @@ endif
 
 tfos.elf: $(OBJS) $(ARCHDIR)/linker.ld
 	@echo "LINK $(LDFLAGS) $(LINK_LIST) ===> $@"
+# Sneakily compile the font because we need it.
+	$(LD) -r -b binary kernel/misc/font.psf -o kernel/misc/fontpsf.o
 	$(CC) -T $(ARCHDIR)/linker.ld -mno-red-zone -o $@ $(CFLAGS) $(LDFLAGS) $(LINK_LIST)
 	@mkdir -p $(DESTDIR)$(BOOTDIR)
 	@cp tfos.elf $(DESTDIR)$(BOOTDIR)

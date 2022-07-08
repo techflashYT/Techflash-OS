@@ -4,10 +4,12 @@
 .global kernVerMa
 .global kernVerMi
 .global kernVerPa
+.section .data
 __bootmsgp1_ascii:
 	.asciz "Techflash OS v"
 __bootmsgp2_ascii:
 	.asciz " Booting"
+.section .text
 _bootmsg:
 	call terminalInit
 	push $__bootmsgp1_ascii

@@ -1,3 +1,10 @@
+mmio        = 0xfffffffff8000000;              /* these are configurable for level 2 loaders */
+fb          = 0xfffffffffc000000;
+bootboot    = 0xffffffffffe00000;
+environment = 0xffffffffffe01000;
+
+
+
 /* The bootloader will look at this image and start execution at the symbol
    designated at the entry point. */
 ENTRY(_start)
@@ -50,4 +57,8 @@ SECTIONS {
 	
 	/* The compiler may produce other sections, put them in the proper place in
 	   in this file, if you'd like to include them in the final kernel. */
+
+	/DISCARD/ : {
+		*(.comment)
+	}
 }

@@ -11,11 +11,12 @@ stackTop:
 .global _start
 .type _start, @function
 _start:
+	xchgw %bx, %bx # Activate Bochs breakpoint
 	cli
 	movq $stackTop, %rsp
 	pushq %rbx
 	pushq %rax
-	call _bootmsg
+	# call _bootmsg
 
 	# Call the global constructors.
 	call _init
@@ -63,16 +64,16 @@ __bootstg2:
 	# Just in case interrupts are enabled, disable them.
 	cli
 	# Also just in case, clear all the regs
-	xor %eax, %eax
-	xor %ebx, %ebx
-	xor %ecx, %ecx
-	xor %edx, %edx
-	xor %esi, %esi
-	xor %edi, %edi
-	xor %ebp, %ebp
+	xor %rax, %rax
+	xor %rbx, %rbx
+	xor %rcx, %rcx
+	xor %rdx, %rdx
+	xor %rsi, %rsi
+	xor %rdi, %rdi
+	xor %rbp, %rbp
 	# Transfer control to the main kernel.
-	movb $0xFE, 68(%edx) # .
-	movb $0x03, 69(%edx) # yellow
+	movb $0xFE, 68(%rdx) # .
+	movb $0x03, 69(%rdx) # yellow
 	call kernelMain
 
 	# Hang if kernelMain unexpectedly returns.

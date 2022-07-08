@@ -2,37 +2,45 @@
 #include <kernel/tty.h>
 #include <kernel/panic.h>
 #include <stdint.h>
+#include <stdio.h>
 #define BOOTDISPLAY_NUM_ACTIONS 4
 extern uint8_t bootProgress;
 uint8_t bootDisplayProgressBarLastLocation = 1;
 void bootDisplayMakeBrackets(uint8_t y) {
-	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 71, y);
-	terminalPutEntryAt('W', VGA_COLOR_YELLOW, 72, y);
-	terminalPutEntryAt('A', VGA_COLOR_YELLOW, 73, y);
-	terminalPutEntryAt('I', VGA_COLOR_YELLOW, 74, y);
-	terminalPutEntryAt('T', VGA_COLOR_YELLOW, 73, y);
-	terminalPutEntryAt(']', VGA_COLOR_LIGHT_GRAY, 76, y);
+	terminalRow = 71;
+	terminalColumn = y;
+	terminalColor = VGA_COLOR_LIGHT_GRAY;
+	terminalPutchar('[');
+	terminalColor = VGA_COLOR_YELLOW;
+	puts("WAIT");
+	terminalColor = VGA_COLOR_LIGHT_GRAY;
+	terminalPutchar(']');
 }
 
 
 void bootDisplayOK(uint8_t y) {
-	terminalPutEntryAt('\0', VGA_COLOR_LIGHT_GRAY, 72, y);
-	terminalPutEntryAt('O', VGA_COLOR_GREEN, 73, y);
-	terminalPutEntryAt('K', VGA_COLOR_GREEN, 74, y);
-	terminalPutEntryAt('\0', VGA_COLOR_LIGHT_GRAY, 75, y);
+	terminalRow = 72;
+	terminalColumn = y;
+	terminalColor = VGA_COLOR_BLACK;
+	terminalPutchar('\0');
+	terminalColor = VGA_COLOR_GREEN;
+	puts("OK");
+	terminalPutchar('\0');
 }
 
 void bootDisplayFAIL(uint8_t y) {
-	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 69, y);
-	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 70, y);
-	terminalPutEntryAt('[', VGA_COLOR_YELLOW, 71, y);
-	terminalPutEntryAt('F', VGA_COLOR_RED, 72, y);
-	terminalPutEntryAt('A', VGA_COLOR_RED, 73, y);
-	terminalPutEntryAt('I', VGA_COLOR_RED, 74, y);
-	terminalPutEntryAt('L', VGA_COLOR_RED, 75, y);
-	terminalPutEntryAt(']', VGA_COLOR_YELLOW, 76, y);
-	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 77, y);
-	terminalPutEntryAt('*', VGA_COLOR_LIGHT_RED, 78, y);
+	terminalRow = 69;
+	terminalColumn = y;
+	terminalColor = VGA_COLOR_LIGHT_RED;
+	puts("**");
+	terminalColor = VGA_COLOR_YELLOW;
+	terminalPutchar('[');
+	terminalColor = VGA_COLOR_LIGHT_RED;
+	puts("FAIL");
+	terminalColor = VGA_COLOR_YELLOW;
+	terminalPutchar(']');
+	terminalColor = VGA_COLOR_LIGHT_RED;
+	puts("**");
 }
 void bootDisplayMakeProgressBar(void) {
 	terminalPutEntryAt('[', VGA_COLOR_LIGHT_GRAY, 0, 20);

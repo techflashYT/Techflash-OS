@@ -16,9 +16,13 @@ cp font.pf2 isodir/boot/grub/fonts/unicode.pf2
 cp bootboot.bin isodir/boot/bootboot.bin
 cp bootbootconfig isodir
 cp bootboot.json isodir
-sh -c "cd $(pwd)/isodir&&mkbootimg bootboot.json tfos.img&&exit 1"
-
+cd isodir
+mkbootimg ./bootboot.json ./tfos.img
 if [ $? != 0 ]
 then
 	exit 1
 fi
+cd ..
+
+
+cp isodir/tfos.img bin/TFOS_ISO.iso

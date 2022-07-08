@@ -9,6 +9,7 @@ export HOST32="${HOST32:-$(CONFIG_BITS=32 ./util/default-host.sh)}"
 export AR="${HOST}"-ar
 export AS="${HOST}"-as
 export CC="${HOST}"-gcc
+export LD="${HOST}"-ld
 export CXX="${HOST}"-g++
 
 export PREFIX=/usr
@@ -17,7 +18,7 @@ export BOOTDIR=/boot
 export LIBDIR=$EXEC_PREFIX/lib
 export INCLUDEDIR=$PREFIX/include
 
-export CFLAGS='-Ofast -g'
+export CFLAGS='-Ofast -g -mcmodel=kernel'
 export CPPFLAGS=''
 export PROJECTS
 export SYSTEM_HEADER_PROJECTS
