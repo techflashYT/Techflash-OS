@@ -13,7 +13,6 @@ then
 	echo "Uh oh!  Looks like never ran ./configure!  Please run ./configure and then run this script again."
 	exit 2
 fi
-clear
 ./clean.sh
 if ! ./build.sh
 then

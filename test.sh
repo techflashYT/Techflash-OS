@@ -1,7 +1,7 @@
 #!/bin/sh
 if command -v cppcheck > /dev/null
 then
-	cppcheck --enable=all,style,performance,portability,information,unusedFunction,missingInclude -I./kernel/include -I./libc/include .
+	cppcheck --enable=all,style,performance,portability,information,unusedFunction,missingInclude -I.kernel .
 else
 	packageCmd=null
 	if command -v apt-get > /dev/null
