@@ -1,5 +1,5 @@
 {
-	"disksize": 128,
+	"disksize": 8,
 	"config": "./bootbootconfig",
 	"iso9660": true,
 	"initrd": {
