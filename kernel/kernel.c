@@ -24,9 +24,11 @@ void _start() {
 	if(s) {
 		// cross-hair to see screen dimension detected correctly
 		for (y = 0; y < h; y++) {
-			*((uint32_t*)(&fb + s * y + (w * 2))) = 0x00FFFFFF; }
+			*((uint32_t*)(&fb + s * y + (w * 2))) = 0x00FFFFFF;
+		}
 		for (x = 0; x < w; x++) {
-			*((uint32_t*)(&fb + s * (h / 2) + x * 4)) = 0x00FFFFFF; }
+			*((uint32_t*)(&fb + s * (h / 2) + x * 4)) = 0x00FFFFFF;
+		}
 
 		// red, green, blue boxes in order
 		for (y = 0; y < 20; y++) {
