@@ -3,7 +3,8 @@
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 
 CFLAGS     = -Wall -Wextra -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include -Ofast
-LDFLAGS    = -nostdlib -lgcc -T linkerScript.ld -static -L../lib -lk
+LDFLAGS    = -nostdlib -lgcc -T linkerScript.ld -static -L../lib -Wl,--verbose
+LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 
 compile=\
@@ -31,7 +32,7 @@ all: $(compile)
 	@echo "Building Font..."
 	@x86_64-elf-ld -r -b binary font.psf -o ../build/kernel/font.o
 	@echo "CCLD  $(subst ../build/,,$(link)) => bin/tfos_kernel.elf"
-	x86_64-elf-gcc $(LDFLAGS) $(link) -o ../bin/tfos_kernel.elf
+	x86_64-elf-gcc $(LDFLAGS) $(link) $(LIBS) -o ../bin/tfos_kernel.elf
 	@echo "Stripping Debug Symbols..."
 	@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
@@ -42,7 +43,7 @@ all: $(compile)
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
 clean:
-	@rm -f ../build/kernel/*.o ../bin/*.elf || true
+	@rm -f $(link) ../bin/*.elf || true
 
 softclean:
-	@rm -f ../build/kernel/*.o || true
+	@rm -f $(link) || true

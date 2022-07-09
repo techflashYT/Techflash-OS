@@ -24,7 +24,7 @@ all: $(compile)
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/libc/$@
 
 clean:
-	@rm -f ../build/libc/*.o ../build/libc/*.a || true
+	@rm -f $(link) ../build/libc/*.a || true
 
 softclean:
-	@rm -f ../build/libc/*.o || true
+	@rm -f $(link) || true
