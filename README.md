@@ -1,4 +1,4 @@
-# ![Techflash OS Logo](/kernel/kernel/misc/logo_64x64_embed.png) Techflash OS
+# ![Techflash OS Logo](/misc/logo_64x64_embed.png) Techflash OS
 
 # What is this?
 
