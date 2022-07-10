@@ -1,12 +1,16 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 
-CFLAGS = -Wall -Wextra -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include -Ofast -static -s
+CFLAGS = -Wall -Wextra -fpic -ffreestanding -fno-stack-protector -nostdlib -I../include -Ofast -static -s -std=gnu2x
 
 compile=\
-stdio/puts.o
+stdio/puts.o \
+stdio/putchar.o \
+stdio/printf.o
 
 link=\
-../build/libc/stdio/puts.o
+../build/libc/stdio/puts.o \
+../build/libc/stdio/putchar.o \
+../build/libc/stdio/printf.o
 
 outFileName=libk.a # libk.a for kernel library static library.  Not ready for hosted libc yet.
 

@@ -10,3 +10,5 @@ copyFromOldPC.bat
 *.a
 sysroot
 isodir
+util/mkbootimg
+util/fasm

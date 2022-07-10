@@ -14,14 +14,15 @@
                 "CONFIG_KERN_MAXARGS=1024",
                 "CONFIG_BITS=64"
             ],
-            "compilerPath": "~/opt/cross/bin/i686-elf-gcc",
+            "compilerPath": "~/opt/cross/bin/x86_64-elf-gcc",
             "cStandard": "gnu17",
-            "cppStandard": "gnu++20",
-            "intelliSenseMode": "linux-gcc-x86",
+            "cppStandard": "gnu++23",
+            "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [
                 "-ffreestanding",
                 "-Ofast",
-                "-g"
+                "-g",
+                "-mcmodel=kernel"
             ]
         }
     ],

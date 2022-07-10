@@ -8,6 +8,9 @@
 #include <stdint.h>
 #include <external/bootboot.h>
 #include <kernel/environment.h>
+#include <kernel/tty.h>
+_kernTTY_t kernTTY;
+extern void __kernTTY_init();
 
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
@@ -18,9 +21,14 @@ void _start() {
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
 
+	// Start initializing a TTY.
+	kernTTY.init = __kernTTY_init;
+
+	kernTTY.init();
+
 	if(s) {
 		// Say that the kernel is loading and to please wait.
-		puts("abcd");
+		puts("0123456789!@#$%^&*(),./<>?-=_+\\|`~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	}
 	// hang for now
 	while(1);
