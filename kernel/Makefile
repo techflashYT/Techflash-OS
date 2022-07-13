@@ -10,12 +10,18 @@ STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 compile=\
 kernel.o \
 tty/tty.o \
+hardware/kbd.o \
+io/inX.o \
+io/outX.o \
 graphics/debug.o
 
 link=\
 ../build/kernel/kernel.o \
 ../build/kernel/tty/tty.o \
 ../build/kernel/graphics/debug.o \
+../build/kernel/hardware/kbd.o \
+../build/kernel/io/inX.o \
+../build/kernel/io/outX.o \
 ../build/kernel/font.o
 
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
@@ -28,7 +34,7 @@ ifneq ($(strip $(RET)),0)
 $(error Kernel Version Mismatch!  Expected: $(EXPECTED_CONFIG_KERN_VERSION_MAJOR).$(EXPECTED_CONFIG_KERN_VERSION_MINOR).$(EXPECTED_CONFIG_KERN_VERSION_PATCH)  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH) Error code: $(RET))
 endif
 
-.SUFFIXES: .o .c .S .S64
+.SUFFIXES: .o .c .S
 
 all: $(compile)
 	@echo "Building Font..."
@@ -43,7 +49,9 @@ all: $(compile)
 .c.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
-
+.S.o:
+	@echo "AS    $(subst .o,.S,$@) => $@"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.S,$@) -o ../build/kernel/$@
 clean:
 	@rm -f $(link) ../bin/*.elf || true
 

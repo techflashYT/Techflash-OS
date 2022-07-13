@@ -16,7 +16,7 @@ outFileName=libk.a # libk.a for kernel library static library.  Not ready for ho
 
 include ../.config
 
-.SUFFIXES: .o .c .S .S64
+.SUFFIXES: .o .c .S
 
 all: $(compile)
 	@echo "Generating libk archive: $(outFileName)"

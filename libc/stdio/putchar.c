@@ -5,6 +5,15 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 int putchar(const int ch) {
+	if (ch == 0x0D) { // CR ('\r')
+		kernTTY.cursorX = 0;
+		return 0x0D;
+	}
+	if (ch == 0x0A) { // CR ('\r')
+		kernTTY.cursorY++;
+		return 0x0A;
+	}
+	
 	psf2_t *font = (psf2_t*)&_binary_font_psf_start;
 	int bpl = (font->width + 7) / 8;
 	int offs;
