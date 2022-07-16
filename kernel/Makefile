@@ -9,6 +9,7 @@ STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 
 compile=\
 kernel.o \
+definitions.o \
 tty/tty.o \
 hardware/kbd.o \
 io/inX.o \
@@ -17,6 +18,7 @@ graphics/debug.o
 
 link=\
 ../build/kernel/kernel.o \
+../build/kernel/definitions.o \
 ../build/kernel/tty/tty.o \
 ../build/kernel/graphics/debug.o \
 ../build/kernel/hardware/kbd.o \
