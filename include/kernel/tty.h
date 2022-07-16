@@ -7,6 +7,8 @@ typedef struct {
 	uint16_t cursorX;	
 	uint16_t cursorY;
 	uint32_t color;
+	uint32_t width;
+	uint32_t height;
 	const char* buffer;
 	void (*init)();
 } __attribute__((packed)) _kernTTY_t;
