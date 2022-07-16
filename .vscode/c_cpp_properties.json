@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "include",
-                "~/opt/cross/lib/gcc/i686-elf/12.1.0/include"
+                "/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
             ],
             "defines": [
                 "__is_libk",
@@ -14,7 +14,7 @@
                 "CONFIG_KERN_MAXARGS=1024",
                 "CONFIG_BITS=64"
             ],
-            "compilerPath": "~/opt/cross/bin/x86_64-elf-gcc",
+            "compilerPath": "/opt/cross/bin/x86_64-elf-gcc",
             "cStandard": "gnu17",
             "cppStandard": "gnu++23",
             "intelliSenseMode": "linux-gcc-x64",
