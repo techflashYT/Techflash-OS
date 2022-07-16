@@ -12,6 +12,7 @@ kernel.o \
 definitions.o \
 tty/tty.o \
 hardware/kbd.o \
+hardware/serial.o \
 io/inX.o \
 io/outX.o \
 graphics/debug.o
@@ -22,6 +23,7 @@ link=\
 ../build/kernel/tty/tty.o \
 ../build/kernel/graphics/debug.o \
 ../build/kernel/hardware/kbd.o \
+../build/kernel/hardware/serial.o \
 ../build/kernel/io/inX.o \
 ../build/kernel/io/outX.o \
 ../build/kernel/font.o
@@ -44,7 +46,7 @@ all: $(compile)
 	@echo "CCLD  $(subst ../build/,,$(link)) => bin/tfos_kernel.elf"
 	@x86_64-elf-gcc $(LDFLAGS) $(link) $(LIBS) -o ../bin/tfos_kernel.elf
 	@echo "Stripping Debug Symbols..."
-	@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
+#@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
 	@make -f ../util/Makefile sysroot
 

@@ -9,6 +9,7 @@
 #include <kernel/environment.h>
 #include <kernel/tty.h>
 #include <kernel/hardware/kbd.h>
+#include <kernel/hardware/serial.h>
 // cppcheck-suppress unusedFunction
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
@@ -19,7 +20,8 @@ void _start() {
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
 	__asm__("call __init"); // Not quite sure why, but I need to call the function to init the environment asm style in order for the compiler not to insert garbage in front of_start();
-
+	// serial.init();
+	// serial.write(SERIAL_PORT_COM1, 'a');
 	if(s) {
 		// Say that the kernel is loading and to please wait.
 		puts("abcdefghijklnmop\r\n");
