@@ -9,7 +9,8 @@
 #include <stdint.h>
 typedef struct {
 	int (*init)();
-	char (*readNext)(uint16_t port);
-	void (*write)(uint16_t port, char value);
+	char (*readNext)(const uint16_t port);
+	void (*write)(const uint16_t port, const char value);
+	void (*writeString)(const uint16_t port, const char* value);
 } __serial_t;
 extern __serial_t serial;
