@@ -19,7 +19,7 @@ int putchar(const int ch) {
 	int offs = 0;
 	unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headersize + (ch > 0 && ch < font->numglyph ? ch : 0) *font->bytesperglyph;
 	int kx = kernTTY.cursorX;
-	int offsY = (font->height * (((kernTTY.cursorY * bootboot.fb_width) * 4) == 0 ? 0 : (((kernTTY.cursorY * bootboot.fb_width) * 4) + 4))); // The +4 is to add just a bit of padding to it so it doesn't look quite so cramped
+	int offsY = (font->height * (((kernTTY.cursorY * bootboot.fb_width) * 4) == 0 ? 0 : (((kernTTY.cursorY * bootboot.fb_width) * 4))));
 	
 	offs = ((kx * (font->width + 1) * 4) + offsY);
 	uint32_t y;

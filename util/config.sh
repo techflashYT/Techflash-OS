@@ -2,7 +2,7 @@
 SYSTEM_HEADER_PROJECTS="libc kernel"
 PROJECTS="libc kernel"
 
-export MAKE="${MAKE:-make}"
+export MAKE="${MAKE:-make --no-print-directory}"
 export HOST="${HOST:-$(./util/default-host.sh)}"
 export HOST32="${HOST32:-$(CONFIG_BITS=32 ./util/default-host.sh)}"
 

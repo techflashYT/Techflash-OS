@@ -1,20 +1,14 @@
 #include <stdbool.h>
-#include <kernel/io.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <kernel/hardware/kbd.h>
-// This is an internal function, won't be exposed globally via the keyboard struct
-void __keyboardStartSetLED() {
-	outb(0x60, 0xED);
-}
-// This is an internal function, won't be exposed globally via the keyboard struct
-uint8_t __keyboardGetAll() {
-	__keyboardStartSetLED();
-	return inb(0x60);
-}
-bool __keyboardGetStatusOfLED(uint8_t led) {
-	return ((__keyboardGetAll() >> led) & 1);
-}
+#include <kernel/hardware/serial.h>
+uint8_t valueToSet;
+void __keyboardStartSetLED();
+uint8_t __keyboardGetAll();
+bool __keyboardGetStatusOfLED(uint8_t led);
 void __keyboardSetLED(uint8_t led, bool value) {
-	uint8_t valueToSet = __keyboardGetAll();
+	valueToSet = __keyboardGetAll();
 	if (value) {
 		// Enable
 		valueToSet |= 1 << led;
@@ -23,6 +17,18 @@ void __keyboardSetLED(uint8_t led, bool value) {
 		// Disable
 		valueToSet &= ~(1 << led);
 	}
-	__keyboardStartSetLED();
-	outb(0x60, valueToSet);
+	// cppcheck-suppress legacyUninitvar
+	char *buffer = itoa(valueToSet, buffer, 10);
+	serial.writeString(SERIAL_PORT_COM1, "[    KBRD] valueToSet: ");
+	serial.writeString(SERIAL_PORT_COM1, buffer);
+	serial.writeString(SERIAL_PORT_COM1, "\r\n");
+	// __keyboardStartSetLED();
+	asm volatile (
+		"mov $0x60, %dx\n"
+		"mov valueToSet, %al\n"
+		// "mov $0x07, %ax\n"
+		"outb %al, %dx\n"
+		"call __keyboardWaitForACK\n"
+	);
+	valueToSet = 7;
 }

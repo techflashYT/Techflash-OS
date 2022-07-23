@@ -31,6 +31,7 @@ int printf(const char* format, ...) {
 	int ret = 0;
 	va_list args;
 	va_start(args, format);
+	puts(format);
 	// while (*format != '\0') {
 	// 	size_t maxrem = __INT_MAX__ - ret;
 	// 	if (format[0] != '%' || format[1] == '%') {

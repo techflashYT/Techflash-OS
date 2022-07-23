@@ -12,7 +12,7 @@ if [ ! -f .config ]; then
 fi
 ./clean.sh
 if ! [ -d bin ]; then
-	make -f util/Makefile builddirs
+	make --no-print-directory -f util/Makefile builddirs
 fi
 if ! ./build.sh; then
 	sleep 0.05

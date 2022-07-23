@@ -7,11 +7,9 @@
                 "/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
             ],
             "defines": [
-                "__is_libk",
                 "CONFIG_KERN_VERSION_MAJOR=0",
-                "CONFIG_KERN_VERSION_MINOR=0",
-                "CONFIG_KERN_VERSION_PATCH=6",
-                "CONFIG_KERN_MAXARGS=1024",
+                "CONFIG_KERN_VERSION_MINOR=1",
+                "CONFIG_KERN_VERSION_PATCH=0",
                 "CONFIG_BITS=64"
             ],
             "compilerPath": "/opt/cross/bin/x86_64-elf-gcc",
