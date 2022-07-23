@@ -49,5 +49,26 @@
 		}
 	],
 	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir}/**/*",
-	"c-cpp-flylint.flexelint.enable": false
+	"c-cpp-flylint.flexelint.enable": false,
+	"c-cpp-flylint.clang.extraArgs": [
+		"-std=gnu2x",
+		"-ffreestanding"
+	],
+	"c-cpp-flylint.clang.language": "c",
+	"c-cpp-flylint.cppcheck.extraArgs": [
+		"--enable=all",
+		"--std=c2x",
+		"-I./include"
+	],
+	"c-cpp-flylint.flawfinder.enable": false,
+	"C_Cpp.errorSquiggles": "Enabled",
+	"search.exclude": {
+		"**/sysroot"        : true,
+		"**/isodir"         : true,
+		"**/bin"            : true,
+		"**/build"          : true,
+		"**/lib"            : true,
+		"**/util/mkbootimg" : true,
+		
+	}
 }
