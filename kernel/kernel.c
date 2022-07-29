@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+
 #include <external/bootboot.h>
 #include <kernel/environment.h>
 #include <kernel/tty.h>
@@ -17,6 +18,8 @@
 #include <kernel/graphics.h>
 #include <kernel/hardware/GDT.h>
 #include <kernel/hardware/IDT.h>
+
+#include <kernel/misc.h>
 extern void __kernTTY_init();
 _kernTTY_t kernTTY;
 
@@ -112,6 +115,7 @@ void _start() {
 		boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
 		// Initialize the GDT
 		GDTInit();
+		BREAK
 		boot.progressBar.update(10);
 		IDTInit();
 		boot.progressBar.update(20);
