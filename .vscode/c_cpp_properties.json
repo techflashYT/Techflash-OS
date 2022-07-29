@@ -1,28 +1,28 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "include",
-                "/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
-            ],
-            "defines": [
-                "CONFIG_KERN_VERSION_MAJOR=0",
-                "CONFIG_KERN_VERSION_MINOR=1",
-                "CONFIG_KERN_VERSION_PATCH=0",
-                "CONFIG_BITS=64"
-            ],
-            "compilerPath": "/opt/cross/bin/x86_64-elf-gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++23",
-            "intelliSenseMode": "linux-gcc-x64",
-            "compilerArgs": [
-                "-ffreestanding",
-                "-Ofast",
-                "-g",
-                "-mcmodel=kernel"
-            ]
-        }
-    ],
-    "version": 4
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"include",
+				"/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
+			],
+			"defines": [
+				"CONFIG_KERN_VERSION_MAJOR=0",
+				"CONFIG_KERN_VERSION_MINOR=1",
+				"CONFIG_KERN_VERSION_PATCH=0",
+				"CONFIG_BITS=64"
+			],
+			"compilerPath": "/opt/cross/bin/x86_64-elf-gcc",
+			"cStandard": "gnu17",
+			"cppStandard": "gnu++23",
+			"intelliSenseMode": "linux-gcc-x64",
+			"compilerArgs": [
+				"-ffreestanding",
+				"-Ofast",
+				"-g",
+				"-mcmodel=kernel"
+			]
+		}
+	],
+	"version": 4
 }
