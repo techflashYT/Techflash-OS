@@ -1,7 +1,7 @@
 {
 	"C_Cpp.autoAddFileAssociations": false,
 	"files.associations": {
-		"*.s": "asm-intel-x86-generic",
+		"*.s": "gas",
 	},
 	"commentAnchors.tags.list": [
 		{
