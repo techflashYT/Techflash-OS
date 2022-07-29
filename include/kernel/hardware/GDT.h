@@ -8,7 +8,7 @@ typedef struct {
 } __attribute__((packed)) gdtEntry_t;
 typedef struct {
 	uint16_t limit;               // The upper 16 bits of all selector limits.
-	uint32_t base;                // The address of the first gdt_entry_t struct.
+	uint64_t base;                // The address of the first gdt_entry_t struct.
 } __attribute__((packed)) gdtPtr_t;
 
 void GDTInit();

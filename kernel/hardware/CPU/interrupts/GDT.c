@@ -7,7 +7,7 @@ gdtPtr_t   gdtPtr;
 
 extern void GDTFlush();
 
-static void GDTSetGate(int32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran) {
+static void GDTSetGate(int32_t num, uint64_t base, uint32_t limit, uint8_t access, uint8_t gran) {
 	gdtEntries[num].baseLow = (base & 0xFFFF);
 	gdtEntries[num].baseMiddle = (base >> 16) & 0xFF;
 	gdtEntries[num].baseHigh = (base >> 24) & 0xFF;
