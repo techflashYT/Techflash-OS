@@ -14,4 +14,3 @@ typedef struct {
 } __attribute__((packed)) _kernTTY_t;
 extern _kernTTY_t kernTTY;
 #endif
-int putcAt(char c, int x, int y, int color);

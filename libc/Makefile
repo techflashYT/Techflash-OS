@@ -7,14 +7,20 @@ stdio/puts.o \
 stdio/putchar.o \
 stdio/printf.o \
 stdlib/itoa.o \
-string/strlen.o
+string/strlen.o \
+string/memset.o \
+custom/putcAt.o \
+custom/putsNoTerminator.o
 
 link=\
 ../build/libc/stdio/puts.o \
 ../build/libc/stdio/putchar.o \
 ../build/libc/stdio/printf.o \
 ../build/libc/stdlib/itoa.o \
-../build/libc/string/strlen.o
+../build/libc/string/strlen.o \
+../build/libc/string/memset.o \
+../build/libc/custom/putcAt.o \
+../build/libc/custom/putsNoTerminator.o
 
 outFileName=libk.a # libk.a for kernel library static library.  Not ready for hosted libc yet.
 
