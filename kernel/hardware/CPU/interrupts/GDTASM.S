@@ -1,8 +1,7 @@
 .global GDTFlush
 .type GDTFlush, @function
 GDTFlush:
-	lgdt (%edi)
-	xchgw %bx, %bx
+	lgdt (%rdi)
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
