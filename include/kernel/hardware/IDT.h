@@ -5,14 +5,14 @@ typedef struct {
 	uint16_t sel;                 // Kernel segment selector.
 	uint8_t  always0;             // This must always be zero.
 	uint8_t  flags;               // More flags. See documentation.
-	uint16_t baseHigh;             // The upper 16 bits of the address to jump to.
+	uint16_t baseHigh;            // The upper 16 bits of the address to jump to.
 } __attribute__((packed)) idtEntry_t;
 
 // A struct describing a pointer to an array of interrupt handlers.
 // This is in a format suitable for giving to 'lidt'.
 typedef struct {
 	uint16_t limit;
-	uint32_t base;                // The address of the first element in our idt_entry_t array.
+	uint64_t base;                // The address of the first element in our idt_entry_t array.
 } __attribute__((packed)) idtPtr_t;
 
 void IDTInit();

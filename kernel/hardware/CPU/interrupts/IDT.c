@@ -4,9 +4,9 @@
 
 idtEntry_t idtEntries[256];
 idtPtr_t   idtPtr;
-extern void IDTFlush(uint32_t unkown);
+extern void IDTFlush(uint64_t unkown);
 
-static void IDTSetGate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
+static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) {
 	idtEntries[num].baseLow = (base & 0xFFFF);
 	idtEntries[num].baseHigh = (base >> 16) & 0xFFFF;
 
