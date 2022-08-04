@@ -6,6 +6,6 @@ IDTDesc:
 	.quad idtEntries
 IDTFlush:
 	xchgw %bx, %bx
-	lidt (%rdi)
+	lidt (IDTDesc)
 	sti
 	ret

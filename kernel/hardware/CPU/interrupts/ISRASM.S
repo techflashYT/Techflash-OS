@@ -86,5 +86,4 @@ ISRCommonStub:
 	pop %rcx
 	pop %rax
 	
-	sti
 	iretq
