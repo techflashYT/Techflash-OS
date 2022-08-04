@@ -21,7 +21,6 @@ ISR\num:
 .endm
 
 ISR_NOERR 0
-ISR_NOERR 1
 ISR_NOERR 2
 ISR_NOERR 3
 ISR_NOERR 4
@@ -54,15 +53,13 @@ ISR_NOERR 30
 ISR_NOERR 31
 
 ISRCommonStub:
-	mov %esp, __temporaryStackPointer
 	push %rax
 	push %rcx
 	push %rdx
-	push %rbx
-	push (__temporaryStackPointer)
-	push %rbp
-	push %rsi
-	push %rdi
+	push %r8
+	push %r9
+	push %r10
+	push %r11
 
 
 	mov %ds, %ax
@@ -81,15 +78,13 @@ ISRCommonStub:
 	mov %ax, %fs
 	mov %ax, %gs
 	
-	pop %rdi
-	pop %rsi
-	pop %rbp
-	add $8,%rsp
-	pop %rbx
+	pop %r11
+	pop %r10
+	pop %r9
+	pop %r8
 	pop %rdx
 	pop %rcx
 	pop %rax
 	
-	add $8, %esp
 	sti
 	iretq

@@ -25,7 +25,8 @@ uint8_t __percentToCoords(const uint8_t percent) {
 void __bootProgressBarUpdate(const uint8_t percent) {
 	// Verify that the percent is valid.
 	if (percent == 0 || percent > 100) {
-		panic("__bootProgressBarUpdate(): Percent not within range 1-100");
+		DUMPREGS
+		panic("__bootProgressBarUpdate(): Percent not within range 1-100", regs);
 	}
 	// Update the progress bar.
 	uint8_t i = 0;

@@ -4,7 +4,6 @@
 #include <kernel/misc.h>
 bool findString(const char* str, uint16_t pos) {
 	bool correctSoFar = false;
-	BREAK
 	for (uint16_t i = 0; i < strlen(str); i++) {
 		if (str[i] == '\0') {
 			return correctSoFar;
@@ -29,8 +28,9 @@ __environment_t handleEnv() {
 			continue;
 		}
 		// handle tag "experimental.progressBarBoot"
-		if (findString("experimental.progressBarBoot=", i)) {
-			i += strlen("experimental.progressBarBoot=");
+		char *strToCheck = "experimental.progressBarBoot";
+		if (findString(strToCheck, i)) {
+			i += strlen(strToCheck);
 			if (findString("true", i)) {
 				buildEnv.experimental.progressBarBoot = true;
 			}

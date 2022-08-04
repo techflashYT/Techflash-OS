@@ -1,9 +1,0 @@
-.include "hardware/PIT/header.S"
-.section .text
-.include "hardware/PIT/IRQ.S"
-.include "hardware/PIT/init/0.S"
-.include "hardware/PIT/init/1.S"
-.include "hardware/PIT/init/2.S"
-.include "hardware/PIT/init/3.S"
-.include "hardware/PIT/init/4.S"
-.include "hardware/PIT/sleep.S"

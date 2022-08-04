@@ -7,10 +7,12 @@ typedef struct {
 	uint16_t cursorX;	
 	uint16_t cursorY;
 	uint32_t color;
+	uint32_t textBackground;
 	uint32_t width;
 	uint32_t height;
 	const char* buffer;
 	void (*init)();
+	void (*setBackground)(const uint32_t color);
 } __attribute__((packed)) _kernTTY_t;
 extern _kernTTY_t kernTTY;
 #endif

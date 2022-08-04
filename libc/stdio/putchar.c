@@ -30,11 +30,11 @@ int putchar(const int ch) {
 		mask = 1 << (font->width - 1);
 		uint32_t x;
 		for(x = 0; x < font->width; x++) {
-			*((uint32_t*)((uint64_t)&fb + line)) = (((int) * glyph) & (mask)) ? kernTTY.color : 0;
+			*((uint32_t*)((uint64_t)&fb + line)) = (((int) * glyph) & (mask)) ? kernTTY.color : kernTTY.textBackground;
 			mask >>= 1;
 			line += 4;
 		}
-		*((uint32_t*)((uint64_t) &fb + line)) = 0;
+		*((uint32_t*)((uint64_t) &fb + line)) = kernTTY.textBackground;
 		glyph += bpl;
 		offs += bootboot.fb_scanline;
 	}

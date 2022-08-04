@@ -17,11 +17,6 @@ void __keyboardSetLED(uint8_t led, bool value) {
 		// Disable
 		valueToSet &= ~(1 << led);
 	}
-	// cppcheck-suppress legacyUninitvar
-	char *buffer = itoa(valueToSet, buffer, 10);
-	serial.writeString(SERIAL_PORT_COM1, "[    KBRD] valueToSet: ");
-	serial.writeString(SERIAL_PORT_COM1, buffer);
-	serial.writeString(SERIAL_PORT_COM1, "\r\n");
 	// __keyboardStartSetLED();
 	asm volatile (
 		"mov $0x60, %dx\n"

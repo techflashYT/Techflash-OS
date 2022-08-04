@@ -1,11 +1,13 @@
 #include <stdint.h>
 // A struct describing an interrupt gate.
 typedef struct {
-	uint16_t baseLow;             // The lower 16 bits of the address to jump to when this interrupt fires.
+	uint16_t baseLow;             // Bit 0-15 of the address to jump to when this interrupt fires.
 	uint16_t sel;                 // Kernel segment selector.
 	uint8_t  always0;             // This must always be zero.
 	uint8_t  flags;               // More flags. See documentation.
-	uint16_t baseHigh;            // The upper 16 bits of the address to jump to.
+	uint16_t baseMiddle;          // Bits 16-31 of the address to jump to.
+	uint32_t baseHigh;			  // Bits 32-63 of the address to jump to.
+	uint32_t reserved;			  // Reserved bits.
 } __attribute__((packed)) idtEntry_t;
 
 // A struct describing a pointer to an array of interrupt handlers.

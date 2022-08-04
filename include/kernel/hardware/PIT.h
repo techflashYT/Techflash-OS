@@ -1,3 +1,4 @@
+#pragma once
 #include <stdint.h>
-void initPIT();
+void initPIT(uint32_t frequency);
 void sleep(uint64_t ms);

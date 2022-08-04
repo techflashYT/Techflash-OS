@@ -30,12 +30,12 @@
  * \param ... the arguments to the format string.
  * \return the number of characters printed.
 */
+// FIXME: Very busted, breaks the first character in mysterious ways and it seems to just stop printing after the first format specifier.
 int printf(const char* format, ...) {
 	int ret = 0;
 	va_list args;
 	va_start(args, format);
 	while (*format != '\0') {
-		size_t maxrem = __INT_MAX__ - ret;
 		if (format[0] != '%' || format[1] == '%') {
 			if (format[0] == '%') {
 				format++;
@@ -44,14 +44,7 @@ int printf(const char* format, ...) {
 			while (format[amount] && format[amount] != '%') {
 				amount++;
 			}
-			if (maxrem < amount) {
-				// TODO: Set errno to EOVERFLOW.
-				va_end(args);
-				return -1;
-			}
-			if (!putsNoTerminator(format, amount)) {
-				return -1;
-			}
+			putsNoTerminator(format, amount);
 			format += amount;
 			ret += amount;
 			continue;
@@ -62,45 +55,30 @@ int printf(const char* format, ...) {
 		if (*format == 'c') {
 			format++;
 			char c = (char) va_arg(args, int /* char promotes to int */);
-			if (!maxrem) {
-				// TODO: Set errno to EOVERFLOW.
-				return -1;
-			}
-			if (putchar(c)) {
-				return -1;
-			}
+			putchar(c);
 			ret++;
 		}
 		else if (*format == 's') {
 			format++;
 			const char* str = va_arg(args, const char*);
-			if (!maxrem) {
-				// TODO: Set errno to EOVERFLOW.
-				return -1;
-			}
-			if (!puts(str)) {
-				return -1;
-			}
+			puts(str);
 			ret += strlen(str);
 		}
-		else if (*format == 'd') {
+		else if (*format == 'd' || *format == 'i') {
 			const char* numStr = itoa(va_arg(args, int), NULL, 10);
 			putsNoTerminator(numStr, sizeof(numStr));
 			format++;
 		}
+		else if (*format == 'x') {
+			const char* numStr = itoa(va_arg(args, int), NULL, 16);
+			putsNoTerminator(numStr, sizeof(numStr));
+			format++;
+		}
+		
 		else {
 			format = format_begun_at;
 			size_t len = strlen(format);
-			serial.writeString(SERIAL_PORT_COM1, "printf: len: ");
-			serial.writeString(SERIAL_PORT_COM1, itoa(len, NULL, 10));
-			serial.writeString(SERIAL_PORT_COM1,"\r\n");
-			if (maxrem < len) {
-				// TODO: Set errno to EOVERFLOW.
-				return -1;
-			}
-			if (!putsNoTerminator(format, len)) {
-				return -1;
-			}
+			putsNoTerminator(format, len);
 			ret += len;
 			format += len;
 		}

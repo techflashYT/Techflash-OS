@@ -18,6 +18,10 @@ SECTIONS {
 		*(.rodata .rodata.*)                   /* data */
 		*(.data .data.*)
 	} :boot
+	.idt BLOCK(0x1000) : ALIGN(0x1000) {
+		idtEntries = .;
+		. = . + 0x1000;
+	}
 	.bss (NOLOAD) : {                          /* bss */
 		. = ALIGN(16);
 		*(.bss .bss.*)
