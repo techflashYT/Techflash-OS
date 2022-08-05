@@ -16,6 +16,7 @@
 #include <kernel/graphics.h>
 #include <kernel/hardware/CPU/GDT.h>
 #include <kernel/hardware/CPU/IDT.h>
+#include <kernel/hardware/CPU/SSE.h>
 #include <kernel/panic.h>
 #include <kernel/hardware/IO.h>
 
@@ -33,6 +34,7 @@ void _start() {
 
 
 	if(s) {
+		SSEInit();
 		__initThings();
 		// Say that the kernel is loading and to please wait.
 		puts("Techflash OS v");

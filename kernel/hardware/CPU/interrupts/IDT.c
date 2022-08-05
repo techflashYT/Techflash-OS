@@ -6,7 +6,7 @@
 
 idtEntry_t idtEntries[256];
 extern void IDTFlush();
-
+extern void ISRStub();
 static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) {
 	idtEntries[num].baseLow = (base & 0xFFFF);
 	idtEntries[num].baseMiddle = (base >> 16) & 0xFFFF;
@@ -21,8 +21,6 @@ static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) 
 }
 
 void IDTInit() {
-	memset(&idtEntries, 0, sizeof(idtEntry_t) * 256);
-
 	// Remap IRQ table for PIC.
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);
@@ -78,12 +76,16 @@ void IDTInit() {
 	IDTSetGate(39, (uint64_t)IRQ7, 0x08, 0x8E);	
 	IDTSetGate(40, (uint64_t)IRQ8, 0x08, 0x8E);	
 	IDTSetGate(41, (uint64_t)IRQ9, 0x08, 0x8E);	
-	IDTSetGate(42, (uint64_t)IRQ10, 0x08, 0x8E);	
-	IDTSetGate(43, (uint64_t)IRQ11, 0x08, 0x8E);	
-	IDTSetGate(44, (uint64_t)IRQ12, 0x08, 0x8E);	
-	IDTSetGate(45, (uint64_t)IRQ13, 0x08, 0x8E);	
-	IDTSetGate(46, (uint64_t)IRQ14, 0x08, 0x8E);	
-	IDTSetGate(47, (uint64_t)IRQ15, 0x08, 0x8E);	
+	IDTSetGate(42, (uint64_t)IRQ10, 0x08, 0x8E);
+	IDTSetGate(43, (uint64_t)IRQ11, 0x08, 0x8E);
+	IDTSetGate(44, (uint64_t)IRQ12, 0x08, 0x8E);
+	IDTSetGate(45, (uint64_t)IRQ13, 0x08, 0x8E);
+	IDTSetGate(46, (uint64_t)IRQ14, 0x08, 0x8E);
+	IDTSetGate(47, (uint64_t)IRQ15, 0x08, 0x8E);
+
+	for (uint8_t i = 48; i < 255; i++) {
+		IDTSetGate(i, (uint64_t)ISRStub, 0x08, 0x8E);
+	}
 
 	IDTFlush();
 }

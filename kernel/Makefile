@@ -1,8 +1,8 @@
 # Original version Copyright 2017 - 2021 bzt (bztsrc@git.lab)
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
-
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fno-stack-protector -nostdlib -g -Ofast -I../include -std=gnu2x -mcmodel=kernel -mgeneral-regs-only -mno-3dnow -mno-mmx -mno-sse -mno-sse2 -mno-avx
+FEATURES   = -mavx -msse -msse2 -mno-sse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-xop -mno-fma4 -mno-cx16 -mno-avx -mno-avx2 -mno-avx512f -mno-3dnow -mno-mmx
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fno-stack-protector -nostdlib -g -Ofast -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack

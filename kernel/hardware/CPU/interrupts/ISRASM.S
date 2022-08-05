@@ -1,4 +1,6 @@
 .section .data
+.global ISRStub
+.type ISRStub, @function
 __temporaryStackPointer:
 	.space 1*8
 .section .text
@@ -51,6 +53,12 @@ ISR_NOERR 28
 ISR_NOERR 29
 ISR_NOERR 30
 ISR_NOERR 31
+
+ISRStub:
+	cli
+	push 0
+	push 255
+	jmp ISRCommonStub
 
 ISRCommonStub:
 	push %rax
