@@ -6,38 +6,38 @@ __temporaryStackPointer:
 .section .text
 .global ISRCommonStub
 .macro PUSHALL
-push %rdi
-push %rsi
-push %rbp
-push %rbx
-push %rdx
-push %rcx
-push %rax
-push %r8
-push %r9
-push %r10
-push %r11
-push %r12
-push %r13
-push %r14
 push %r15
+push %r14
+push %r13
+push %r12
+push %r11
+push %r10
+push %r9
+push %r8
+push %rax
+push %rcx
+push %rdx
+push %rbx
+push %rbp
+push %rsi
+push %rdi
 .endm
 .macro POPALL
-pop %r15
-pop %r14
-pop %r13
-pop %r12
-pop %r11
-pop %r10
-pop %r9
-pop %r8
-pop %rax
-pop %rcx
-pop %rdx
-pop %rbx
-pop %rbp
-pop %rsi
 pop %rdi
+pop %rsi
+pop %rbp
+pop %rbx
+pop %rdx
+pop %rcx
+pop %rax
+pop %r8
+pop %r9
+pop %r10
+pop %r11
+pop %r12
+pop %r13
+pop %r14
+pop %r15
 .endm
 
 .macro ISR_NOERR num
@@ -97,6 +97,7 @@ ISRCommonStub:
 
 	mov %ds, %ax
 	push %rax
+	cld
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
@@ -111,12 +112,7 @@ ISRCommonStub:
 	mov %ax, %fs
 	mov %ax, %gs
 	
-	pop %r11
-	pop %r10
-	pop %r9
-	pop %r8
-	pop %rdx
-	pop %rcx
-	pop %rax
-	
+	POPALL
+	std
+	sub $8, %rsp	
 	iretq
