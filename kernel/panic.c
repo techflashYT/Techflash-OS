@@ -63,7 +63,7 @@ CPU Registers:\r\n\
 	itoa(regs.rbp, itoaBuf, 16);
 	puts(itoaBuf);
 	puts("\r\n    RSP: ");
-	itoa(regs.rsp, itoaBuf, 16);
+	itoa(regs.userRsp, itoaBuf, 16);
 	puts(itoaBuf);
 	puts("\r\n    RSI: ");
 	puts("\r\n    RSI: ");

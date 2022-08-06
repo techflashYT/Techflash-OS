@@ -19,7 +19,7 @@ registers_t regs = {\
 	.rcx = rcx,\
 	.rdx = rdx,\
 	.rbp = rbp,\
-	.rsp = rsp,\
+	.userRsp = rsp,\
 	.rsi = rsi,\
 	.rdi = rdi \
 };
