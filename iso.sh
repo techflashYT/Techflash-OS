@@ -24,7 +24,7 @@ cd ../../..
 cat ISO_GRUB_CFG.cfg > isodir/boot/grub/grub.cfg
 cp grub_bg.png isodir/boot/bg.png
 cp font.pf2 isodir/boot/grub/fonts/unicode.pf2
-grub-mkrescue -o bin/TFOS_ISO.iso isodir
+grub-mkrescue --stdio_sync off -o bin/TFOS_ISO.iso isodir &> /dev/null
 # cp isodir/tfos.img bin/TFOS_ISO.iso
 
 
