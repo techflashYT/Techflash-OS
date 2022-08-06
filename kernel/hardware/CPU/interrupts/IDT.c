@@ -7,6 +7,7 @@
 idtEntry_t idtEntries[256];
 extern void IDTFlush();
 extern void ISRStub();
+extern void ISRHandlersInit();
 static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) {
 	idtEntries[num].baseLow = (base & 0xFFFF);
 	idtEntries[num].baseMiddle = (base >> 16) & 0xFFFF;
@@ -21,6 +22,7 @@ static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) 
 }
 
 void IDTInit() {
+	ISRHandlersInit();
 	// Remap IRQ table for PIC.
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);

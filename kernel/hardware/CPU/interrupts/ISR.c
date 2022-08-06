@@ -2,9 +2,18 @@
 #include <kernel/hardware/CPU/ISR.h>
 #include <kernel/hardware/IO.h>
 #include <stdio.h>
+#include <stdlib.h>
 isr_t interruptHandlers[256];
+void ISRHandlersInit() {
+	for (int i = 0; i < 256; i++) {
+		interruptHandlers[i] = 0;
+	}
+}
 void ISRHandler(registers_t regs) {
-	printf("Interrupt: %d\r\n", regs.intNo);
+	if (interruptHandlers[regs.intNo] != 0) {
+		isr_t handler = interruptHandlers[regs.intNo];
+		handler(regs);
+	}
 }
 void registerInterruptHandler(uint8_t n, isr_t handler) {
 	interruptHandlers[n] = handler;
@@ -33,8 +42,14 @@ void ISR1() {
 	outb(0x20, 0x20);
 	outb(0xA0, 0x20);
 	int status = inb(0x64);
-	printf("\r\nISR1 occurred!  Status Read: 0x%x", status);
-	printf("   Char Read: 0x%x\r\n", inb(0x60));
+	puts("\r\nISR1 occurred!  Status Read: 0x");
+	char *buffer ="\0\0\0\0";
+	itoa(status, buffer, 16);
+	puts(buffer);
+	puts("   Char Read: 0x");
+	itoa(inb(0x60), buffer, 16);
+	puts(buffer);
+	puts("\r\n");
 
 	asm volatile (
 		"pop %rax\r\n"
