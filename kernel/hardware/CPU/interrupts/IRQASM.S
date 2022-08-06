@@ -6,7 +6,6 @@ __temporaryStackPointer:
 .macro IRQ irqNum remapNum
 .global IRQ\irqNum
 IRQ\irqNum:
-	cli
 	push $0
 	push $\remapNum
 	jmp IRQCommonStub
