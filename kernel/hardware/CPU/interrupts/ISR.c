@@ -21,7 +21,6 @@ void registerInterruptHandler(uint8_t n, isr_t handler) {
 
 void ISR1() {
 	asm volatile (
-		"xchgw %bx, %bx\r\n"
 		"cli\r\n"
 		"push %rax\r\n"
 		"push %rcx\r\n"
