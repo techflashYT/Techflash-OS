@@ -83,9 +83,10 @@ void IDTInit() {
 	IDTSetGate(46, (uint64_t)IRQ14, 0x08, 0x8E);
 	IDTSetGate(47, (uint64_t)IRQ15, 0x08, 0x8E);
 
-	for (uint8_t i = 48; i < 255; i++) {
+	for (uint8_t i = 48; i <= 255; i++) {
 		IDTSetGate(i, (uint64_t)ISRStub, 0x08, 0x8E);
 	}
+
 
 	IDTFlush();
 }
