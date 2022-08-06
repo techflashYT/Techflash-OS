@@ -8,6 +8,4 @@ GDTFlush:
 	movw %ax, %fs
 	movw %ax, %gs
 	movw %ax, %ss
-	jmp %cs:.flush
-.flush:
-	ret
+	retfq
