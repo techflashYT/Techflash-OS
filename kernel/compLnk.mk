@@ -14,7 +14,6 @@ hardware/serial/serialRW.o \
 hardware/serial/serialWriteLoop.o \
 hardware/FPU.o \
 hardware/CPU/SSE.o \
-hardware/CPU/AVX.o \
 hardware/CPU/interrupts/GDT.o \
 hardware/CPU/interrupts/GDTASM.o \
 hardware/CPU/interrupts/IDT.o \
@@ -49,7 +48,6 @@ link=\
 ../build/kernel/hardware/serial/serialRW.o \
 ../build/kernel/hardware/serial/serialWriteLoop.o \
 ../build/kernel/hardware/CPU/SSE.o \
-../build/kernel/hardware/CPU/AVX.o \
 ../build/kernel/hardware/FPU.o \
 ../build/kernel/hardware/CPU/interrupts/GDT.o \
 ../build/kernel/hardware/CPU/interrupts/GDTASM.o \
