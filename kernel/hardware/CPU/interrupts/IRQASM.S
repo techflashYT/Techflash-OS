@@ -29,8 +29,6 @@ IRQ  14,    46
 IRQ  15,    47
 
 IRQCommonStub:
-	xchgw %bx, %bx
-	xchgw %bx, %bx
 	mov %esp, __temporaryStackPointer
 	push %rax
 	push %rcx
