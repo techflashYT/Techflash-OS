@@ -23,10 +23,10 @@ void GDTInit() {
 	gdtPtr.limit = (sizeof(gdtEntry_t) * 5) - 1;
 	gdtPtr.base  = (uint64_t)&gdtEntries;
 	GDTSetGate(0, 0, 0, 0, 0);                // Null segment
-	GDTSetGate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); // Code segment
-	GDTSetGate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Data segment
-	GDTSetGate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
-	GDTSetGate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
+	GDTSetGate(1, 0, 0xFFFFFFFF, 0x9A, 0xAF); // Code segment
+	GDTSetGate(2, 0, 0xFFFFFFFF, 0x92, 0xAF); // Data segment
+	GDTSetGate(3, 0, 0xFFFFFFFF, 0xFA, 0xAF); // User mode code segment
+	GDTSetGate(4, 0, 0xFFFFFFFF, 0xF2, 0xAF); // User mode data segment
 
 	GDTFlush((uint64_t)&gdtPtr);
 }
