@@ -9,6 +9,7 @@ stdio/printf.o \
 stdlib/itoa.o \
 string/strlen.o \
 string/memset.o \
+string/memcpy.o \
 string/strcat.o \
 custom/putcAt.o \
 custom/putsNoTerminator.o
@@ -20,6 +21,7 @@ link=\
 ../build/libc/stdlib/itoa.o \
 ../build/libc/string/strlen.o \
 ../build/libc/string/memset.o \
+../build/libc/string/memcpy.o \
 ../build/libc/string/strcat.o \
 ../build/libc/custom/putcAt.o \
 ../build/libc/custom/putsNoTerminator.o
