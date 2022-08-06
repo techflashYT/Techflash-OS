@@ -23,6 +23,7 @@
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;
 void __initThings();
+void PICInit();
 // cppcheck-suppress unusedFunction
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
@@ -47,9 +48,12 @@ void _start() {
 		env = handleEnv();
 		// if (env.experimental.progressBarBoot) {
 		boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
-		// Initialize the GDT
+		// Initialize the 8259 Programmable Interrupt Controller
+		PICInit();
+		// Initialize the Global Descriptor Table
 		GDTInit();
 		boot.progressBar.update(10);
+		// Initialize the Interrupt Descriptor Table
 		IDTInit();
 		boot.progressBar.update(20);
 		boot.progressBar.update(30);
