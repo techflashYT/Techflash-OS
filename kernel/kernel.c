@@ -21,6 +21,7 @@
 #include <kernel/hardware/IO.h>
 
 #include <kernel/misc.h>
+uint8_t SSEFeaturesBits = 0;
 void __initThings();
 // cppcheck-suppress unusedFunction
 /******************************************

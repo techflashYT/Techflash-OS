@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <kernel/misc.h>
+extern uint8_t SSEFeaturesBits;
 bool findString(const char* str, uint16_t pos) {
 	bool correctSoFar = false;
 	for (uint16_t i = 0; i < strlen(str); i++) {
@@ -18,7 +19,14 @@ bool findString(const char* str, uint16_t pos) {
 	return correctSoFar;
 }
 __environment_t defaultEnv = {
-	.experimental.progressBarBoot = false
+	.experimental.progressBarBoot   = false,
+	.hardware.CPU.features.SSE.v1   = true,
+	.hardware.CPU.features.SSE.v2   = true,
+	.hardware.CPU.features.SSE.v3   = false,
+	.hardware.CPU.features.SSE.v4_1 = false,
+	.hardware.CPU.features.SSE.v4_2 = false,
+	.hardware.CPU.features.SSE.v4_A = false,
+	.hardware.CPU.features.SSE.v5   = false,
 };
 __environment_t handleEnv() {
 	__environment_t buildEnv = defaultEnv;
