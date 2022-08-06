@@ -1,7 +1,7 @@
 #include <kernel/hardware/PIT.h>
 #include <kernel/hardware/CPU/regs.h>
 #include <kernel/hardware/CPU/ISR.h>
-#include <kernel/hardware/CPU/IRQ.h>
+#include <kernel/hardware/CPU/IRQNums.h>
 #include <kernel/hardware/IO.h>
 #include <stdio.h>
 #include <stdlib.h>
