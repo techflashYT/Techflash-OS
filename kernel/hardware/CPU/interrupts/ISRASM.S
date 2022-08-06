@@ -93,6 +93,8 @@ ISRStub:
 	jmp ISRCommonStub
 
 ISRCommonStub:
+	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
+
 	PUSHALL
 
 	mov %ds, %ax
@@ -113,6 +115,5 @@ ISRCommonStub:
 	mov %ax, %gs
 	
 	POPALL
-	std
-	sub $8, %rsp	
+	sub $8, %rsp
 	iretq
