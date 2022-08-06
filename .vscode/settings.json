@@ -52,7 +52,10 @@
 	"c-cpp-flylint.flexelint.enable": false,
 	"c-cpp-flylint.clang.extraArgs": [
 		"-std=gnu2x",
-		"-ffreestanding"
+		"-ffreestanding",
+		"-march=core2",
+		"-mno-3dnow",
+		"-mno-mmx"
 	],
 	"c-cpp-flylint.clang.language": "c",
 	"c-cpp-flylint.cppcheck.extraArgs": [
