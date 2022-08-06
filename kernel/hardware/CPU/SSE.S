@@ -63,7 +63,6 @@ SSECheckAdditional:
 	.retrn:
 		testb $1, SSSE3
 		jz .YesSSSE3p2
-		xchgw %bx, %bx
 	.realretrn:
 		pop %rdx
 		pop %rcx
