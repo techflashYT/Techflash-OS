@@ -4,11 +4,16 @@
 #include <kernel/hardware/CPU/IRQ.h>
 #include <kernel/hardware/IO.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <kernel/misc.h>
 uint32_t tick = 0;
 static void timerCallback(registers_t regs) {
 	tick++;
-	printf("PIT Tick!: %u\r\n", tick);
+	char *buffer = "\0\0\0\0";
+	itoa(tick, buffer, 10);
+	puts("PIT Tick!: ");
+	puts(buffer);
+	puts("\r\n");
 }
 void initPIT(uint32_t frequency) {
 	// Register timer callback
