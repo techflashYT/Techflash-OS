@@ -9,10 +9,10 @@ void ISRHandlersInit() {
 		interruptHandlers[i] = 0;
 	}
 }
-void ISRHandler(registers_t regs) {
-	if (interruptHandlers[regs.intNo] != 0) {
-		isr_t handler = interruptHandlers[regs.intNo];
-		handler(regs);
+void ISRHandler(registers_t* regs) {
+	if (interruptHandlers[regs->intNo] != 0) {
+		isr_t handler = interruptHandlers[regs->intNo];
+		handler(*regs);
 	}
 }
 void registerInterruptHandler(uint8_t n, isr_t handler) {

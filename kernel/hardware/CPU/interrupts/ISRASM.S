@@ -7,6 +7,7 @@ __temporaryStackPointer:
 .global ISRCommonStub
 .macro PUSHALL
 push %r15
+mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 push %r14
 push %r13
 push %r12
@@ -93,8 +94,6 @@ ISRStub:
 	jmp ISRCommonStub
 
 ISRCommonStub:
-	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
-
 	PUSHALL
 
 	mov %ds, %ax
