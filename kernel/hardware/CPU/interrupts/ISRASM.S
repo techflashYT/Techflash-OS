@@ -7,7 +7,6 @@ __temporaryStackPointer:
 .global ISRCommonStub
 .macro PUSHALL
 push %r15
-mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 push %r14
 push %r13
 push %r12
@@ -89,16 +88,17 @@ ISR_NOERR 30
 ISR_NOERR 31
 
 ISRStub:
-	push 0
-	push 255
+	push $0
+	push $255
 	jmp ISRCommonStub
 
 ISRCommonStub:
-	PUSHALL
-
-	mov %ds, %ax
-	push %rax
 	cld
+	PUSHALL
+	pushq $0
+	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
+	mov %rsp, %r12
+	andq $-16, %r12 # Align stack to 16 bytes
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
@@ -107,6 +107,7 @@ ISRCommonStub:
 
 	call ISRHandler
 
+	movq %r12, %rsp # Restore stack pointer
 	pop %rax
 	mov %ax, %ds
 	mov %ax, %es
@@ -114,5 +115,5 @@ ISRCommonStub:
 	mov %ax, %gs
 	
 	POPALL
-	sub $8, %rsp
+	add $16, %rsp
 	iretq
