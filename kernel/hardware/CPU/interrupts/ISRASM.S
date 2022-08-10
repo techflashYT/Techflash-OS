@@ -41,20 +41,22 @@ pop %r15
 .endm
 
 .macro ISR_NOERR num
-.global ISR\num
-ISR\num:
-	push 0
-	push \num
-	jmp ISRCommonStub
+.align 8
+   push $\num-128
+   jmp ISRCommonStubNoErr
+.align 8
 .endm
 
 .macro ISR_ERR num
-.global ISR\num
-ISR\num:
-	push \num
-	jmp ISRCommonStub
+.align 8
+   push $\num-128
+   jmp ISRCommonStubErr
+.align 8
 .endm
 
+.global ISRStubArray
+
+ISRStubArray:
 ISR_NOERR 0
 ISR_NOERR 2
 ISR_NOERR 3
@@ -83,19 +85,15 @@ ISR_NOERR 25
 ISR_NOERR 26
 ISR_NOERR 27
 ISR_NOERR 28
-ISR_NOERR 29
-ISR_NOERR 30
+ISR_ERR   29
+ISR_ERR   30
 ISR_NOERR 31
 
-ISRStub:
-	push $0
-	push $255
-	jmp ISRCommonStub
-
-ISRCommonStub:
+ISRCommonStubNoErr:
+	pushq (%rsp) # copy interrupt number to the correct location
+ISRCommonStubErr:
 	cld
 	PUSHALL
-	pushq $0
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 	mov %rsp, %r12
 	andq $-16, %r12 # Align stack to 16 bytes
