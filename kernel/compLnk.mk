@@ -3,6 +3,7 @@ kernel.o \
 init.o \
 boot.o \
 panic.o \
+stack.o \
 environment.o \
 tty/tty.o \
 hardware/IO/in.o \
@@ -32,6 +33,7 @@ link=\
 ../build/kernel/init.o \
 ../build/kernel/boot.o \
 ../build/kernel/panic.o \
+../build/kernel/stack.o \
 ../build/kernel/environment.o \
 ../build/kernel/tty/tty.o \
 ../build/kernel/graphics/debug.o \
