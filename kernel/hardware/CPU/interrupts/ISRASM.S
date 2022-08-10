@@ -58,6 +58,7 @@ pop %r15
 
 ISRStubArray:
 ISR_NOERR 0
+ISR_NOERR 1
 ISR_NOERR 2
 ISR_NOERR 3
 ISR_NOERR 4
@@ -88,6 +89,12 @@ ISR_NOERR 28
 ISR_ERR   29
 ISR_ERR   30
 ISR_NOERR 31
+
+.set i,32
+.rept 256-32
+ISR_NOERR i
+.set i,i+1
+.endr
 
 ISRCommonStubNoErr:
 	pushq (%rsp) # copy interrupt number to the correct location
