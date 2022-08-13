@@ -2,8 +2,8 @@
 name: Bug Report
 about: Found a bug in Techflash OS?  Report it here!
 title: "[BUG]  Unnamed"
-labels: ''
-assignees: ''
+labels: bug
+assignees: techflashYT
 
 ---
 
