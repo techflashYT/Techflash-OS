@@ -8,6 +8,7 @@
 #include <stdint.h>
 extern void __kernTTY_init();
 extern void __kernTTY_setBackground(const uint32_t color);
+extern char __kernTTY_buffer[32767];
 _kernTTY_t kernTTY;
 
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
@@ -54,6 +55,7 @@ void __initThings() {
 	// Start initializing a TTY.
 	kernTTY.init = __kernTTY_init;
 	kernTTY.setBackground = __kernTTY_setBackground;
+	kernTTY.buffer = __kernTTY_buffer;
 	kernTTY.init();
 
 	// Start setting up the keyboard struct.

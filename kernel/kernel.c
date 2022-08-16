@@ -64,7 +64,12 @@ void _start() {
 		// Initialize the PIT to 60hz
 		initPIT(60);
 	}
-	while (true);
+	while (true) {
+		// Main kernel loop
+
+		// Update screen using text buffer in kernTTY.buffer
+		updateScreen(kernTTY.buffer);
+	}
 	asm volatile (
 		"cli\n"
 		"hlt\n"
