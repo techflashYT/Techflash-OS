@@ -103,7 +103,7 @@ ISRCommonStubErr:
 	PUSHALL
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 	mov %rsp, %r12
-	andq $-16, %r12 # Align stack to 16 bytes
+	andq $-16, %rsp # Align stack to 16 bytes
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
@@ -113,7 +113,7 @@ ISRCommonStubErr:
 	call ISRHandler
 
 	movq %r12, %rsp # Restore stack pointer
-	pop %rax
+	mov $0x10, %rax # Segment selector for kernel code
 	mov %ax, %ds
 	mov %ax, %es
 	mov %ax, %fs
