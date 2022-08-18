@@ -1,6 +1,7 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
-
-CFLAGS = -Wall -Wextra -fdiagnostics-color=always -fno-pic -ffreestanding -fno-stack-protector -nostdlib -I../include -Ofast -static -s -std=gnu2x -mcmodel=kernel -mgeneral-regs-only -mno-3dnow -mno-mmx -mno-sse -mno-sse2 -mno-avx
+WARN   = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
+FEATURE= -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
+CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
 compile=\
 stdio/puts.o \
@@ -12,7 +13,8 @@ string/memset.o \
 string/memcpy.o \
 string/strcat.o \
 custom/putcAt.o \
-custom/putsNoTerminator.o
+custom/putsNoTerminator.o \
+custom/padNumTo.o \
 
 link=\
 ../build/libc/stdio/puts.o \
@@ -24,7 +26,8 @@ link=\
 ../build/libc/string/memcpy.o \
 ../build/libc/string/strcat.o \
 ../build/libc/custom/putcAt.o \
-../build/libc/custom/putsNoTerminator.o
+../build/libc/custom/putsNoTerminator.o \
+../build/libc/custom/padNumTo.o \
 
 outFileName=libk.a # libk.a for kernel library static library.  Not ready for hosted libc yet.
 

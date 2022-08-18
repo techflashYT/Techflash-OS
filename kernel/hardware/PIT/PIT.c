@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <kernel/misc.h>
 uint32_t tick = 0;
-static void timerCallback(registers_t regs) {
+static void timerCallback(registers_t *regs) {
 	tick++;
 	char *buffer = "\0\0\0\0";
 	itoa(tick, buffer, 10);

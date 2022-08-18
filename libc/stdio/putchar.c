@@ -5,6 +5,9 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 int putchar(const int ch) {
+	// Add the character to the kernTTY buffer.
+	kernTTY.index++;
+	kernTTY.buffer[kernTTY.index] = ch;
 	if (ch == '\r') { // CR ('\r')
 		kernTTY.cursorX = 0;
 		return '\r';
