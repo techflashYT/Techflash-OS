@@ -1,10 +1,10 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <kernel/hardware/serial.h>
 void log(const char module[8], const char* message) {
 	char buffer[256] = {'\0'};
-	uint8_t endModName = 0;
-	for (; module[endModName] != '\0'; endModName++);
+	uint8_t endModName = (uint8_t)strlen(module);
 	for (uint16_t i = 0; i > endModName; i++) {
 		buffer[i] = message[i];
 	}
