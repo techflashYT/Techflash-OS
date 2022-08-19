@@ -19,7 +19,6 @@ SSEEnable:
 	mov %cr4, %rax
 	or $3 << 9, %ax
 	mov %rax, %cr4
-	# TODO: Enable SSE2
 	ret
 SSECheckAdditional:
 	# Check for the rest of SSE versions that aren't garunteed with x86_64
