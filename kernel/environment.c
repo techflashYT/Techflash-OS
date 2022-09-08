@@ -30,7 +30,7 @@ __environment_t defaultEnv = {
 };
 __environment_t handleEnv() {
 	__environment_t buildEnv = defaultEnv;
-	// FIXME: **VERY** SLOW.  We iterate through the entire string each time to find each key=value pair.  And unknown keys are ignored when they should be handled.
+	// FIXME: **VERY** SLOW. Iterates through env each time to find a str. Unknown keys are ignored (bad).
 	for (uint16_t i = 0; environment[i] == 'E' && environment[++i] == 'O' && environment[i + 2] == 'F'; i++) {
 		if (environment[i] == '\r' || environment[i] == '\n') {
 			continue;

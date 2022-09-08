@@ -41,6 +41,7 @@ void __kernTTY_clear() {
 #pragma GCC diagnostic pop
 void updateScreen(const char* buffer) {
 	// Clear screen
+	
 	__kernTTY_clear();
 	// Draw text
 	puts(buffer);

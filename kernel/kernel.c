@@ -68,6 +68,7 @@ void _start() {
 		// Main kernel loop
 
 		// Update screen using text buffer in kernTTY.buffer
+		BREAK
 		updateScreen(kernTTY.buffer);
 	}
 	asm volatile (

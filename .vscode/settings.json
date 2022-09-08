@@ -5,24 +5,6 @@
 	},
 	"commentAnchors.tags.list": [
 		{
-			"tag": "ANCHOR",
-			"iconColor": "default",
-			"highlightColor": "#A8C023",
-			"scope": "workspace"
-		},
-		{
-			"tag": "TODO",
-			"iconColor": "blue",
-			"highlightColor": "#3ea8ff",
-			"scope": "workspace"
-		},
-		{
-			"tag": "FIXME",
-			"iconColor": "red",
-			"highlightColor": "#F44336",
-			"scope": "workspace"
-		},
-		{
 			"tag": "STUB",
 			"iconColor": "purple",
 			"highlightColor": "#BA68C8",
@@ -35,12 +17,6 @@
 			"scope": "workspace"
 		},
 		{
-			"tag": "REVIEW",
-			"iconColor": "green",
-			"highlightColor": "#64DD17",
-			"scope": "workspace"
-		},
-		{
 			"tag": "SECTION",
 			"iconColor": "#000000",
 			"highlightColor": "#000000",
@@ -48,7 +24,7 @@
 			"enabled": false
 		}
 	],
-	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir}/**/*",
+	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir,util}/**/*",
 	"c-cpp-flylint.flexelint.enable": false,
 	"c-cpp-flylint.clang.extraArgs": [
 		"-std=gnu2x",
@@ -72,6 +48,6 @@
 		"**/build"          : true,
 		"**/lib"            : true,
 		"**/util/mkbootimg" : true,
-		
-	}
+	},
+	"vim.useCtrlKeys": false
 }

@@ -4,6 +4,7 @@
 			"name": "Linux",
 			"includePath": [
 				"include",
+				"apps/installer/include",
 				"/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
 			],
 			"defines": [
@@ -17,10 +18,12 @@
 			"cppStandard": "gnu++23",
 			"intelliSenseMode": "linux-gcc-x64",
 			"compilerArgs": [
-				"-ffreestanding",
 				"-Ofast",
-				"-g",
-				"-mcmodel=kernel"
+				"-std=gnu2x",
+				"-ffreestanding",
+				"-march=core2",
+				"-mno-3dnow",
+				"-mno-mmx"
 			]
 		}
 	],
