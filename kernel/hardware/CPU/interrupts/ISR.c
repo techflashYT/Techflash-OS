@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <kernel/misc.h>
 #include <kernel/panic.h>
+#include <kernel/tty.h>
 isr_t interruptHandlers[256];
 void ISRHandlersInit() {
 	for (int i = 0; i < 256; i++) {
@@ -12,12 +13,15 @@ void ISRHandlersInit() {
 	}
 }
 void ISRHandler(registers_t* regs) {
+	printf("RAX: %llu", regs->rax);
+	BREAK;
 	regs->intNo += 128;
 	if (interruptHandlers[regs->intNo] != 0) {
 		isr_t handler = interruptHandlers[regs->intNo];
 		handler(regs);
 	}
 	printf("Unhandled Interrupt!  Number: %d", regs->intNo);
+	panic("E", *regs);
 }
 void registerInterruptHandler(uint8_t n, isr_t handler) {
 	interruptHandlers[n] = handler;

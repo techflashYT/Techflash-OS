@@ -49,6 +49,30 @@ int printf(const char* format, ...) {
 					ret += puts(itoa(va_arg(args, int), itoaBuf, 10));
 					format++;
 					break;
+				case 'l': 
+					switch (*format + 1) {
+						case 'l':
+							switch (*format + 2) {
+								case 'd':
+								case 'i':
+									ret += puts(itoa(va_arg(args, long long int), itoaBuf, 10));
+									format++;
+									break;
+								case 'u':
+									ret += puts(itoa(va_arg(args, long long unsigned int), itoaBuf, 10));
+									format++;
+									break;
+							}
+							case 'd':
+							case 'i':
+								ret += puts(itoa(va_arg(args, long int), itoaBuf, 10));
+								format++;
+								break;
+							case 'u':
+								ret += puts(itoa(va_arg(args, long unsigned int), itoaBuf, 10));
+								format++;
+								break;
+					}
 				case 's':
 					ret += puts(va_arg(args, char*));
 					format++;

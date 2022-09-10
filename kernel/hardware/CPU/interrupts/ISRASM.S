@@ -100,7 +100,9 @@ ISRCommonStubNoErr:
 	pushq (%rsp) # copy interrupt number to the correct location
 ISRCommonStubErr:
 	cld
+	mov $0, %rax
 	PUSHALL
+	xchgw %bx, %bx
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 	mov %rsp, %r12
 	andq $-16, %rsp # Align stack to 16 bytes
