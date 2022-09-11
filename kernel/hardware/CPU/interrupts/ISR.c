@@ -13,15 +13,12 @@ void ISRHandlersInit() {
 	}
 }
 void ISRHandler(registers_t* regs) {
-	printf("RAX: %llu", regs->rax);
-	BREAK;
 	regs->intNo += 128;
 	if (interruptHandlers[regs->intNo] != 0) {
 		isr_t handler = interruptHandlers[regs->intNo];
 		handler(regs);
 	}
-	printf("Unhandled Interrupt!  Number: %d", regs->intNo);
-	panic("E", *regs);
+	panic("Unhandled Interrupt", *regs);
 }
 void registerInterruptHandler(uint8_t n, isr_t handler) {
 	interruptHandlers[n] = handler;
