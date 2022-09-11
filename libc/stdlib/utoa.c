@@ -1,33 +1,31 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+// Thanks to https://github.com/Mathewnd for this code!
+char* utoa(unsigned long value, volatile char* result, int base) {
+	char buff[sizeof(long) * 8 / 4];
 
-char* utoa(unsigned long value, volatile char* result, int base){
+	if (base < 2 || base > 36) {
+		*result = '\0';
+		return result;
+	}
 
-        char buff[sizeof(long)*8/4];
+	size_t charc = 0;
 
-        if(base < 2 || base > 36){
-                *result = '\0';
-                return result;
-        }
+	do {
+		uintmax_t offset = value % base;
+		value /= base;
+		buff[charc++] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[offset];
+	}
+	while (value);
+	
+	for (uintmax_t i = 0; i < charc; ++i) {
+		result[i] = buff[charc - i - 1];
 
-        size_t charc = 0;
+	}
 
-        do{
-                uintmax_t offset = value % base;
-                value /= base;
-                buff[charc++] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[offset];
-        }
-        while(value);
-        
-        for(uintmax_t i = 0; i < charc; ++i){
-
-                result[i] = buff[charc-i-1];
-                
-        }
-
-        result[charc] = '\0';
-        
-        return result;
+	result[charc] = '\0';
+	
+	return result;
 }
 
