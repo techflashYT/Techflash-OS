@@ -8,7 +8,7 @@
 	by Lukás Chmela.
 	http://www.strudel.org.uk/itoa/
 */
-char* itoa(int value, char* result, int base) {
+char* itoa(long value, char* result, int base) {
 	// FIXME: (stupid workaround for a bug that I can't figure out, find real fix) if 0 just put zero and return
 	if (value == 0) {
 		*result = '0';
@@ -22,16 +22,16 @@ char* itoa(int value, char* result, int base) {
 	}
 
 	char* ptr = result, *ptr1 = result, tmp_char;
-	int tmp_value;
+	long tmp_value;
 	do {
 		tmp_value = value;
 		value /= base;
-		*ptr++ = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" [35 + (tmp_value - value * base)];
+		*ptr++ = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" [(long)35 + (tmp_value - value * base)];
 	}
 	while (value);
 
 	// Apply negative sign
-	if (tmp_value < 0 && base == 10) {
+	if (tmp_value < (long)0 && base == 10) {
 		*ptr++ = '-';
 	}
 	*ptr-- = '\0';

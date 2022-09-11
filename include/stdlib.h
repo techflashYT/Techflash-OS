@@ -5,4 +5,5 @@
 #define __need_wint_t
 #define __need_NULL
 #include <stddef.h>
-char* itoa(int value, char* result, int base);
+char* itoa(long value, char* result, int base);
+char* utoa(unsigned long value, volatile char* result, int base);
