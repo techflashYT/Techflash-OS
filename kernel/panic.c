@@ -8,7 +8,7 @@
 #include <kernel/tty.h>
 #include <kernel/hardware/CPU/regs.h>
 #include <kernel/misc.h>
-char* padNumTo(const char *src, uint8_t padding);
+void padNumTo(char *src, uint8_t padding);
 bool alreadyPanicing = false;
 bool mentionDualPanic = false;
 void panic(const char* message, registers_t regs) {
@@ -41,14 +41,23 @@ Error: "
 	char intNo[17];
 
 	utoa(regs.rax, rax, 16);
+	padNumTo(rax, 16);
 	utoa(regs.rbx, rbx, 16);
+	padNumTo(rbx, 16);
 	utoa(regs.rcx, rcx, 16);
+	padNumTo(rcx, 16);
 	utoa(regs.rdx, rdx, 16);
+	padNumTo(rdx, 16);
 	utoa(regs.rbp, rbp, 16);
+	padNumTo(rbp, 16);
 	utoa(regs.userRsp, rsp, 16);
+	padNumTo(rsp, 16);
 	utoa(regs.rsi, rsi, 16);
+	padNumTo(rsi, 16);
 	utoa(regs.rdi, rdi, 16);
+	padNumTo(rdi, 16);
 	utoa(regs.intNo, intNo, 16);
+	padNumTo(intNo, 16);
 	printf(
 "%s\r\n\
 CPU Registers:\r\n\
@@ -60,7 +69,7 @@ CPU Registers:\r\n\
     RSP: 0x%s\r\n\
     RSI: 0x%s\r\n\
     RDI: 0x%s\r\n\
-    Interrupt Number: 0x%s",
+    Interrupt Number: 0x%s\r\n",
 	message,
 	rax,
 	rbx,
@@ -73,7 +82,7 @@ CPU Registers:\r\n\
 	intNo
 	);
 	if (mentionDualPanic) {
-		puts("\r\nAdditionally, an error has occurred during the printing of this message.\r\n");
+		puts("Additionally, an error has occurred during the printing of this message.\r\n");
 	}
 
 	asm volatile (

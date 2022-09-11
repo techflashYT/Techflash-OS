@@ -1,7 +1,7 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 WARN   = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
 FEATURE= -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx -g
+CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
 compile=\
 stdio/puts.o \
@@ -13,6 +13,7 @@ string/strlen.o \
 string/memset.o \
 string/memcpy.o \
 string/strcat.o \
+string/strcpy.o \
 custom/putcAt.o \
 custom/putsNoTerminator.o \
 custom/padNumTo.o \
@@ -27,6 +28,7 @@ link=\
 ../build/libc/string/memset.o \
 ../build/libc/string/memcpy.o \
 ../build/libc/string/strcat.o \
+../build/libc/string/strcpy.o \
 ../build/libc/custom/putcAt.o \
 ../build/libc/custom/putsNoTerminator.o \
 ../build/libc/custom/padNumTo.o \

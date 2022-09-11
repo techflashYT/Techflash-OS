@@ -23,6 +23,7 @@
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;
 void __initThings();
+void initExceptions();
 void PICInit();
 // cppcheck-suppress unusedFunction
 /******************************************
@@ -55,6 +56,8 @@ void _start() {
 		boot.progressBar.update(10);
 		// Initialize the Interrupt Descriptor Table
 		IDTInit();
+		// Initialize some exception handlers
+		initExceptions();
 		boot.progressBar.update(20);
 		boot.progressBar.update(30);
 		for (uint8_t i = 30; i < 99; i++) {
