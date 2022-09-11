@@ -1,7 +1,7 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 WARN   = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
 FEATURE= -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
+CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx -g
 
 compile=\
 stdio/puts.o \
