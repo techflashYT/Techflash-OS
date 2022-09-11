@@ -1,0 +1,1 @@
+./qemu-system-x86_64 -smp 2 -m 512M,slots=2,maxmem=1G -vga cirrus -no-reboot -no-shutdown -serial stdio -cdrom bin/TFOS_ISO.iso
