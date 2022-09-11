@@ -40,15 +40,15 @@ Error: "
 	char rdi[17];
 	char intNo[17];
 
-	itoa(regs.rax, rax, 16);
-	itoa(regs.rbx, rbx, 16);
-	itoa(regs.rcx, rcx, 16);
-	itoa(regs.rdx, rdx, 16);
-	itoa(regs.rbp, rbp, 16);
-	itoa(regs.userRsp, rsp, 16);
-	itoa(regs.rsi, rsi, 16);
-	itoa(regs.rdi, rdi, 16);
-	itoa(regs.intNo, intNo, 16);
+	utoa(regs.rax, rax, 16);
+	utoa(regs.rbx, rbx, 16);
+	utoa(regs.rcx, rcx, 16);
+	utoa(regs.rdx, rdx, 16);
+	utoa(regs.rbp, rbp, 16);
+	utoa(regs.userRsp, rsp, 16);
+	utoa(regs.rsi, rsi, 16);
+	utoa(regs.rdi, rdi, 16);
+	utoa(regs.intNo, intNo, 16);
 	printf(
 "%s\r\n\
 CPU Registers:\r\n\

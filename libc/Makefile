@@ -8,6 +8,7 @@ stdio/puts.o \
 stdio/putchar.o \
 stdio/printf.o \
 stdlib/itoa.o \
+stdlib/utoa.o \
 string/strlen.o \
 string/memset.o \
 string/memcpy.o \
@@ -21,6 +22,7 @@ link=\
 ../build/libc/stdio/putchar.o \
 ../build/libc/stdio/printf.o \
 ../build/libc/stdlib/itoa.o \
+../build/libc/stdlib/utoa.o \
 ../build/libc/string/strlen.o \
 ../build/libc/string/memset.o \
 ../build/libc/string/memcpy.o \
