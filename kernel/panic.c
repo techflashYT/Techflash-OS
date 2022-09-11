@@ -29,15 +29,17 @@ Please report this to Techflash at https://github.com/techflashYT/Techflash-OS\r
 Please give the following information in the bug report:\r\n\
 Error: "
 	); // Puts is slightly faster here since there's no need to check for format specifiers
-	char *rax = "\0\0\0\0\0\0\0\0\0\0";
-	char *rbx = "\0\0\0\0\0\0\0\0\0\0";
-	char *rcx = "\0\0\0\0\0\0\0\0\0\0";
-	char *rdx = "\0\0\0\0\0\0\0\0\0\0";
-	char *rbp = "\0\0\0\0\0\0\0\0\0\0";
-	char *rsp = "\0\0\0\0\0\0\0\0\0\0";
-	char *rsi = "\0\0\0\0\0\0\0\0\0\0";
-	char *rdi = "\0\0\0\0\0\0\0\0\0\0";
-	char *intNo = "\0\0\0\0\0\0\0\0\0\0";
+
+	char rax[17];
+	char rbx[17];
+	char rcx[17];
+	char rdx[17];
+	char rbp[17];
+	char rsp[17];
+	char rsi[17];
+	char rdi[17];
+	char intNo[17];
+
 	itoa(regs.rax, rax, 16);
 	itoa(regs.rbx, rbx, 16);
 	itoa(regs.rcx, rcx, 16);
