@@ -6,3 +6,4 @@
 inb:
 	mov %edi, %edx
 	inb %dx, %al
+	ret

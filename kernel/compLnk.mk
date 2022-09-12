@@ -22,6 +22,7 @@ hardware/CPU/interrupts/IDTASM.o \
 hardware/CPU/interrupts/exceptionHandler.o \
 hardware/CPU/interrupts/ISRASM.o \
 hardware/CPU/interrupts/ISR.o \
+hardware/CPU/interrupts/IRQ.o \
 hardware/CPU/interrupts/PIC.o \
 hardware/PIT/PIT.o \
 graphics/debug.o \
@@ -56,5 +57,6 @@ link=\
 ../build/kernel/hardware/CPU/interrupts/exceptionHandler.o \
 ../build/kernel/hardware/CPU/interrupts/ISRASM.o \
 ../build/kernel/hardware/CPU/interrupts/ISR.o \
+../build/kernel/hardware/CPU/interrupts/IRQ.o \
 ../build/kernel/hardware/CPU/interrupts/PIC.o \
 ../build/kernel/font.o

@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdbool.h>
+void IRQSetMask(uint8_t IRQline, bool status);
 extern void IRQ0();
 extern void IRQ1();
 extern void IRQ2();

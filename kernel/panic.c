@@ -57,29 +57,30 @@ Error: "
 	utoa(regs.rdi, rdi, 16);
 	padNumTo(rdi, 16);
 	utoa(regs.intNo, intNo, 16);
+	BREAK
 	padNumTo(intNo, 16);
-	printf(
-"%s\r\n\
-CPU Registers:\r\n\
-    RAX: 0x%s\r\n\
-    RBX: 0x%s\r\n\
-    RCX: 0x%s\r\n\
-    RDX: 0x%s\r\n\
-    RBP: 0x%s\r\n\
-    RSP: 0x%s\r\n\
-    RSI: 0x%s\r\n\
-    RDI: 0x%s\r\n\
-    Interrupt Number: 0x%s\r\n",
-	message,
-	rax,
-	rbx,
-	rcx,
-	rdx,
-	rbp,
-	rsp,
-	rsi,
-	rdi,
-	intNo
+	printf (
+		"%s\r\n"
+		"CPU Registers:\r\n"
+		"    RAX: 0x%s\r\n"
+		"    RBX: 0x%s\r\n"
+		"    RCX: 0x%s\r\n"
+		"    RDX: 0x%s\r\n"
+		"    RBP: 0x%s\r\n"
+		"    RSP: 0x%s\r\n"
+		"    RSI: 0x%s\r\n"
+		"    RDI: 0x%s\r\n"
+		"    Interrupt Number: 0x%s\r\n",
+		message,
+		rax,
+		rbx,
+		rcx,
+		rdx,
+		rbp,
+		rsp,
+		rsi,
+		rdi,
+		intNo
 	);
 	if (mentionDualPanic) {
 		puts("Additionally, an error has occurred during the printing of this message.\r\n");

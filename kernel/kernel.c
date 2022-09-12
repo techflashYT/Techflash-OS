@@ -17,6 +17,7 @@
 #include <kernel/hardware/CPU/GDT.h>
 #include <kernel/hardware/CPU/IDT.h>
 #include <kernel/hardware/CPU/SSE.h>
+#include <kernel/hardware/CPU/IRQ.h>
 #include <kernel/panic.h>
 #include <kernel/hardware/IO.h>
 
@@ -25,6 +26,7 @@ uint8_t SSEFeaturesBits = 0;
 void __initThings();
 void initExceptions();
 void PICInit();
+void keyboardInit();
 // cppcheck-suppress unusedFunction
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
@@ -51,11 +53,24 @@ void _start() {
 		boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
 		// Initialize the 8259 Programmable Interrupt Controller
 		PICInit();
+		// for (uint8_t i = 4; i < 7; i++) {
+		// 	IRQSetMask(i, false);
+		// }
+		// for (uint8_t i = 10; i < 15; i++) {
+		// 	IRQSetMask(i, false);
+		// }
+		
+		
 		// Initialize the Global Descriptor Table
 		GDTInit();
 		boot.progressBar.update(10);
 		// Initialize the Interrupt Descriptor Table
 		IDTInit();
+		IRQSetMask(0, false);
+		IRQSetMask(1, false);
+		// Init the keyboard driver
+		keyboardInit();
+		IRQSetMask(1, true);
 		// Initialize some exception handlers
 		initExceptions();
 		boot.progressBar.update(20);
@@ -66,6 +81,7 @@ void _start() {
 		}
 		// Initialize the PIT to 60hz
 		initPIT(60);
+		IRQSetMask(0, true);
 	}
 	while (true) {
 		// Main kernel loop
