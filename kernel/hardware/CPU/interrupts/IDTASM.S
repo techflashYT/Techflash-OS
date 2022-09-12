@@ -6,5 +6,4 @@ IDTDesc:
 	.quad idtEntries
 IDTFlush:
 	lidt (IDTDesc)
-	sti
 	ret

@@ -9,11 +9,7 @@
 uint32_t tick = 0;
 static void timerCallback(registers_t *regs) {
 	tick++;
-	char *buffer = "\0\0\0\0";
-	itoa(tick, buffer, 10);
-	puts("PIT Tick!: ");
-	puts(buffer);
-	puts("\r\n");
+	printf("PIT Tick: %u\r\n", tick);
 }
 void initPIT(uint32_t frequency) {
 	// Register timer callback
@@ -26,7 +22,6 @@ void initPIT(uint32_t frequency) {
 	uint8_t l = (uint8_t)(divisor & 0xFF);
 	// High byte of divisor
 	uint8_t h = (uint8_t)((divisor >> 8) & 0xFF);
-
 	// Send frequency divisor
 	outb(0x40, l);
 	outb(0x40, h);

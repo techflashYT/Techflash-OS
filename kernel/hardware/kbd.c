@@ -18,6 +18,15 @@ char kbdScancodeToASCII(uint8_t scancode) {
 	}
 	return 'a';
 }
+char keyboardBufferPop() {
+	if (keyboardBufferCurrent == 0) {
+		return '\0';
+	}
+	char ret = keyboardBuffer[keyboardBufferCurrent];
+	keyboardBuffer[keyboardBufferCurrent] = '\0';
+	keyboardBufferCurrent--;
+	return ret;
+}
 void keyboardIRQ(registers_t regs) {
 	int scancode = 0;
 	for (uint16_t i = 0; i < 1000; i++) {

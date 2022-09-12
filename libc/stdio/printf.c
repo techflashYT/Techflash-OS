@@ -73,6 +73,10 @@ int printf(const char* format, ...) {
 								format++;
 								break;
 					}
+				case 'u':
+					ret += puts(itoa(va_arg(args, unsigned int), itoaBuf, 10));
+					format++;
+					break;
 				case 's':
 					ret += puts(va_arg(args, char*));
 					format++;

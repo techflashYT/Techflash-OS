@@ -57,7 +57,6 @@ Error: "
 	utoa(regs.rdi, rdi, 16);
 	padNumTo(rdi, 16);
 	utoa(regs.intNo, intNo, 16);
-	BREAK
 	padNumTo(intNo, 16);
 	printf (
 		"%s\r\n"

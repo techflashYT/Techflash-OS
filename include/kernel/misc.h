@@ -1,9 +1,11 @@
 #include <stdint.h>
 #include <kernel/hardware/CPU/regs.h>
+
 #define BREAK \
 asm volatile (\
 	"xchgw %bx, %bx\n"\
 );
+
 #define DUMPREGS \
 register uint64_t rax asm("rax");\
 register uint64_t rbx asm("rbx");\
