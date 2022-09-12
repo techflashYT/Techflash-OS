@@ -79,8 +79,8 @@ void _start() {
 		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		initPIT(60);
 		// Disable PIT interrupt via PIC because for some reason it's busted
-		IRQSetMask(0, false);
-		IRQSetMask(8, false);
+		IRQSetMask(0, true);
+		IRQSetMask(8, true);
 		// Enable keyboard interrupt via PIC
 		IRQSetMask(1, true);
 		IRQSetMask(9, true);

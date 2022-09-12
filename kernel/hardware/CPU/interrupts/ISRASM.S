@@ -1,6 +1,8 @@
 .section .data
 .global ISRStub
 .type ISRStub, @function
+.global sendEOI
+.type sendEOI, @function
 __temporaryStackPointer:
 	.space 1*8
 .section .text
@@ -101,7 +103,6 @@ ISRCommonStubNoErr:
 ISRCommonStubErr:
 	cld
 	PUSHALL
-	xchgw %bx, %bx
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 	mov %rsp, %r12
 	andq $-16, %rsp # Align stack to 16 bytes
@@ -120,6 +121,8 @@ ISRCommonStubErr:
 	mov %ax, %fs
 	mov %ax, %gs
 	
+	call sendEOI
+
 	POPALL
 	add $16, %rsp
 	iretq

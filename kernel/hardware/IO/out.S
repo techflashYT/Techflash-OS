@@ -14,3 +14,4 @@ outb:
 	mov %esi, %eax
 	mov %edi, %edx
 	outb %al, %dx
+	ret
