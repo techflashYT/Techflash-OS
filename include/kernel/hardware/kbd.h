@@ -14,4 +14,5 @@ typedef struct {
 } __keyboard_t;
 extern __keyboard_t keyboard;
 char keyboardBufferPop();
+void setKeyboardInterruptState(uint8_t PS2Port, bool state);
 #endif

@@ -48,3 +48,4 @@ PICInit:
 	movb $0,%al
 	outb %al, $PIC_1_DATA
 	outb %al, $PIC_2_DATA
+	ret

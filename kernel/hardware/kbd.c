@@ -43,6 +43,15 @@ void keyboardIRQ(registers_t regs) {
 void keyboardInit() {
 	registerInterruptHandler(IRQ1, &keyboardIRQ);
 }
+void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
+	if (PS2Port == 0) {
+		outb(0x64, (uint8_t)(0xA7 + state));
+	}
+	else {
+		DUMPREGS
+		panic("setKeyboardInterruptState(): Called with invalid PS2 Port number\r\n       or with port 2 which is unsupported", regs);
+	}
+}
 uint8_t valueToSet;
 void __keyboardStartSetLED();
 uint8_t __keyboardGetAll();

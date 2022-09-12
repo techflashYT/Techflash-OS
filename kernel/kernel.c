@@ -33,6 +33,8 @@ void keyboardInit();
  * Entry point, called by BOOTBOOT Loader *
  ******************************************/
 void _start() {
+	// Disable interrupts during setup
+	asm volatile ("cli");
 	/*** NOTE: this code runs on all cores in parallel ***/
 	int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;
@@ -40,8 +42,6 @@ void _start() {
 
 
 	if(s) {
-		// Disable interrupts during setup
-		asm volatile ("cli");
 		SSEInit();
 		__initThings();
 		// Say that the kernel is loading and to please wait.
@@ -50,7 +50,6 @@ void _start() {
 		printf("%d.%d.%d ", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
 		kernTTY.color = 0xAAAAAA;
 		puts("Loading...\r\n");
-
 		env = handleEnv();
 		// if (env.experimental.progressBarBoot) {
 		boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
@@ -58,17 +57,21 @@ void _start() {
 		// Initialize the 8259 Programmable Interrupt Controller
 		PICInit();
 
-		
-		
 		// Initialize the Global Descriptor Table
 		GDTInit();
+
 		boot.progressBar.update(10);
-		// Initializ/e the Interrupt Descriptor Table
+
+		// Initialize the Interrupt Descriptor Table
 		IDTInit();
+
 		// Init the keyboard driver
 		keyboardInit();
+
+		setKeyboardInterruptState(0, false);
 		// Initialize some exception handlers
 		initExceptions();
+
 		boot.progressBar.update(20);
 		boot.progressBar.update(30);
 		for (uint8_t i = 30; i < 99; i++) {
@@ -76,7 +79,6 @@ void _start() {
 			// sleep(2000);
 		}
 		// Initialize the PIT to 60hz
-		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		initPIT(60);
 		// Disable PIT interrupt via PIC because for some reason it's busted
 		IRQSetMask(0, true);
@@ -84,7 +86,10 @@ void _start() {
 		// Enable keyboard interrupt via PIC
 		IRQSetMask(1, true);
 		IRQSetMask(9, true);
+
+		setKeyboardInterruptState(0, true);
 		// Now the interrupts are ready, enable them
+		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		asm volatile ("sti");
 	}
 	while (true) {
