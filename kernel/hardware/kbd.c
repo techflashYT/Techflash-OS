@@ -9,14 +9,45 @@
 #include <kernel/panic.h>
 #include <kernel/misc.h>
 #include <stdint.h>
+#include <string.h>
+#include <kernel/tty.h>
 char keyboardBuffer[256];
 uint8_t keyboardBufferCurrent = 0;
+char *nextKey;
+char scancodes[] = {0xFF,
+	0xFF, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0xFF,
+	0xFF
+};
 char kbdScancodeToASCII(uint8_t scancode) {
-	if (scancode == 0) {
-		DUMPREGS;
-		panic("oh shit keyboard is bad", regs);
+	char key;
+	if (scancode > 0x0F) {
+		return 0x00;
 	}
-	return 'a';
+	key = scancodes[scancode];
+	if ((uint8_t)key == (uint8_t)0xFF) {
+		if (scancode == 0x00) {
+			return 0x0;
+		}
+		else if (scancode == 0x01) {
+			nextKey = "ESC";
+			return 0xFF;
+		}
+		else if (scancode == 0x0E) {
+			kernTTY.cursorX--;
+			putchar(' ');
+			kernTTY.cursorX--;
+			return 0x0;
+		}
+		else if (scancode == 0x0F) {
+			nextKey = "Tab";
+			return 0xFF;
+		}
+	}
+	return key;
+}
+char *kbdGetLastSpecialKey() {
+	nextKey = "\0\0\0";
+	return nextKey;
 }
 char keyboardBufferPop() {
 	if (keyboardBufferCurrent == 0) {
@@ -27,8 +58,9 @@ char keyboardBufferPop() {
 	keyboardBufferCurrent--;
 	return ret;
 }
-void keyboardIRQ(registers_t regs) {
+void keyboardIRQ(registers_t  *regs) {
 	int scancode = 0;
+	int key = 0;
 	for (uint16_t i = 0; i < 1000; i++) {
         // Check if scancode is ready
         if ((inb(0x64) & 1) == 0) {
@@ -38,9 +70,15 @@ void keyboardIRQ(registers_t regs) {
         scancode = inb(0x60);
         break;
     }
-	keyboardBuffer[keyboardBufferCurrent++] = kbdScancodeToASCII(scancode);
+	key = kbdScancodeToASCII(scancode);
+	kernTTY.cursorX = 0;
+	kernTTY.cursorY = 5;
+	printf("Keyboard IRQ!  Key: %c\r\nScancode: 0x%x", key, scancode);
+	keyboardBuffer[keyboardBufferCurrent++] = key;
 }
 void keyboardInit() {
+	nextKey = "\0\0\0";
+	memset(keyboardBuffer, '\0', 256);
 	registerInterruptHandler(IRQ1, &keyboardIRQ);
 }
 void setKeyboardInterruptState(uint8_t PS2Port, bool state) {

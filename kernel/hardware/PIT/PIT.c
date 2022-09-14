@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <kernel/misc.h>
-uint32_t tick = 0;
+uint32_t PITTick = 0;
 void timerCallback(registers_t *regs) {
-	tick++;
+	PITTick++;
 }
 void initPIT(uint32_t frequency) {
 	// Register timer callback

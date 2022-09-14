@@ -4,7 +4,6 @@
 #include <external/bootboot.h>
 #include <stdbool.h>
 #include <stdio.h>
-char __kernTTY_buffer[32767] = "";
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
@@ -39,10 +38,3 @@ void __kernTTY_clear() {
 	}
 }
 #pragma GCC diagnostic pop
-void updateScreen(const char* buffer) {
-	// Clear screen
-	
-	__kernTTY_clear();
-	// Draw text
-	puts(buffer);
-}

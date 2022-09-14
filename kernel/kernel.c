@@ -44,6 +44,7 @@ void _start() {
 	if(s) {
 		SSEInit();
 		__initThings();
+		keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);;
 		// Say that the kernel is loading and to please wait.
 		puts("Techflash OS v");
 		kernTTY.color = vga.colors.cyan + 0x002020;
@@ -92,14 +93,21 @@ void _start() {
 		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		asm volatile ("sti");
 	}
+	char userInput = '\0';
 	while (true) {
+		kernTTY.cursorX = 0;
+		kernTTY.cursorY = 4;
 		// Main kernel loop
-		char userInput = keyboardBufferPop();
-		if (userInput != '\0') {
-			putchar(keyboardBufferPop());
+		char newUserInput = keyboardBufferPop();
+		if ((uint8_t)userInput == 0xFF) {
+			// Special key
+			printf("%s\r\n", kbdGetLastSpecialKey());
 		}
-		// Update screen using text buffer in kernTTY.buffer
-		// updateScreen(kernTTY.buffer);
+		if (userInput != (char)'\0') {
+			userInput = newUserInput;
+			putchar(userInput);
+		}
+		printf("userInput: %x  \r", userInput);
 	}
 	asm volatile (
 		"cli\n"

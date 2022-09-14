@@ -15,4 +15,5 @@ typedef struct {
 extern __keyboard_t keyboard;
 char keyboardBufferPop();
 void setKeyboardInterruptState(uint8_t PS2Port, bool state);
+char *kbdGetLastSpecialKey();
 #endif
