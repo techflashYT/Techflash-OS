@@ -12,3 +12,4 @@ ioWait:
 
 	pop %dx
 	pop %ax
+	ret
