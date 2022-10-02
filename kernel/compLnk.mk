@@ -2,6 +2,7 @@ compile=\
 kernel.o \
 init.o \
 boot.o \
+memory.o \
 panic.o \
 stack.o \
 environment.o \
@@ -10,6 +11,7 @@ hardware/IO/in.o \
 hardware/IO/out.o \
 hardware/IO/wait.o \
 hardware/kbd.o \
+hardware/kbdLEDs.o \
 hardware/kbdASM.o \
 hardware/serial/serialRW.o \
 hardware/serial/serialWriteLoop.o \
@@ -44,6 +46,7 @@ link=\
 ../build/kernel/hardware/IO/out.o \
 ../build/kernel/hardware/IO/wait.o \
 ../build/kernel/hardware/kbd.o \
+../build/kernel/hardware/kbdLEDs.o \
 ../build/kernel/hardware/kbdASM.o \
 ../build/kernel/hardware/PIT/PIT.o \
 ../build/kernel/hardware/serial/serialRW.o \
@@ -59,4 +62,5 @@ link=\
 ../build/kernel/hardware/CPU/interrupts/ISR.o \
 ../build/kernel/hardware/CPU/interrupts/IRQ.o \
 ../build/kernel/hardware/CPU/interrupts/PIC.o \
-../build/kernel/font.o
+../build/kernel/font.o \
+../build/kernel/memory.o

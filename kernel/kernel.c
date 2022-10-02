@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-
+#include <string.h>
 
 #include <external/bootboot.h>
 #include <kernel/environment.h>
@@ -23,6 +23,7 @@
 #include <kernel/panic.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/kbd.h>
+
 
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;

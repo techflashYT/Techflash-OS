@@ -9,6 +9,7 @@ stdio/putchar.o \
 stdio/printf.o \
 stdlib/itoa.o \
 stdlib/utoa.o \
+stdlib/malloc.o \
 string/strlen.o \
 string/memset.o \
 string/memcpy.o \
@@ -16,7 +17,7 @@ string/strcat.o \
 string/strcpy.o \
 custom/putcAt.o \
 custom/putsNoTerminator.o \
-custom/padNumTo.o \
+custom/padNumTo.o
 
 link=\
 ../build/libc/stdio/puts.o \
@@ -24,6 +25,7 @@ link=\
 ../build/libc/stdio/printf.o \
 ../build/libc/stdlib/itoa.o \
 ../build/libc/stdlib/utoa.o \
+../build/libc/stdlib/malloc.o \
 ../build/libc/string/strlen.o \
 ../build/libc/string/memset.o \
 ../build/libc/string/memcpy.o \
@@ -31,7 +33,7 @@ link=\
 ../build/libc/string/strcpy.o \
 ../build/libc/custom/putcAt.o \
 ../build/libc/custom/putsNoTerminator.o \
-../build/libc/custom/padNumTo.o \
+../build/libc/custom/padNumTo.o
 
 outFileName=libk.a # libk.a for kernel library static library.  Not ready for hosted libc yet.
 
