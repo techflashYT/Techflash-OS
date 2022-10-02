@@ -27,6 +27,7 @@
 	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir,util}/**/*",
 	"c-cpp-flylint.flexelint.enable": false,
 	"c-cpp-flylint.clang.extraArgs": [
+		"-I./include",
 		"-std=gnu2x",
 		"-ffreestanding",
 		"-march=core2",
@@ -49,5 +50,9 @@
 		"**/lib"            : true,
 		"**/util/mkbootimg" : true,
 	},
-	"vim.useCtrlKeys": false
+	"vim.useCtrlKeys": false,
+	"cSpell.ignoreWords": [
+		"xchgw",
+		"DUMPREGS"
+	]
 }
