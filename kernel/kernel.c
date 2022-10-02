@@ -96,6 +96,7 @@ void _start() {
 		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		asm volatile ("sti");
 	}
+	puts("> ");
 	while (true) {
 		kernTTY.cursorX = 0;
 		kernTTY.cursorY = 8;
@@ -106,8 +107,7 @@ void _start() {
 			printf("%s\r\n", kbdGetLastSpecialKey());
 		}
 		if (userInput != (char)'\0') {
-			// putchar(userInput);
-			printf("userInput: %c  \r", userInput);
+			putchar(userInput);
 		}
 	}
 	asm volatile (

@@ -13,17 +13,30 @@
 #include <kernel/tty.h>
 char keyboardBuffer[256];
 uint8_t keyboardBufferCurrent = 0;
+bool isShifted = false;
 char *nextKey;
+char *lastNextKey;
+char shiftedScancodes[] = {0xFF,
+	0xFF, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0xFF,
+	0xFF, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0xFF,
+	0xFF, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~', 0xFF
+};
 char scancodes[] = {0xFF,
 	0xFF, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0xFF,
-	0xFF
+	0xFF, 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0xFF,
+	0xFF, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 0xFF
 };
 char kbdScancodeToASCII(uint8_t scancode) {
 	char key;
 	if (scancode > 0x0F) {
 		return 0x00;
 	}
-	key = scancodes[scancode];
+	if (!isShifted) {
+		key = shiftedScancodes[scancode];
+	}
+	else {
+		key = scancodes[scancode];
+	}
 	if ((uint8_t)key == (uint8_t)0xFF) {
 		if (scancode == 0x00) {
 			return 0x0;
@@ -32,6 +45,7 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			nextKey = "ESC";
 			return 0xFF;
 		}
+		// Backspace
 		else if (scancode == 0x0E) {
 			kernTTY.cursorX--;
 			putchar(' ');
@@ -42,12 +56,25 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			nextKey = "Tab";
 			return 0xFF;
 		}
+		else if (scancode == 0x1C) {
+			nextKey = "Ent";
+			return 0xFF;
+		}
+		else if (scancode == 0x1D) {
+			nextKey = "LCt";
+			return 0xFF;
+		}
+		else if (scancode == 0x36) {
+			isShifted = true;
+			return 0x00;
+		}
 	}
 	return key;
 }
 char *kbdGetLastSpecialKey() {
+	lastNextKey = nextKey;
 	nextKey = "\0\0\0";
-	return nextKey;
+	return lastNextKey;
 }
 char keyboardBufferPop() {
 	if (keyboardBufferCurrent == 0) {
