@@ -11,7 +11,7 @@
 void padNumTo(char *src, uint8_t padding);
 bool alreadyPanicing = false;
 bool mentionDualPanic = false;
-void panic(const char* message, registers_t regs) {
+void panic(const char* message, registers_t *regs) {
 	if (alreadyPanicing) {
 		mentionDualPanic = true;
 		return;
@@ -21,7 +21,6 @@ void panic(const char* message, registers_t regs) {
 	kernTTY.cursorY = 0;
 	kernTTY.setBackground(0x0062A8); // light blue
 	kernTTY.color = vga.colors.white;
-	char itoaBuf[32];
 
 	puts(
 "Techflash OS has run into a problem it couldn't handle and needs to restart.\r\n\
@@ -40,23 +39,23 @@ Error: "
 	char rdi[17];
 	char intNo[17];
 
-	utoa(regs.rax, rax, 16);
+	utoa(regs->rax, rax, 16);
 	padNumTo(rax, 16);
-	utoa(regs.rbx, rbx, 16);
+	utoa(regs->rbx, rbx, 16);
 	padNumTo(rbx, 16);
-	utoa(regs.rcx, rcx, 16);
+	utoa(regs->rcx, rcx, 16);
 	padNumTo(rcx, 16);
-	utoa(regs.rdx, rdx, 16);
+	utoa(regs->rdx, rdx, 16);
 	padNumTo(rdx, 16);
-	utoa(regs.rbp, rbp, 16);
+	utoa(regs->rbp, rbp, 16);
 	padNumTo(rbp, 16);
-	utoa(regs.userRsp, rsp, 16);
+	utoa(regs->userRsp, rsp, 16);
 	padNumTo(rsp, 16);
-	utoa(regs.rsi, rsi, 16);
+	utoa(regs->rsi, rsi, 16);
 	padNumTo(rsi, 16);
-	utoa(regs.rdi, rdi, 16);
+	utoa(regs->rdi, rdi, 16);
 	padNumTo(rdi, 16);
-	utoa(regs.intNo, intNo, 16);
+	utoa(regs->intNo, intNo, 16);
 	padNumTo(intNo, 16);
 	printf (
 		"%s\r\n"
