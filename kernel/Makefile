@@ -2,7 +2,7 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fno-stack-protector -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-strong -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) -Werror=stack-usage=128
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack

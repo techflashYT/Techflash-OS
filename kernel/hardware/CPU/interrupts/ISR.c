@@ -35,7 +35,7 @@ void ISRHandler(registers_t* regs) {
 		handler(regs);
 	}
 	else {
-		panic("Unhandled Interrupt", *regs);
+		panic("Unhandled Interrupt", regs);
 	}
 }
 void registerInterruptHandler(uint8_t n, isr_t handler) {

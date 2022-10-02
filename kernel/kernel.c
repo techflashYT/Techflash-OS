@@ -1,11 +1,13 @@
 /*
 	Original version Copyright 2017 - 2021 bzt (bztsrc@gitlab)
 	as part of the 'bootboot' repository on GitLab.
-	Original file availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/kernel.c
+	Original file available at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/kernel.c
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
+
 
 #include <external/bootboot.h>
 #include <kernel/environment.h>
@@ -32,6 +34,7 @@ void keyboardInit();
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
  ******************************************/
+extern char keyboardBuffer[256];
 void _start() {
 	// Disable interrupts during setup
 	asm volatile ("cli");
@@ -44,7 +47,7 @@ void _start() {
 	if(s) {
 		SSEInit();
 		__initThings();
-		keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);;
+		keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
 		// Say that the kernel is loading and to please wait.
 		puts("Techflash OS v");
 		kernTTY.color = vga.colors.cyan + 0x002020;
@@ -93,21 +96,19 @@ void _start() {
 		printf("INTERRUPTS ARE BEING ENABLED!\r\n");
 		asm volatile ("sti");
 	}
-	char userInput = '\0';
 	while (true) {
 		kernTTY.cursorX = 0;
-		kernTTY.cursorY = 4;
+		kernTTY.cursorY = 8;
 		// Main kernel loop
-		char newUserInput = keyboardBufferPop();
+		char userInput = keyboardBufferPop();
 		if ((uint8_t)userInput == 0xFF) {
 			// Special key
 			printf("%s\r\n", kbdGetLastSpecialKey());
 		}
 		if (userInput != (char)'\0') {
-			userInput = newUserInput;
-			putchar(userInput);
+			// putchar(userInput);
+			printf("userInput: %c  \r", userInput);
 		}
-		printf("userInput: %x  \r", userInput);
 	}
 	asm volatile (
 		"cli\n"

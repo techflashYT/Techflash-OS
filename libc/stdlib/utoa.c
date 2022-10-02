@@ -7,7 +7,7 @@ char* utoa(unsigned long value, volatile char* result, int base) {
 
 	if (base < 2 || base > 36) {
 		*result = '\0';
-		return result;
+		return (char *)result;
 	}
 
 	size_t charc = 0;
@@ -26,6 +26,6 @@ char* utoa(unsigned long value, volatile char* result, int base) {
 
 	result[charc] = '\0';
 	
-	return result;
+	return (char *)result;
 }
 

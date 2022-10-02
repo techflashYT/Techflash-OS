@@ -9,23 +9,14 @@ asm volatile (\
 #define DUMPREGS \
 _Pragma("GCC diagnostic push")\
 _Pragma("GCC diagnostic ignored \"-Wuninitialized\"")\
-register uint64_t rax asm("rax");\
-register uint64_t rbx asm("rbx");\
-register uint64_t rcx asm("rcx");\
-register uint64_t rdx asm("rdx");\
-register uint64_t rbp asm("rbp");\
-register uint64_t rsp asm("rsp");\
-register uint64_t rsi asm("rsi");\
-register uint64_t rdi asm("rdi");\
-registers_t regsTemp = {\
-	.rax = rax,\
-	.rbx = rbx,\
-	.rcx = rcx,\
-	.rdx = rdx,\
-	.rbp = rbp,\
-	.userRsp = rsp,\
-	.rsi = rsi,\
-	.rdi = rdi \
-};\
-registers_t *regs = &regsTemp;
-_Pragma("GCC diagnostic pop")\
+extern registers_t regsDump;\
+asm("movq %%rax, %0\r\n" : "=r" (regsDump.rax) : );\
+asm("movq %%rbx, %0\r\n" : "=r" (regsDump.rbx) : );\
+asm("movq %%rcx, %0\r\n" : "=r" (regsDump.rcx) : );\
+asm("movq %%rdx, %0\r\n" : "=r" (regsDump.rdx) : );\
+asm("movq %%rdi, %0\r\n" : "=r" (regsDump.rdi) : );\
+asm("movq %%rsi, %0\r\n" : "=r" (regsDump.rsi) : );\
+asm("movq %%rsp, %0\r\n" : "=r" (regsDump.userRsp) : );\
+asm("movq %%rbp, %0\r\n" : "=r" (regsDump.rbp) : );\
+registers_t *regs = &regsDump;\
+_Pragma("GCC diagnostic pop")

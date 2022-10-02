@@ -4,8 +4,11 @@
 #include <kernel/environment.h>
 #include <kernel/boot.h>
 #include <kernel/graphics.h>
+#include <kernel/hardware/CPU/regs.h>
 
 #include <stdint.h>
+
+registers_t regsDump;
 extern void __kernTTY_init();
 extern void __kernTTY_setBackground(const uint32_t color);
 _kernTTY_t kernTTY;

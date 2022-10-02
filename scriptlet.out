@@ -1,0 +1,6 @@
++ /usr/sbin/alternatives --install /usr/bin/cdrecord cdrecord /usr/bin/xorrecord 50 --slave /usr/share/man/man1/cdrecord.1.gz cdrecord-cdrecordman /usr/share/man/man1/xorrecord.1.gz
++ /usr/sbin/alternatives --install /usr/bin/mkisofs mkisofs /usr/bin/xorrisofs 50 --slave /usr/share/man/man1/mkisofs.1.gz mkisofs-mkisofsman /usr/share/man/man1/xorrisofs.1.gz
++ update-mime-database -n /usr/share/mime
++ update-desktop-database
++ '[' -x /usr/bin/systemd-run -a -x /usr/bin/systemctl ']'
++ /usr/bin/systemd-run /usr/bin/systemctl start man-db-cache-update

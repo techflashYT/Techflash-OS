@@ -29,56 +29,56 @@ Please give the following information in the bug report:\r\n\
 Error: "
 	); // Puts is slightly faster here since there's no need to check for format specifiers
 
-	char rax[17];
-	char rbx[17];
-	char rcx[17];
-	char rdx[17];
-	char rbp[17];
-	char rsp[17];
-	char rsi[17];
-	char rdi[17];
-	char intNo[17];
+	char reg1[17];
+	char reg2[17];
+	char reg3[17];
 
-	utoa(regs->rax, rax, 16);
-	padNumTo(rax, 16);
-	utoa(regs->rbx, rbx, 16);
-	padNumTo(rbx, 16);
-	utoa(regs->rcx, rcx, 16);
-	padNumTo(rcx, 16);
-	utoa(regs->rdx, rdx, 16);
-	padNumTo(rdx, 16);
-	utoa(regs->rbp, rbp, 16);
-	padNumTo(rbp, 16);
-	utoa(regs->userRsp, rsp, 16);
-	padNumTo(rsp, 16);
-	utoa(regs->rsi, rsi, 16);
-	padNumTo(rsi, 16);
-	utoa(regs->rdi, rdi, 16);
-	padNumTo(rdi, 16);
-	utoa(regs->intNo, intNo, 16);
-	padNumTo(intNo, 16);
+
+	utoa(regs->rax, reg1, 16);
+	padNumTo(reg1, 16);
+	utoa(regs->rbx, reg2, 16);
+	padNumTo(reg2, 16);
+	utoa(regs->rcx, reg3, 16);
+	padNumTo(reg3, 16);
 	printf (
 		"%s\r\n"
 		"CPU Registers:\r\n"
 		"    RAX: 0x%s\r\n"
 		"    RBX: 0x%s\r\n"
-		"    RCX: 0x%s\r\n"
+		"    RCX: 0x%s\r\n",
+		message,
+		reg1,
+		reg2,
+		reg3
+	);
+	utoa(regs->rdx, reg1, 16);
+	padNumTo(reg1, 16);
+	utoa(regs->rbp, reg2, 16);
+	padNumTo(reg2, 16);
+	utoa(regs->userRsp, reg3, 16);
+	padNumTo(reg3, 16);
+	
+	printf (
 		"    RDX: 0x%s\r\n"
 		"    RBP: 0x%s\r\n"
-		"    RSP: 0x%s\r\n"
+		"    RSP: 0x%s\r\n",
+		reg1,
+		reg2,
+		reg3
+	);
+	utoa(regs->rsi, reg1, 16);
+	padNumTo(reg2, 16);
+	utoa(regs->rdi, reg2, 16);
+	padNumTo(reg2, 16);
+	utoa(regs->intNo, reg3, 16);
+	padNumTo(reg3, 16);
+	printf (
 		"    RSI: 0x%s\r\n"
 		"    RDI: 0x%s\r\n"
 		"    Interrupt Number: 0x%s\r\n",
-		message,
-		rax,
-		rbx,
-		rcx,
-		rdx,
-		rbp,
-		rsp,
-		rsi,
-		rdi,
-		intNo
+		reg1,
+		reg2,
+		reg3
 	);
 	if (mentionDualPanic) {
 		puts("Additionally, an error has occurred during the printing of this message.\r\n");

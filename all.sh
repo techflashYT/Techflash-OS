@@ -2,7 +2,7 @@
 if [ "$1" != "--no-pull" ]; then
 	git pull
 fi
-if ! ( command -v grub-mkrescue > /dev/null || ! command -v grub2-mkrescue > /dev/null ); then
+if ! ( command -v grub-mkrescue > /dev/null || command -v grub2-mkrescue > /dev/null ); then
 	echo "Uh oh!  Looks like you don't have grub(2)-mkrescue and xorriso!  These are required to create the bootable ISO image."
 	exit 1
 fi

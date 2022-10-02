@@ -58,7 +58,7 @@ char keyboardBufferPop() {
 	keyboardBufferCurrent--;
 	return ret;
 }
-void keyboardIRQ(registers_t  *regs) {
+void keyboardIRQ(registers_t *regs) {
 	int scancode = 0;
 	int key = 0;
 	for (uint16_t i = 0; i < 1000; i++) {
@@ -73,7 +73,7 @@ void keyboardIRQ(registers_t  *regs) {
 	key = kbdScancodeToASCII(scancode);
 	kernTTY.cursorX = 0;
 	kernTTY.cursorY = 5;
-	printf("Keyboard IRQ!  Key: %c\r\nScancode: 0x%x", key, scancode);
+	// printf("Keyboard IRQ!  Key: %c\r\nScancode: 0x%x  \r\n", key, scancode);
 	keyboardBuffer[keyboardBufferCurrent++] = key;
 }
 void keyboardInit() {

@@ -27,6 +27,9 @@
 	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir,util}/**/*",
 	"c-cpp-flylint.flexelint.enable": false,
 	"c-cpp-flylint.clang.extraArgs": [
+		"-DCONFIG_KERN_VERSION_MAJOR=0",
+		"-DCONFIG_KERN_VERSION_MINOR=0",
+		"-DCONFIG_KERN_VERSION_PATCH=6",
 		"-I./include",
 		"-std=gnu2x",
 		"-ffreestanding",
@@ -53,6 +56,17 @@
 	"vim.useCtrlKeys": false,
 	"cSpell.ignoreWords": [
 		"xchgw",
-		"DUMPREGS"
+		"DUMPREGS",
+		"bootloader",
+		"bootboot",
+		"bztsrc",
+		"scancode",
+		"scancodes",
+		"cppcheck",
+		"scanline",
+		"NUMLOCK",
+		"Techflash",
+		"Panicing",
+		"utoa"
 	]
 }

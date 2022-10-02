@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO: Make this less trash
 CONFIGURE_VERSION=0.0.5
 TFOS_VERSION_MAJOR=0
 TFOS_VERSION_MINOR=1
