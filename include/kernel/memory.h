@@ -106,7 +106,7 @@ struct S_MEMORY_BUCKET {
 }
 
 
-#define __malloc(s)      kmalloc((s), 1, ~MALLOC_FLAGS_CLEAR)
+#define __malloc(s)      kmalloc((s), 1, MALLOC_FLAGS_VIRTUAL)
 #define __calloc(s)      kmalloc((s), 1, MALLOC_FLAGS_CLEAR)
 #define __amalloc(s, a)  kmalloc((s), (a), ~MALLOC_FLAGS_CLEAR)
 #define __acalloc(s, a)  kmalloc((s), (a), MALLOC_FLAGS_CLEAR)
@@ -124,6 +124,5 @@ HANDLE mallocInit(size_t size);
 
 void *kmalloc(size_t size, uint64_t alignment, uint32_t flags);
 void *realloc(void *ptr, size_t size); // The standard function.
-void free(void *ptr);   // The standard function.
 
 #endif   // MALLOC_H

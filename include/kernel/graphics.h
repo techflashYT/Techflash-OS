@@ -1,5 +1,5 @@
 #include <stdint.h>
-uint16_t readPixel(const uint16_t x, const uint16_t y);
+uint32_t readPixel(const uint16_t x, const uint16_t y);
 
 
 typedef struct {

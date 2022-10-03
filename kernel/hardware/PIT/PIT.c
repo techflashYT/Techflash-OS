@@ -10,6 +10,20 @@ uint32_t PITTick = 0;
 void timerCallback(registers_t *regs) {
 	PITTick++;
 }
+// FIXME: Sometimes takes twice as long as it should and I have no idea why
+void sleep(uint64_t ms) {
+	uint32_t oldTick = 0;
+	while (true) {
+		if (oldTick != PITTick) {
+			oldTick = PITTick;
+			ms--;
+		}
+		if (ms == 0) {
+			break;
+		}
+		asm("hlt");
+	}
+}
 void initPIT(uint32_t frequency) {
 	// Register timer callback
 	registerInterruptHandler(IRQ0, &timerCallback);

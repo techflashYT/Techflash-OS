@@ -13,7 +13,7 @@ typedef struct {
 	void (*setLED)(uint8_t led, bool value);
 } __keyboard_t;
 extern __keyboard_t keyboard;
-char keyboardBufferPop();
+char keyboardGetLastKey();
 void setKeyboardInterruptState(uint8_t PS2Port, bool state);
 char *kbdGetLastSpecialKey();
 #endif

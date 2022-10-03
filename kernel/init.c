@@ -28,6 +28,7 @@ __environment_t env;
 
 extern void __bootProgressBarUpdate(const uint8_t percent);
 extern void __bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
+extern void __bootProgressBarFadeOut();
 __boot_t boot;
 
 extern uint32_t __VGAColorBlack;
@@ -50,8 +51,9 @@ __vga vga;
 HANDLE kernelHeap = NULL;
 void __initThings() {
 	boot.percent = 0;
-	boot.progressBar.create = __bootProgressBarCreate;
-	boot.progressBar.update = __bootProgressBarUpdate;
+	boot.progressBar.create  = __bootProgressBarCreate;
+	boot.progressBar.update  = __bootProgressBarUpdate;
+	boot.progressBar.fadeOut = __bootProgressBarFadeOut;
 	// Start setting up the serial struct.
 	serial.readNext = __serialReadNext;
 	serial.write = __serialWrite;
@@ -84,5 +86,5 @@ void __initThings() {
 	vga.colors.white = __VGAColorWhite;
 
 	// TODO: We should really check how much RAM the system has and use that number rather than just assume they have 32MB and only use that.
-	mallocInit(32 * 1024 * 1024);
+	kernelHeap = mallocInit(32 * 1024 * 1024);
 }

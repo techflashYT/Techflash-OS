@@ -12,9 +12,7 @@
 #include <string.h>
 #include <kernel/tty.h>
 
-char *keyboardBuffer;
-
-uint8_t keyboardBufferCurrent = 0;
+char lastKey;
 
 bool isShifted = false;
 
@@ -35,14 +33,14 @@ char scancodes[] = {0xFF,
 
 char kbdScancodeToASCII(uint8_t scancode) {
 	char key;
-	if (scancode > 0x0F) {
+	if (scancode > 0x2A) {
 		return 0x00;
 	}
 	if (!isShifted) {
-		key = shiftedScancodes[scancode];
+		key = scancodes[scancode];
 	}
 	else {
-		key = scancodes[scancode];
+		key = shiftedScancodes[scancode];
 	}
 
 	if ((uint8_t)key == (uint8_t)0xFF) {
@@ -65,7 +63,7 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			return 0xFF;
 		}
 		else if (scancode == 0x1C) {
-			nextKey = "Ent";
+			nextKey = "\r\n";
 			return 0xFF;
 		}
 		else if (scancode == 0x1D) {
@@ -77,7 +75,7 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			return 0x00;
 		}
 	}
-
+	// printf("key: %c", key);
 	return key;
 }
 
@@ -87,15 +85,6 @@ char *kbdGetLastSpecialKey() {
 	return lastNextKey;
 }
 
-char keyboardBufferPop() {
-	if (keyboardBufferCurrent == 0) {
-		return '\0';
-	}
-	char ret = keyboardBuffer[keyboardBufferCurrent];
-	keyboardBuffer[keyboardBufferCurrent] = '\0';
-	keyboardBufferCurrent--;
-	return ret;
-}
 
 void keyboardIRQ(registers_t *regs) {
 	int scancode = 0;
@@ -113,16 +102,19 @@ void keyboardIRQ(registers_t *regs) {
     }
 	
 	key = kbdScancodeToASCII(scancode);
-	kernTTY.cursorX = 0;
-	kernTTY.cursorY = 5;
+	lastKey = key;
+	// kernTTY.cursorX = 0;
+	// kernTTY.cursorY = 5;
 	// printf("Keyboard IRQ!  Key: %c\r\nScancode: 0x%x  \r\n", key, scancode);
-	keyboardBuffer[keyboardBufferCurrent++] = key;
+}
+char keyboardGetLastKey() {
+	char ret = lastKey;
+	lastKey = 0;
+	return ret;
 }
 
 void keyboardInit() {
 	nextKey = "\0\0\0";
-	keyboardBuffer = malloc(256);
-	memset(keyboardBuffer, '\0', 256);
 	registerInterruptHandler(IRQ1, &keyboardIRQ);
 }
 

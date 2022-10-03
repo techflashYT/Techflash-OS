@@ -2,7 +2,6 @@
 #include <kernel/memory.h>
 #include <string.h>
 #include <stdio.h>
-#define MODNAME "bucket.cpp"
 
 #define PAGE_SIZE 2048
 // TODO: free function and fix busted code
@@ -48,8 +47,6 @@ void spinUnlock(spinlock_t lock) {
  */
 
 #include <kernel/memory.h>
-
-#define MODNAME "malloc.cpp"
 
 spinlock_t mallocSpinlock = 0;
 
