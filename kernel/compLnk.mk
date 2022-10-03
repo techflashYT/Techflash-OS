@@ -26,6 +26,7 @@ hardware/CPU/interrupts/ISRASM.o \
 hardware/CPU/interrupts/ISR.o \
 hardware/CPU/interrupts/IRQ.o \
 hardware/CPU/interrupts/PIC.o \
+fs/tar.o \
 hardware/PIT/PIT.o \
 graphics/debug.o \
 graphics/pixel.o \
@@ -62,5 +63,6 @@ link=\
 ../build/kernel/hardware/CPU/interrupts/ISR.o \
 ../build/kernel/hardware/CPU/interrupts/IRQ.o \
 ../build/kernel/hardware/CPU/interrupts/PIC.o \
+../build/kernel/fs/tar.o \
 ../build/kernel/font.o \
 ../build/kernel/memory.o

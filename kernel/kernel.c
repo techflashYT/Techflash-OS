@@ -113,7 +113,7 @@ void _start() {
 	sleep(250);
 	boot.progressBar.fadeOut();
 
-	puts("> ");
+	kernTTY.printPrompt();
 	while (true) {
 		// Main kernel loop
 		char userInput = keyboardGetLastKey();
@@ -125,7 +125,7 @@ void _start() {
 				puts("\r\n> ");
 			}
 		}
-		if (userInput != (char)'\0') {
+		if (userInput != (char)'\0' && (uint8_t)userInput != 0xFF) {
 			putchar(userInput);
 		}
 	}

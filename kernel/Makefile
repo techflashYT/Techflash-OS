@@ -2,7 +2,7 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-strong -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) -Werror=stack-usage=145
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-strong -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
@@ -36,7 +36,11 @@ all: $(compile)
 
 .c.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $(subst .o,.c,$@) -o ../build/kernel/$@
+fs/tar.o:
+	@echo "CC    $(subst .o,.c,$@) => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
+
 .S.o:
 	@echo "AS    $(subst .o,.S,$@) => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.S,$@) -o ../build/kernel/$@

@@ -13,6 +13,7 @@
 registers_t regsDump;
 extern void __kernTTY_init();
 extern void __kernTTY_setBackground(const uint32_t color);
+extern void __kernTTY_printPrompt();
 _kernTTY_t kernTTY;
 
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
@@ -62,6 +63,7 @@ void __initThings() {
 	// Start initializing a TTY.
 	kernTTY.init = __kernTTY_init;
 	kernTTY.setBackground = __kernTTY_setBackground;
+	kernTTY.printPrompt = __kernTTY_printPrompt;
 	kernTTY.init();
 
 	// Start setting up the keyboard struct.

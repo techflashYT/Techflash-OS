@@ -4,6 +4,8 @@
 #include <external/bootboot.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
@@ -15,6 +17,8 @@ void __kernTTY_init() {
 	kernTTY.color = 0xAAAAAA; // VGA light gray.
 	kernTTY.width = (bootboot.fb_width / font->width);
 	kernTTY.height = (bootboot.fb_height / font->height);
+	kernTTY.promptStr = malloc(256);
+	strcpy(kernTTY.promptStr, "> ");
 }
 void __kernTTY_setBackground(const uint32_t color) {
 	kernTTY.textBackground = color;
@@ -38,3 +42,8 @@ void __kernTTY_clear() {
 	}
 }
 #pragma GCC diagnostic pop
+
+void __kernTTY_printPrompt() {
+	puts(kernTTY.promptStr);
+	kernTTY.cursorAfterPromptX = 0;
+}
