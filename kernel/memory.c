@@ -2,11 +2,28 @@
 #include <kernel/memory.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <kernel/environment.h>
 #define PAGE_SIZE 2048
 // TODO: free function and fix busted code
+size_t currentMmapAddr = 0x0000000001000000;
+bool *isPageFree;
+bool isPagesFreeListReady = false;
+uint8_t pagesUsed = 0;
 void *mmap(size_t size) {
-	return (void *)0x0000000001000000;
+	if (size < 2048) {
+		size = 2048;
+	}
+	else {
+		size = (size + 7) &(-2048);
+	}
+	size_t oldMmapAddr = currentMmapAddr;
+	currentMmapAddr += size;
+
+	if (isPagesFreeListReady) {
+		
+	}
+	pagesUsed += (size / 2048);
+	return (void *)oldMmapAddr;
 }
 void mmapFree(void *ptr, size_t size) {
 	// TODO: Make this work
@@ -53,9 +70,13 @@ spinlock_t mallocSpinlock = 0;
 // initialize the heap by simply allocating a single Bucket
 //	with a single Pebble in it.	The pebble will be free.
 HANDLE mallocInit(size_t size) {
-
 	struct S_MEMORY_BUCKET *bucket = createBucket(size);
-	
+	// Allocate enough RAM to store if up to 1TB of ram is free or not,
+	// after that you're on your own.
+	isPageFree = malloc(524288 * sizeof(bool));
+	// Set the pages used by the setup to "used"
+	memset(isPageFree, false, pagesUsed * 2048);
+	memset(isPageFree + (pagesUsed * 2048), true, ((524288 * sizeof(bool)) - (pagesUsed * sizeof(bool))));
 	return bucket;
 }
 
