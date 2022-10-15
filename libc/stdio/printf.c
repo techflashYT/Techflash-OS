@@ -59,7 +59,7 @@ int printf(const char* format, ...) {
 									format++;
 									break;
 								case 'u':
-									ret += puts(itoa(va_arg(args, long long unsigned int), itoaBuf, 10));
+									ret += puts(utoa(va_arg(args, long long unsigned int), itoaBuf, 10));
 									format++;
 									break;
 							}
@@ -69,13 +69,13 @@ int printf(const char* format, ...) {
 								format++;
 								break;
 							case 'u':
-								ret += puts(itoa(va_arg(args, long unsigned int), itoaBuf, 10));
+								ret += puts(utoa(va_arg(args, long unsigned int), itoaBuf, 10));
 								format++;
 								break;
 					}
 					break;
 				case 'u':
-					ret += puts(itoa(va_arg(args, unsigned int), itoaBuf, 10));
+					ret += puts(utoa(va_arg(args, unsigned int), itoaBuf, 10));
 					format++;
 					break;
 				case 's':
@@ -88,7 +88,7 @@ int printf(const char* format, ...) {
 					ret++;
 					break;
 				case 'x':
-					ret += puts(itoa(va_arg(args, int), itoaBuf, 16));
+					ret += puts(utoa(va_arg(args, int), itoaBuf, 16));
 					format++;
 					break;
 				default:
