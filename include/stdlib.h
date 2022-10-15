@@ -8,4 +8,5 @@
 char* itoa(long value, char* result, int base);
 char* utoa(unsigned long value, volatile char* result, int base);
 void *malloc(size_t size);
+void *realloc(void *ptr, size_t size);
 void free(void *ptr);

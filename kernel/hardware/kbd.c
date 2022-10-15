@@ -22,18 +22,22 @@ char *lastNextKey;
 char shiftedScancodes[] = {0xFF,
 	0xFF, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0xFF,
 	0xFF, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0xFF,
-	0xFF, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~', 0xFF
+	0xFF, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~', 0xFF,
+	'|',  'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',0xFF, '*', 0xFF,
+	' '
 };
 
 char scancodes[] = {0xFF,
 	0xFF, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0xFF,
 	0xFF, 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0xFF,
-	0xFF, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 0xFF
+	0xFF, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 0xFF,
+	'\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',0xFF, '*', 0xFF,
+	' '
 };
 
 char kbdScancodeToASCII(uint8_t scancode) {
 	char key;
-	if (scancode > 0x2A) {
+	if (scancode > 0x39) {
 		return 0x00;
 	}
 	if (!isShifted) {

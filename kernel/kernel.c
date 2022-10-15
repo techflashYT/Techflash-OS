@@ -23,7 +23,8 @@
 #include <kernel/panic.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/kbd.h>
-
+#include <kernel/fs/tar.h>
+#include <kernel/shell.h>
 
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;
@@ -35,7 +36,7 @@ void keyboardInit();
 /******************************************
  * Entry point, called by BOOTBOOT Loader *
  ******************************************/
-uint8_t maxTasks = 10;
+uint8_t maxTasks = 11;
 float currentTasks = 0.0f;
 
 void _start() {
@@ -75,6 +76,7 @@ void _start() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
+	mallocInit((uintptr_t)0x0000000001000000);
 	// Init the keyboard driver
 	keyboardInit();
 	currentTasks += 1.0f;
@@ -110,10 +112,18 @@ void _start() {
 	asm volatile ("sti");
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+
+	parseTar();
+	currentTasks += 1.0f;
+	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	sleep(250);
 	boot.progressBar.fadeOut();
 
 	kernTTY.printPrompt();
+
+
+	char *command = malloc(512);
+	uint16_t commandStrIndex = 0;
 	while (true) {
 		// Main kernel loop
 		char userInput = keyboardGetLastKey();
@@ -122,11 +132,26 @@ void _start() {
 			char *specialKey = kbdGetLastSpecialKey();
 			if (specialKey[0] == '\r' && specialKey[1] == '\n') {
 				// Enter
-				puts("\r\n> ");
+				puts("\r\n");
+				// TODO: Handle command
+				uint8_t val = handleCommands(command);
+				if (val == 1) {
+					printf("Unknown command: \'%s\'\r\n", command);
+				}
+				memset(command, 0, 512);
+
+				if (strcmp(kernTTY.promptStr, "") == 0) {
+					DUMPREGS
+					panic("DEBUG: Prompt was overwritten!  Malloc is trashed!", regs);
+				}
+				commandStrIndex = 0;
+				kernTTY.printPrompt();
 			}
 		}
 		if (userInput != (char)'\0' && (uint8_t)userInput != 0xFF) {
 			putchar(userInput);
+			command[commandStrIndex] = userInput;
+			commandStrIndex++;
 		}
 	}
 	asm volatile (

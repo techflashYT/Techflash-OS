@@ -5,6 +5,7 @@ boot.o \
 memory.o \
 panic.o \
 stack.o \
+shell.o \
 environment.o \
 tty/tty.o \
 hardware/IO/in.o \
@@ -65,4 +66,5 @@ link=\
 ../build/kernel/hardware/CPU/interrupts/PIC.o \
 ../build/kernel/fs/tar.o \
 ../build/kernel/font.o \
+../build/kernel/shell.o \
 ../build/kernel/memory.o

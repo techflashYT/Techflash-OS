@@ -9,7 +9,8 @@ bootboot    = 0xffffffffffe00000;
 environment = 0xffffffffffe01000;
 initstack = 10240;
 PHDRS {
-  boot PT_LOAD;                                /* one single loadable segment */
+	boot PT_LOAD;                                /* one single loadable segment */
+
 }
 SECTIONS {
 	. = 0xffffffffffe02000;

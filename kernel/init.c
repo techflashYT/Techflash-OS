@@ -6,8 +6,6 @@
 #include <kernel/graphics.h>
 #include <kernel/hardware/CPU/regs.h>
 
-#include <kernel/memory.h>
-
 #include <stdint.h>
 
 registers_t regsDump;
@@ -49,7 +47,11 @@ extern uint32_t __VGAColorPink;
 extern uint32_t __VGAColorYellow;
 extern uint32_t __VGAColorWhite;
 __vga vga;
-HANDLE kernelHeap = NULL;
+
+bool heapSetUp;
+bool haveAllocated;
+unsigned char *lastValidHeapAddress;
+unsigned char *heapSpace;
 void __initThings() {
 	boot.percent = 0;
 	boot.progressBar.create  = __bootProgressBarCreate;
@@ -85,8 +87,5 @@ void __initThings() {
 	vga.colors.lred = __VGAColorLRed;
 	vga.colors.pink = __VGAColorPink;
 	vga.colors.yellow = __VGAColorYellow;
-	vga.colors.white = __VGAColorWhite;
-
-	// TODO: We should really check how much RAM the system has and use that number rather than just assume they have 32MB and only use that.
-	kernelHeap = mallocInit(32 * 1024 * 1024);
+	vga.colors.white = __VGAColorWhite;	
 }

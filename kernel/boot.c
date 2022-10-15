@@ -25,7 +25,7 @@ void __bootProgressBarFadeOut() {
 	uint32_t bracketColor = vga.colors.lgray;
 	uint32_t hashColor    = vga.colors.white;
 	while (true) {
-		sleep(5);
+		sleep(3);
 		if (hashColor != 0x00000000) {
 			hashColor -= 0x00010101;
 		}

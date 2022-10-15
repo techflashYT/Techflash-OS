@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 tarHeader_t *headers[32];
+char str1[128] = { '\0' };
+char str2[128] = { '\0' };
 typedef struct {
 	char a[128];
 	char b[128];
@@ -54,8 +56,10 @@ TwoStrings oldFullName;
 TwoStrings oldNameInPath;
 
 TwoStrings strsplit(char *str, char split) {
-	char *p1 = malloc(128);
-	char *p2 = malloc(128);
+	// TODO: after malloc is fixed: char *p1 = malloc(128);
+	// TODO: after malloc is fixed: char *p2 = malloc(128);
+	char *p1 = str1;
+	char *p2 = str2;
 	size_t i = 0;
 	int j = 0;
 	
@@ -63,13 +67,13 @@ TwoStrings strsplit(char *str, char split) {
 		p1[i] = str[i];
 	}
 	i++;
-	p1[i] = '\0';
+	p1[i - 1] = '\0';
 	for (; i < strlen(str); j++) {
 		p2[j] = str[i];
 		i++;
 	}
 	j++;
-	p2[j] = '\0';
+	p2[j - 1] = '\0';
 
 	for (int i = 0; i < 128; i++) {
 		strSplitRet.a[i] = p1[i];
@@ -96,12 +100,12 @@ void ls() {
 		if (i > 1) {
 			oldFullName   = strsplit(headers[i-1]->filename, '/');
 			oldNameInPath = strsplit(oldFullName.b, '/');    
-			if (!strcmp(oldNameInPath.a, nameInPath.a)) {
+			if (strcmp(oldNameInPath.a, nameInPath.a) != 0) {
 				printf("%s\r\n", nameInPath.a);
 			}
 		}
 		else {
-			printf("'%s'\n", nameInPath.a);
+			printf("%s\r\n", nameInPath.a);
 		}
 	}
 }

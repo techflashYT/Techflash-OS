@@ -12,6 +12,12 @@ void padNumTo(char *src, uint8_t padding);
 bool alreadyPanicing = false;
 bool mentionDualPanic = false;
 void panic(const char* message, registers_t *regs) {
+	if (mentionDualPanic) {
+		asm (
+			"cli\n"
+			"hlt\n"
+		);
+	}
 	if (alreadyPanicing) {
 		mentionDualPanic = true;
 		return;

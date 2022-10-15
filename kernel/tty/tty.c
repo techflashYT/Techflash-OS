@@ -9,6 +9,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+char promptStr[64] = { '\0' };
 void __kernTTY_init() {
 	psf2_t *font = (psf2_t*)&_binary_font_psf_start;
 	kernTTY.ready = false;
@@ -17,7 +18,8 @@ void __kernTTY_init() {
 	kernTTY.color = 0xAAAAAA; // VGA light gray.
 	kernTTY.width = (bootboot.fb_width / font->width);
 	kernTTY.height = (bootboot.fb_height / font->height);
-	kernTTY.promptStr = malloc(256);
+	// TODO: after malloc is fixed: kernTTY.promptStr = malloc(256);
+	kernTTY.promptStr = promptStr;
 	strcpy(kernTTY.promptStr, "> ");
 }
 void __kernTTY_setBackground(const uint32_t color) {
