@@ -14,8 +14,15 @@ cp bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 
 # Make initrd
 mkdir -p /tmp/initrd/sys
-cp isodir/boot/install /tmp/initrd/sys/core
-find /tmp/initrd | cpio -H crc -o | gzip > isodir/BOOTBOOT/INITRD
+printf "Please enter your password to copy temporary files\r\n"
+sudo cp -r sysroot/* /tmp/initrd/
+sudo mv /tmp/initrd/boot/tfos.elf /tmp/initrd/boot/install
+prevDir=$(pwd)
+pushd /tmp/initrd 2>&1 > /dev/null
+sudo tar -czf $prevDir/isodir/BOOTBOOT/INITRD *
+unset prevDir
+popd  2>&1 > /dev/null
+
 cat bootbootconfig > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub
 cd isodir/boot/grub
