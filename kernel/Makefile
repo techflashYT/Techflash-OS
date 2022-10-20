@@ -11,8 +11,8 @@ SHELL=/bin/bash
 include compLnk.mk
 
 
-EXPECTED_CONFIG_KERN_VERSION_MAJOR=0
-EXPECTED_CONFIG_KERN_VERSION_MINOR=1
+EXPECTED_CONFIG_KERN_VERSION_MAJOR=1
+EXPECTED_CONFIG_KERN_VERSION_MINOR=0
 EXPECTED_CONFIG_KERN_VERSION_PATCH=0
 
 include ../.config
@@ -32,14 +32,18 @@ all: $(compile)
 	@echo "Stripping Debug Symbols..."
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
+	@rm $(link)
 	@make --no-print-directory -f ../util/Makefile sysroot
 
 .c.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $(subst .o,.c,$@) -o ../build/kernel/$@
-fs/tar.o:
+panic.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $(subst .o,.c,$@) -o ../build/kernel/$@
+# fs/tar.o:
+# 	@echo "CC    $(subst .o,.c,$@) => $@"
+# 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
 .S.o:
 	@echo "AS    $(subst .o,.S,$@) => $@"

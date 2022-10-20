@@ -12,6 +12,7 @@ registers_t regsDump;
 extern void __kernTTY_init();
 extern void __kernTTY_setBackground(const uint32_t color);
 extern void __kernTTY_printPrompt();
+extern void __kernTTY_blink();
 _kernTTY_t kernTTY;
 
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
@@ -52,6 +53,8 @@ bool heapSetUp;
 bool haveAllocated;
 unsigned char *lastValidHeapAddress;
 unsigned char *heapSpace;
+
+extern char *arguments;
 void __initThings() {
 	boot.percent = 0;
 	boot.progressBar.create  = __bootProgressBarCreate;
@@ -66,6 +69,7 @@ void __initThings() {
 	kernTTY.init = __kernTTY_init;
 	kernTTY.setBackground = __kernTTY_setBackground;
 	kernTTY.printPrompt = __kernTTY_printPrompt;
+	kernTTY.blink = __kernTTY_blink;
 	kernTTY.init();
 
 	// Start setting up the keyboard struct.
@@ -87,5 +91,7 @@ void __initThings() {
 	vga.colors.lred = __VGAColorLRed;
 	vga.colors.pink = __VGAColorPink;
 	vga.colors.yellow = __VGAColorYellow;
-	vga.colors.white = __VGAColorWhite;	
+	vga.colors.white = __VGAColorWhite;
+
+	arguments = malloc(128);
 }

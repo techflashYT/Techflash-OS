@@ -6,9 +6,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <kernel/misc.h>
+#include <kernel/tty.h>
+#include <kernel/custom.h>
+#include <kernel/graphics.h>
+
+
 uint32_t PITTick = 0;
 void timerCallback(registers_t *regs) {
 	PITTick++;
+	kernTTY.blink();
 }
 // FIXME: Sometimes takes twice as long as it should and I have no idea why
 void sleep(uint64_t ms) {

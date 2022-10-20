@@ -4,8 +4,8 @@
 	"iso9660": true,
 	"initrd": {
 		"type": "tar",
-		"gzip": true,
-		"folder": "./"
+		"gzip": false,
+		"folder": "/Coding/TFOS/sysroot"
 	},
 	"partitions": [{
 		"type": "boot",

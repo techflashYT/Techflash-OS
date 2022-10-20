@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/memory.h>
+#include <stdlib.h>
 #if 0
 void testMalloc() {
 	printf("====== STARTING MALLOC TEST 1 ======\r\n");

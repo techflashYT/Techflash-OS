@@ -1,8 +1,8 @@
 #!/bin/bash
 # TODO: Make this less trash
-CONFIGURE_VERSION=0.0.5
-TFOS_VERSION_MAJOR=0
-TFOS_VERSION_MINOR=1
+CONFIGURE_VERSION=0.1.0
+TFOS_VERSION_MAJOR=1
+TFOS_VERSION_MINOR=0
 TFOS_VERSION_PATCH=0
 TFOS_VERSION=$TFOS_VERSION_MAJOR.$TFOS_VERSION_MINOR.$TFOS_VERSION_PATCH
 printf "Techflash OS Configure Script v%s starting, built for Techflash OS v%s...\r\n" $CONFIGURE_VERSION $TFOS_VERSION
@@ -32,18 +32,7 @@ else
 fi
 global() {
 	printf "======================GLOBAL=====================\r\n"
-	printf "CONFIG_BITS                    The architecture of the kernel, valid values: [32, 64], (default: 64): "
-	read -r CONFIG_BITS
-	if [ -z "$CONFIG_BITS" ]
-	then
-		CONFIG_BITS=64
-	fi
-	# Check that CONFIG_BITS is an integer equal to either 32 or 64
-	if ! [[ $CONFIG_BITS =~ ^[0-9]+$ ]] || [ $CONFIG_BITS -ne 32 ] && [ $CONFIG_BITS -ne 64 ]
-	then
-		echo "CONFIG_BITS must be an integer equal to either 32 or 64"
-		return 1
-	fi
+	
 	global_done=true
 	return 0
 }
@@ -152,20 +141,7 @@ grub() {
 }
 kernel() {
 	printf "=====================KERNEL======================\r\n"
-	printf "CONFIG_KERN_MAXARGS     Limit in chars of the length of args from GRUB, 100-65535,  (default: 65535): "
-	read -r CONFIG_KERN_MAXARGS
-	# Check if the value is blank
-	if [ -z "$CONFIG_KERN_MAXARGS" ]
-	then
-		CONFIG_KERN_MAXARGS="65535"
-	fi
-	# Check if the value is a valid number less than or equal to 65535 and not negative
-	if ! [[ "$CONFIG_KERN_MAXARGS" =~ ^[0-9]+$ ]] || [ "$CONFIG_KERN_MAXARGS" -lt 100 ] || [ "$CONFIG_KERN_MAXARGS" -gt 65535 ]
-	then
-		clear
-		echo "Invalid value. Please enter a valid number between 100 and 65535."
-		return 1
-	fi
+	
 	kernel_done=true
 	return 0
 }
@@ -187,13 +163,15 @@ What would you like to edit?\r\n\
 	read -r editChoice
 	case "$editChoice" in
 		1)
-			global
+			printf "Sorry!  This part doesn't have any configuration options yet!\r\n"
+			return 1
 			;;
 		2)
 			grub
 			;;
 		3)
-			kernel
+			printf "Sorry!  This part doesn't have any configuration options yet!\r\n"
+			return 1
 			;;
 		4)
 			printf "Sorry!  This part doesn't have any configuration options yet!\r\n"
@@ -208,12 +186,10 @@ What would you like to edit?\r\n\
 end() {
 	printf "=====================CONFIG======================\r\n"
 	cat << EOF
-CONFIG_BITS=$CONFIG_BITS
 CONFIGURE_VERSION=$CONFIGURE_VERSION
 CONFIG_KERN_VERSION_MAJOR=$TFOS_VERSION_MAJOR
 CONFIG_KERN_VERSION_MINOR=$TFOS_VERSION_MINOR
 CONFIG_KERN_VERSION_PATCH=$TFOS_VERSION_PATCH
-CONFIG_KERN_MAXARGS=$CONFIG_KERN_MAXARGS
 CONFIG_GRUB_OUTER_BG_COL=$CONFIG_GRUB_OUTER_BG_COL
 CONFIG_GRUB_OUTER_FG_COL=$CONFIG_GRUB_OUTER_FG_COL
 CONFIG_GRUB_MENU_BG_COL=$CONFIG_GRUB_MENU_BG_COL

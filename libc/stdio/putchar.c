@@ -13,11 +13,19 @@ int putchar(const int ch) {
 		kernTTY.cursorY++;
 		return '\n';
 	}
+	if (ch == '\t') { // Tab ('\t')
+		kernTTY.cursorX += 4;
+		return '\t';
+	}
+	if (kernTTY.cursorX >= kernTTY.width - 15) {
+		kernTTY.cursorX = 0;
+		kernTTY.cursorY++;
+	}
 	
 	psf2_t *font = (psf2_t*)&_binary_font_psf_start;
 	int bpl = (font->width + 7) / 8;
 	int offs = 0;
-	unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headersize + (ch > 0 && ch < font->numglyph ? ch : 0) *font->bytesperglyph;
+	unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headerSize + (ch > 0 && ch < font->numOfGlyphs ? ch : 0) *font->bytesPerGlyph;
 	int kx = kernTTY.cursorX;
 	int offsY = (font->height * (((kernTTY.cursorY * bootboot.fb_width) * 4) == 0 ? 0 : (((kernTTY.cursorY * bootboot.fb_width) * 4))));
 	
@@ -29,7 +37,7 @@ int putchar(const int ch) {
 		line = offs;
 		mask = 1 << (font->width - 1);
 		uint32_t x;
-		for(x = 0; x < font->width; x++) {
+		for (x = 0; x < font->width; x++) {
 			*((uint32_t*)((uint64_t)&fb + line)) = (((int) * glyph) & (mask)) ? kernTTY.color : kernTTY.textBackground;
 			mask >>= 1;
 			line += 4;
@@ -39,6 +47,7 @@ int putchar(const int ch) {
 		offs += bootboot.fb_scanline;
 	}
 	kernTTY.cursorX++;
+	kernTTY.cursorAfterPromptX++;
 	return ch;
 }
 #pragma GCC diagnostic pop

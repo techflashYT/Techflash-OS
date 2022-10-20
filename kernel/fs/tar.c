@@ -1,111 +1,73 @@
-#include <kernel/environment.h>
 #include <kernel/fs/tar.h>
-#include <stddef.h>
-#include <string.h>
-#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
-tarHeader_t *headers[32];
-char str1[128] = { '\0' };
-char str2[128] = { '\0' };
-typedef struct {
-	char a[128];
-	char b[128];
-} TwoStrings;
+#include <stdio.h>
+#include <string.h>
+#include <kernel/environment.h>
+#include <kernel/hardware/PIT.h> 
 
-TwoStrings strSplitRet;
-unsigned int parseTar() {
-	uint64_t initPointer = bootboot.initrd_ptr;
-	unsigned int i;
- 
-	for (i = 0; ; i++) {
-		tarHeader_t *header = (tarHeader_t *)bootboot.initrd_ptr;
-		if (strcmp(&header->filename[0], "") != 0) {
+tarHeader_t *headers[2048];
+uint64_t numHeaders = 0;
+uint64_t getSize(const char* archive) {
+	uint64_t size = 0;
+	uint64_t count = 1;
+	for (uint64_t i = 11; i > 0; i--, count *= 8) {
+		size += ((archive[i - 1] - '0') * count);
+	}
+
+	return size;
+}
+
+uint64_t parseTar(void *address) {
+	uint64_t i;
+	for (i = 0; ;i++) {
+		tarHeader_t *header = (tarHeader_t *)address;
+
+		if (header->filename[0] == '\0') {
 			break;
 		}
+		uint64_t size = getSize(header->size);
 
 		headers[i] = header;
-		bootboot.initrd_ptr += ((bootboot.initrd_size / 512) + 1) * 512;
-		
-		if (bootboot.initrd_size % 512) {
-			bootboot.initrd_ptr += 512;
+
+		address += ((size / 512) + 1) * 512;
+
+		if (size % 512) {
+			address += 512;
 		}
 	}
-	bootboot.initrd_ptr = initPointer;
+	numHeaders = i;
+	return i;
+}
+uint32_t oct2bin(unsigned char *str, uint32_t size) {
+	uint32_t i = 0;
+	unsigned char *ptr = str;
+	while (size-- > 0) {
+		i *= 8;
+		i += *ptr - '0';
+		ptr++;
+	}
 	return i;
 }
 
-
-char *readFile(char* fileToReadName) {
-	tarHeader_t *header = (tarHeader_t *)bootboot.initrd_ptr;
-
-	for (int i = 0; strcmp(headers[i]->filename, "") != 0; i++) {
-		if (strcmp(fileToReadName, headers[i]->filename) == 0) {
-			header = headers[i];
-			break;
+size_t readFile(unsigned char *archive, char *filename, char **out) {
+	unsigned char *ptr = archive;
+ 
+	while (!memcmp(ptr + 257, "ustar", 5)) {
+		int filesize = oct2bin(ptr + 0x7c, 11);
+		if (!memcmp(ptr, filename, strlen(filename) + 1)) {
+			*out = ptr + 512;
+			return filesize;
 		}
+		ptr += (((filesize + 511) / 512) + 1) * 512;
 	}
-
-	char *contents = &((char *) header)[512]; // pointer shenanigans (:
-
-	return contents;
+	return 0;
 }
-// TODO: FIX MORE HERE
-TwoStrings fullName;
-TwoStrings nameInPath;
-TwoStrings oldFullName;
-TwoStrings oldNameInPath;
-
-TwoStrings strsplit(char *str, char split) {
-	// TODO: after malloc is fixed: char *p1 = malloc(128);
-	// TODO: after malloc is fixed: char *p2 = malloc(128);
-	char *p1 = str1;
-	char *p2 = str2;
-	size_t i = 0;
-	int j = 0;
-	
-	for (; i < strlen(str) && str[i] != split; i++) {
-		p1[i] = str[i];
-	}
-	i++;
-	p1[i - 1] = '\0';
-	for (; i < strlen(str); j++) {
-		p2[j] = str[i];
-		i++;
-	}
-	j++;
-	p2[j - 1] = '\0';
-
-	for (int i = 0; i < 128; i++) {
-		strSplitRet.a[i] = p1[i];
-		strSplitRet.b[i] = p2[i];
-	}
-	free(p1);
-	free(p2);
-	return strSplitRet;
-}
-
-void ls() {
-	for (uint32_t i = 1; strcmp(headers[i]->filename, "") != 0; i++) {  
-		memset(fullName.a, 0, 128);
-		memset(fullName.b, 0, 128);
-		memset(nameInPath.a, 0, 128);
-		memset(nameInPath.b, 0, 128);
-		memset(oldFullName.a, 0, 128);
-		memset(oldFullName.b, 0, 128);
-		memset(oldNameInPath.a, 0, 128);
-
-		fullName   = strsplit(headers[i]->filename, '/');
-		nameInPath = strsplit(fullName.b, '/');
-		
-		if (i > 1) {
-			oldFullName   = strsplit(headers[i-1]->filename, '/');
-			oldNameInPath = strsplit(oldFullName.b, '/');    
-			if (strcmp(oldNameInPath.a, nameInPath.a) != 0) {
-				printf("%s\r\n", nameInPath.a);
-			}
-		}
-		else {
-			printf("%s\r\n", nameInPath.a);
-		}
+void ls(const char* dir) {
+	char *buf;
+	// memset(buf, '\0', 64);
+	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "usr/src/TechflashOS", &buf);
+	for (size_t i = 0; i < size; i++) {
+		putchar(buf[i]);
 	}
 }

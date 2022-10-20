@@ -25,6 +25,9 @@
 #include <kernel/hardware/kbd.h>
 #include <kernel/fs/tar.h>
 #include <kernel/shell.h>
+#include <kernel/memory.h>
+
+#include <kernel/custom.h>
 
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;
@@ -76,7 +79,7 @@ void _start() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
-	mallocInit((uintptr_t)0x0000000001000000);
+	mallocInit((void*)0x0000000001000000);
 	// Init the keyboard driver
 	keyboardInit();
 	currentTasks += 1.0f;
@@ -113,14 +116,15 @@ void _start() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
-	parseTar();
+	parseTar(bootboot.initrd_ptr);
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	sleep(250);
 	boot.progressBar.fadeOut();
 
 	kernTTY.printPrompt();
-
+	kernTTY.blinkingCursor = true;
+	kernTTY.cursorAfterPromptX = 0;
 
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
@@ -133,7 +137,7 @@ void _start() {
 			if (specialKey[0] == '\r' && specialKey[1] == '\n') {
 				// Enter
 				puts("\r\n");
-				// TODO: Handle command
+				command[commandStrIndex] = '\0';
 				uint8_t val = handleCommands(command);
 				if (val == 1) {
 					printf("Unknown command: \'%s\'\r\n", command);
@@ -146,6 +150,15 @@ void _start() {
 				}
 				commandStrIndex = 0;
 				kernTTY.printPrompt();
+			}
+			else if (specialKey[0] == '\b') {
+				// Backspace
+				if (kernTTY.cursorAfterPromptX != 0) {
+					putcAt(' ', kernTTY.cursorX - 1, kernTTY.cursorY, kernTTY.color);
+					kernTTY.cursorX--;
+					kernTTY.cursorAfterPromptX--;
+					commandStrIndex--;
+				}
 			}
 		}
 		if (userInput != (char)'\0' && (uint8_t)userInput != 0xFF) {

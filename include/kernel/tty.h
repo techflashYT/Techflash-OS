@@ -4,6 +4,8 @@
 #include <stdint.h>
 typedef struct {
 	bool ready;
+	bool blinkingCursor;
+	bool nextBlinkShouldBeOn;
 	uint16_t cursorX;	
 	uint16_t cursorY;
 	uint16_t cursorAfterPromptX;
@@ -17,6 +19,7 @@ typedef struct {
 	void (*init)();
 	void (*setBackground)(const uint32_t color);
 	void (*printPrompt)();
+	void (*blink)();
 } __attribute__((packed)) _kernTTY_t;
 extern _kernTTY_t kernTTY;
 #endif

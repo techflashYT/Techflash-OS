@@ -5,4 +5,6 @@ void *memset(void *b, int c, size_t len);
 char *strcat(char* restrict destination, const char* restrict source);
 char *strcpy(char* destination, const char* source);
 void *memcpy(void* destination, const void* source, size_t num);
+int memcmp(const void *s1, const void *s2, int len);
 int strcmp(const char *str1, const char *str2);
+const char* strstr(const char* haystack, const char* needle);

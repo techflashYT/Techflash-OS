@@ -11,10 +11,12 @@ stdlib/itoa.o \
 stdlib/utoa.o \
 string/strlen.o \
 string/memset.o \
+string/memcmp.o \
 string/memcpy.o \
 string/strcat.o \
 string/strcpy.o \
 string/strcmp.o \
+string/strstr.o \
 custom/putcAt.o \
 custom/putsNoTerminator.o \
 custom/padNumTo.o
@@ -27,10 +29,12 @@ link=\
 ../build/libc/stdlib/utoa.o \
 ../build/libc/string/strlen.o \
 ../build/libc/string/memset.o \
+../build/libc/string/memcmp.o \
 ../build/libc/string/memcpy.o \
 ../build/libc/string/strcat.o \
 ../build/libc/string/strcpy.o \
 ../build/libc/string/strcmp.o \
+../build/libc/string/strstr.o \
 ../build/libc/custom/putcAt.o \
 ../build/libc/custom/putsNoTerminator.o \
 ../build/libc/custom/padNumTo.o

@@ -98,6 +98,10 @@ int printf(const char* format, ...) {
 					break;
 			}
 		}
+		if (*format == '\0') {
+			va_end(args);
+			return ret;
+		}
 		putchar(*format);
 		format++;
 		ret++;

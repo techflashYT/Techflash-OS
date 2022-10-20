@@ -24,7 +24,7 @@ char shiftedScancodes[] = {0xFF,
 	0xFF, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0xFF,
 	0xFF, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~', 0xFF,
 	'|',  'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',0xFF, '*', 0xFF,
-	' '
+	' ', 0xFF, 
 };
 
 char scancodes[] = {0xFF,
@@ -32,12 +32,12 @@ char scancodes[] = {0xFF,
 	0xFF, 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0xFF,
 	0xFF, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 0xFF,
 	'\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',0xFF, '*', 0xFF,
-	' '
+	' ', 0xFF,
 };
 
 char kbdScancodeToASCII(uint8_t scancode) {
 	char key;
-	if (scancode > 0x39) {
+	if (scancode > 0x3A) {
 		return 0x00;
 	}
 	if (!isShifted) {
@@ -52,31 +52,33 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			return 0x0;
 		}
 		else if (scancode == 0x01) {
-			nextKey = "ESC";
+			strcpy(nextKey, "ESC");
 			return 0xFF;
 		}
 		// Backspace
 		else if (scancode == 0x0E) {
-			kernTTY.cursorX--;
-			putchar(' ');
-			kernTTY.cursorX--;
-			return 0x0;
+			strcpy(nextKey, "\b");
+			return 0xFF;
 		}
 		else if (scancode == 0x0F) {
-			nextKey = "Tab";
+			strcpy(nextKey, "Tab");
 			return 0xFF;
 		}
 		else if (scancode == 0x1C) {
-			nextKey = "\r\n";
+			strcpy(nextKey, "\r\n");
 			return 0xFF;
 		}
 		else if (scancode == 0x1D) {
-			nextKey = "LCt";
+			strcpy(nextKey, "LCt");
 			return 0xFF;
 		}
 		else if (scancode == 0x36) {
 			isShifted = true;
 			return 0x00;
+		}
+		else if (scancode == 0x3A) {
+			keyboard.setLED(KEYBOARD_LED_CAPSLOCK, !keyboard.getStatusLED(KEYBOARD_LED_CAPSLOCK));
+			isShifted = true;
 		}
 	}
 	// printf("key: %c", key);
@@ -91,6 +93,8 @@ char *kbdGetLastSpecialKey() {
 
 
 void keyboardIRQ(registers_t *regs) {
+	kernTTY.nextBlinkShouldBeOn = true;
+	kernTTY.blink();
 	int scancode = 0;
 	int key = 0;
 
