@@ -18,7 +18,7 @@ _kernTTY_t kernTTY;
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
 extern void __keyboardSetLED(const uint8_t led, const bool value);
 __keyboard_t keyboard;
-
+extern int __serialInit();
 extern char __serialReadNext(const uint16_t port);
 extern void __serialWrite(const uint16_t port, const char value);
 extern void __serialWriteString(const uint16_t port, const char* value);
@@ -61,20 +61,11 @@ void __initThings() {
 	boot.progressBar.update  = __bootProgressBarUpdate;
 	boot.progressBar.fadeOut = __bootProgressBarFadeOut;
 	// Start setting up the serial struct.
+	serial.init = __serialInit;
 	serial.readNext = __serialReadNext;
 	serial.write = __serialWrite;
 	serial.writeString = __serialWriteString;
-
-	// Start initializing a TTY.
-	kernTTY.init = __kernTTY_init;
-	kernTTY.setBackground = __kernTTY_setBackground;
-	kernTTY.printPrompt = __kernTTY_printPrompt;
-	kernTTY.blink = __kernTTY_blink;
-	kernTTY.init();
-
-	// Start setting up the keyboard struct.
-	keyboard.getStatusLED = __keyboardGetStatusOfLED;
-	keyboard.setLED = __keyboardSetLED;
+	serial.init();
 
 	vga.colors.black = __VGAColorBlack;
 	vga.colors.blue = __VGAColorBlue;
@@ -92,6 +83,18 @@ void __initThings() {
 	vga.colors.pink = __VGAColorPink;
 	vga.colors.yellow = __VGAColorYellow;
 	vga.colors.white = __VGAColorWhite;
+	
+	// Start initializing a TTY.
+	kernTTY.init = __kernTTY_init;
+	kernTTY.setBackground = __kernTTY_setBackground;
+	kernTTY.printPrompt = __kernTTY_printPrompt;
+	kernTTY.blink = __kernTTY_blink;
+	kernTTY.init();
+
+	// Start setting up the keyboard struct.
+	keyboard.getStatusLED = __keyboardGetStatusOfLED;
+	keyboard.setLED = __keyboardSetLED;
+
 
 	arguments = malloc(128);
 }

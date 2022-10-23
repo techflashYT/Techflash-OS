@@ -64,10 +64,11 @@ size_t readFile(unsigned char *archive, char *filename, char **out) {
 	return 0;
 }
 void ls(const char* dir) {
-	char *buf;
-	// memset(buf, '\0', 64);
-	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "usr/src/TechflashOS", &buf);
-	for (size_t i = 0; i < size; i++) {
-		putchar(buf[i]);
+	printf("dir: %s\r\n", dir);
+	for (uint64_t i = 0; i < numHeaders; i++) {
+		if (strstr(headers[i]->filename, dir) == NULL) {
+			continue;
+		}
+		printf("%s\r\n", headers[i]->filename);
 	}
 }

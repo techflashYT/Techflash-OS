@@ -35,16 +35,11 @@ void __initThings();
 void initExceptions();
 void PICInit();
 void keyboardInit();
-// cppcheck-suppress unusedFunction
-/******************************************
- * Entry point, called by BOOTBOOT Loader *
- ******************************************/
 uint8_t maxTasks = 11;
 float currentTasks = 0.0f;
 
-void _start() {
-	// Disable interrupts during setup
-	asm volatile ("cli");
+// cppcheck-suppress unusedFunction
+void kernelMain() {
 	/*** NOTE: this code runs on all cores in parallel ***/
 	int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;

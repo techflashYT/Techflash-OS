@@ -4,7 +4,10 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
+psf2_t *font;
 int putchar(const int ch) {
+	kernTTY.buffer[(kernTTY.cursorY * kernTTY.width) + kernTTY.cursorX] = ch;
+	font = (psf2_t*)&_binary_font_psf_start;
 	if (ch == '\r') { // CR ('\r')
 		kernTTY.cursorX = 0;
 		return '\r';
@@ -22,7 +25,6 @@ int putchar(const int ch) {
 		kernTTY.cursorY++;
 	}
 	
-	psf2_t *font = (psf2_t*)&_binary_font_psf_start;
 	int bpl = (font->width + 7) / 8;
 	int offs = 0;
 	unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headerSize + (ch > 0 && ch < font->numOfGlyphs ? ch : 0) *font->bytesPerGlyph;

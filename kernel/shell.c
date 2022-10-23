@@ -6,6 +6,7 @@
 #include <kernel/fs/tar.h>
 char *arguments;
 bool checkInput(const char* str1, const char* str2) {
+	arguments[0] = '\0';
 	for (uint16_t i = 0; i < (uint16_t)-1; i++) {
 		if (str1[i] == str2[i]) {
 			if (str1[i] == '\0' && str2[i] == '\0') {
@@ -14,7 +15,7 @@ bool checkInput(const char* str1, const char* str2) {
 			continue;
 		}
 		else if (str1[i] == ' ') {
-			strcpy(arguments, (str1 + i));
+			strcpy(arguments, (str1 + i + 1));
 			return true;
 		}
 		else if (str1[i] == '\0') {
@@ -26,7 +27,10 @@ bool checkInput(const char* str1, const char* str2) {
 	}
 }
 uint8_t handleCommands(const char* input) {
-	if (checkInput(input, "ver")) {
+	if (input[0] == '\0') {
+		return 0;
+	}
+	else if (checkInput(input, "ver")) {
 		printf("Techflash OS v%u.%u.%u\r\n", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
 		return 0;
 	}
@@ -47,6 +51,7 @@ Commands:\r\n\
 	}
 	else if (checkInput(input, "reboot")) {
 		CPUReset();
+		return 0;
 	}
 	return ERR_UNK_CMD;
 }

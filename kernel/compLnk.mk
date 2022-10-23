@@ -1,4 +1,5 @@
 compile=\
+entryPoint.o \
 kernel.o \
 init.o \
 reboot.o \
@@ -9,14 +10,15 @@ stack.o \
 shell.o \
 environment.o \
 tty/tty.o \
+tty/scroll.o \
+tty/blink.o \
 hardware/IO/in.o \
 hardware/IO/out.o \
 hardware/IO/wait.o \
 hardware/kbd.o \
 hardware/kbdLEDs.o \
 hardware/kbdASM.o \
-hardware/serial/serialRW.o \
-hardware/serial/serialWriteLoop.o \
+hardware/serial/serial.o \
 hardware/FPU.o \
 hardware/CPU/SSE.o \
 hardware/CPU/interrupts/GDT.o \
@@ -35,6 +37,7 @@ graphics/pixel.o \
 graphics/vga.o
 
 link=\
+../build/kernel/entryPoint.o \
 ../build/kernel/kernel.o \
 ../build/kernel/init.o \
 ../build/kernel/boot.o \
@@ -42,6 +45,8 @@ link=\
 ../build/kernel/stack.o \
 ../build/kernel/environment.o \
 ../build/kernel/tty/tty.o \
+../build/kernel/tty/blink.o \
+../build/kernel/tty/scroll.o \
 ../build/kernel/graphics/debug.o \
 ../build/kernel/graphics/pixel.o \
 ../build/kernel/graphics/vga.o \
@@ -52,8 +57,7 @@ link=\
 ../build/kernel/hardware/kbdLEDs.o \
 ../build/kernel/hardware/kbdASM.o \
 ../build/kernel/hardware/PIT/PIT.o \
-../build/kernel/hardware/serial/serialRW.o \
-../build/kernel/hardware/serial/serialWriteLoop.o \
+../build/kernel/hardware/serial/serial.o \
 ../build/kernel/hardware/CPU/SSE.o \
 ../build/kernel/hardware/FPU.o \
 ../build/kernel/hardware/CPU/interrupts/GDT.o \
