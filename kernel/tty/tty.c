@@ -19,7 +19,6 @@ void __kernTTY_init() {
 	kernTTY.width = (bootboot.fb_width / font->width);
 	kernTTY.height = (bootboot.fb_height / font->height);
 	kernTTY.promptStr = malloc(256);
-	kernTTY.buffer = malloc(sizeof(char) * ((bootboot.fb_width / font->width) * (bootboot.fb_height / font->height)));
 	strcpy(kernTTY.promptStr, "> ");
 }
 void __kernTTY_setBackground(const uint32_t color) {

@@ -15,7 +15,6 @@ typedef struct {
 	uint32_t height;
 	uint32_t index;
 	
-	char *buffer;
 	char *promptStr;
 	void (*init)();
 	void (*setBackground)(const uint32_t color);
@@ -23,6 +22,4 @@ typedef struct {
 	void (*blink)();
 } __attribute__((packed)) _kernTTY_t;
 extern _kernTTY_t kernTTY;
-
-void updateScreen(const char* buffer);
 #endif

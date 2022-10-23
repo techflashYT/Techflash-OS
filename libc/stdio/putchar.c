@@ -6,7 +6,6 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 psf2_t *font;
 int putchar(const int ch) {
-	kernTTY.buffer[(kernTTY.cursorY * kernTTY.width) + kernTTY.cursorX] = ch;
 	font = (psf2_t*)&_binary_font_psf_start;
 	if (ch == '\r') { // CR ('\r')
 		kernTTY.cursorX = 0;
