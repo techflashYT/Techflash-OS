@@ -1,18 +1,20 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 WARN   = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
 FEATURE= -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -Ofast -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
+CFLAGS = $(WARN) $(FEATURE) -nostdlib -I../include -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
 compile=\
 stdio/puts.o \
 stdio/putchar.o \
 stdio/printf.o \
+stdlib/atoi.o \
 stdlib/itoa.o \
 stdlib/utoa.o \
 string/strlen.o \
 string/memset.o \
 string/memcmp.o \
 string/memcpy.o \
+string/memmove.o \
 string/strcat.o \
 string/strcpy.o \
 string/strcmp.o \
@@ -25,12 +27,14 @@ link=\
 ../build/libc/stdio/puts.o \
 ../build/libc/stdio/putchar.o \
 ../build/libc/stdio/printf.o \
+../build/libc/stdlib/atoi.o \
 ../build/libc/stdlib/itoa.o \
 ../build/libc/stdlib/utoa.o \
 ../build/libc/string/strlen.o \
 ../build/libc/string/memset.o \
 ../build/libc/string/memcmp.o \
 ../build/libc/string/memcpy.o \
+../build/libc/string/memmove.o \
 ../build/libc/string/strcat.o \
 ../build/libc/string/strcpy.o \
 ../build/libc/string/strcmp.o \

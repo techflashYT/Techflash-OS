@@ -53,24 +53,24 @@ int printf(const char* format, ...) {
 					switch (*(format + 1)) {
 						case 'l':
 							switch (*(format + 2)) {
-								__attribute__((fallthrough)); case 'd':
+								case 'd': // %lld / %lli
 								case 'i':
 									ret += puts(itoa(va_arg(args, long long int), itoaBuf, 10));
-									format++;
+									format += 3;
 									break;
-								case 'u':
+								case 'u': // %llu
 									ret += puts(utoa(va_arg(args, long long unsigned int), itoaBuf, 10));
-									format++;
+									format += 3;
 									break;
 							}
 							__attribute__((fallthrough)); case 'd':
 							case 'i':
 								ret += puts(itoa(va_arg(args, long int), itoaBuf, 10));
-								format++;
+								format += 2;
 								break;
 							case 'u':
 								ret += puts(utoa(va_arg(args, long unsigned int), itoaBuf, 10));
-								format++;
+								format += 2;
 								break;
 					}
 					break;
@@ -98,13 +98,11 @@ int printf(const char* format, ...) {
 					break;
 			}
 		}
-		if (*format == '\0') {
-			va_end(args);
-			return ret;
+		else {
+			putchar(*format);
+			format++;
+			ret++;
 		}
-		putchar(*format);
-		format++;
-		ret++;
 	}
 	va_end(args);
 	return ret;

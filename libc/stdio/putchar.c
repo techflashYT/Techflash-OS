@@ -1,12 +1,11 @@
 #include <kernel/font.h>
 #include <kernel/environment.h>
 #include <kernel/tty.h>
+#include <kernel/hardware/IO.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-psf2_t *font;
 int putchar(const int ch) {
-	font = (psf2_t*)&_binary_font_psf_start;
 	if (ch == '\r') { // CR ('\r')
 		kernTTY.cursorX = 0;
 		return '\r';
@@ -40,10 +39,12 @@ int putchar(const int ch) {
 		uint32_t x;
 		for (x = 0; x < font->width; x++) {
 			*((uint32_t*)((uint64_t)&fb + line)) = (((int) * glyph) & (mask)) ? kernTTY.color : kernTTY.textBackground;
+			ioWait();
 			mask >>= 1;
 			line += 4;
 		}
 		*((uint32_t*)((uint64_t) &fb + line)) = kernTTY.textBackground;
+		ioWait();
 		glyph += bpl;
 		offs += bootboot.fb_scanline;
 	}

@@ -20,6 +20,7 @@ typedef struct {
 	void (*setBackground)(const uint32_t color);
 	void (*printPrompt)();
 	void (*blink)();
+	void (*scroll)(const char *numLines);
 } __attribute__((packed)) _kernTTY_t;
 extern _kernTTY_t kernTTY;
 #endif

@@ -10,3 +10,4 @@ char* utoa(unsigned long value, volatile char* result, int base);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 void free(void *ptr);
+int atoi(const char *nptr);

@@ -18,7 +18,7 @@ export BOOTDIR=/boot
 export LIBDIR=$EXEC_PREFIX/lib
 export INCLUDEDIR=$PREFIX/include
 
-export CFLAGS='-Ofast -g -mcmodel=kernel'
+export CFLAGS='-g -mcmodel=kernel'
 export CPPFLAGS=''
 export PROJECTS
 export SYSTEM_HEADER_PROJECTS

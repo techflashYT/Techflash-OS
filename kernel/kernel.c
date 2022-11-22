@@ -41,7 +41,7 @@ float currentTasks = 0.0f;
 // cppcheck-suppress unusedFunction
 void kernelMain() {
 	/*** NOTE: this code runs on all cores in parallel ***/
-	int s = bootboot.fb_scanline;
+	// int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
 
@@ -88,17 +88,12 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
 
+	serial.init();
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
 
-	// Disable PIT interrupt via PIC because for some reason it's busted
-	IRQSetMask(0, true);
-	IRQSetMask(8, true);
-	// Enable keyboard interrupt via PIC
-	IRQSetMask(1, true);
-	IRQSetMask(9, true);
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
@@ -111,7 +106,7 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
-	parseTar(bootboot.initrd_ptr);
+	parseTar((void *)bootboot.initrd_ptr);
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	sleep(250);

@@ -8,7 +8,8 @@
 #define SERIAL_PORT_COM8 0x4E8
 #include <stdint.h>
 typedef struct {
-	int (*init)();
+	bool working;
+	bool (*init)();
 	char (*readNext)(const uint16_t port);
 	void (*write)(const uint16_t port, const char value);
 	void (*writeString)(const uint16_t port, const char* value);

@@ -13,15 +13,15 @@ mv isodir/boot/tfos.elf isodir/boot/install
 cp bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 
 # Make initrd
-mkdir -p /tmp/initrd/sys
-printf "Please enter your password to copy temporary files\r\n"
-sudo cp -r sysroot/* /tmp/initrd/
-sudo mv /tmp/initrd/boot/tfos.elf /tmp/initrd/boot/install
+mkdir -p tmp/initrd/sys
+cp -r sysroot/* tmp/initrd/
+mv tmp/initrd/boot/tfos.elf tmp/initrd/boot/install
 prevDir=$(pwd)
-pushd /tmp/initrd 2>&1 > /dev/null
-sudo tar -czf $prevDir/isodir/BOOTBOOT/INITRD *
+pushd tmp/initrd > /dev/null 2>&1
+tar -czf $prevDir/isodir/BOOTBOOT/INITRD *
 unset prevDir
-popd  2>&1 > /dev/null
+popd > /dev/null 2>&1
+rm -rf tmp/initrd
 cat bootbootconfig > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub
 cd isodir/boot/grub
@@ -31,10 +31,10 @@ cat ISO_GRUB_CFG.cfg > isodir/boot/grub/grub.cfg
 cp grub_bg.png isodir/boot/bg.png
 cp font.pf2 isodir/boot/grub/fonts/unicode.pf2
 if ( command -v grub-mkrescue > /dev/null ); then
-	grub-mkrescue --stdio_sync off -o bin/TFOS_ISO.iso isodir &> /dev/null
+	grub-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
 else
 	if ( command -v grub2-mkrescue > /dev/null ); then
-		grub2-mkrescue --stdio_sync off -o bin/TFOS_ISO.iso isodir &> /dev/null
+		grub2-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
 	fi
 fi
 
@@ -62,7 +62,7 @@ fi
 # 		rm fasm.tgz
 # 		cd fasm
 # 		echo "(If a \"[sudo]\" prompt doesn't pop up, please ignore this) Please enter your password so that we can install fasm, an assembler that is required by the bootloader of this project."
-# 		sudo install -m 755 fasm /usr/bin/fasm
+# 		install -m 755 fasm /usr/bin/fasm
 # 		cd ..
 # 		rm -r fasm
 # 	fi

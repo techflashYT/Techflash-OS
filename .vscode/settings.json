@@ -3,27 +3,57 @@
 	"files.associations": {
 		"*.s": "gas",
 	},
-	"commentAnchors.tags.list": [
-		{
-			"tag": "STUB",
+	"commentAnchors.tags.anchors": {
+		"ANCHOR": {
+			"iconColor": "default",
+			"highlightColor": "#A8C023",
+			"scope": "file"
+		},
+		"TODO": {
+			"iconColor": "blue",
+			"highlightColor": "#3ea8ff",
+			"scope": "workspace"
+		},
+		"FIXME": {
+			"iconColor": "red",
+			"highlightColor": "#F44336",
+			"scope": "workspace"
+		},
+		"STUB": {
 			"iconColor": "purple",
 			"highlightColor": "#BA68C8",
-			"scope": "workspace"
+			"scope": "file"
 		},
-		{
-			"tag": "NOTE",
+		"NOTE": {
 			"iconColor": "orange",
 			"highlightColor": "#FFB300",
+			"scope": "file"
+		},
+		"REVIEW": {
+			"iconColor": "green",
+			"highlightColor": "#64DD17",
 			"scope": "workspace"
 		},
-		{
-			"tag": "SECTION",
-			"iconColor": "#000000",
-			"highlightColor": "#000000",
-			"scope": "hidden",
+		"SECTION": {
+			"iconColor": "blurple",
+			"highlightColor": "#896afc",
+			"scope": "workspace",
+			"behavior": "region",
 			"enabled": false
+		},
+		"LINK": {
+			"iconColor": "#2ecc71",
+			"highlightColor": "#2ecc71",
+			"scope": "workspace",
+			"behavior": "link"
+		},
+		"IDEA": {
+			"iconColor": "#3565ff",
+			"highlightColor": "#3565ff",
+			"scope": "workspace",
 		}
-	],
+	},
+
 	"commentAnchors.workspace.excludeFiles": "**/{.git,.vscode,bin,sysroot,out,build,isodir,util}/**/*",
 	"c-cpp-flylint.flexelint.enable": false,
 	"c-cpp-flylint.clang.extraArgs": [
@@ -44,7 +74,7 @@
 		"-I./include"
 	],
 	"c-cpp-flylint.flawfinder.enable": false,
-	"C_Cpp.errorSquiggles": "Enabled",
+	"C_Cpp.errorSquiggles": "enabled",
 	"search.exclude": {
 		"**/sysroot"        : true,
 		"**/isodir"         : true,

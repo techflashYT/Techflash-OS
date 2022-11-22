@@ -11,4 +11,12 @@ kernelStackTop:
 _start:
 	cli
 	mov $kernelStackTop, %rsp
-	call kernelMain
+	# disable serial port interrupts since I know they cause issues
+	push %rax
+	push %rdx
+	mov $0x00, %rdx
+	mov $0x3F9, %rax
+	outb %al, %dx
+	pop %rdx
+	pop %rax
+	jmp kernelMain

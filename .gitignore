@@ -12,3 +12,4 @@ sysroot
 isodir
 util/mkbootimg
 util/fasm
+tmp

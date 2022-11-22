@@ -50,7 +50,7 @@ uint32_t oct2bin(unsigned char *str, uint32_t size) {
 	return i;
 }
 
-size_t readFile(unsigned char *archive, char *filename, char **out) {
+size_t readFile(unsigned char *archive, char *filename, unsigned char **out) {
 	unsigned char *ptr = archive;
  
 	while (!memcmp(ptr + 257, "ustar", 5)) {

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <kernel/shell.h>
 #include <kernel/fs/tar.h>
+#include <kernel/tty.h>
+void CPUReset();
 char *arguments;
 bool checkInput(const char* str1, const char* str2) {
 	arguments[0] = '\0';
@@ -25,6 +27,8 @@ bool checkInput(const char* str1, const char* str2) {
 			return false;
 		}
 	}
+	// unreachable
+	return false;
 }
 uint8_t handleCommands(const char* input) {
 	if (input[0] == '\0') {
@@ -35,14 +39,12 @@ uint8_t handleCommands(const char* input) {
 		return 0;
 	}
 	else if (checkInput(input, "help")) {
-		puts (
-"\
+		puts ("\
 Commands:\r\n\
 	- `help`: You're reading it right now!\r\n\
 	- `ls`:   Lists the files in the directory\r\n\
 	- `ver`:  Prints the version of Techflash OS that you are running\r\n\
-"
-		);
+");
 		return 0;
 	}
 	else if (checkInput(input, "ls")) {
@@ -51,6 +53,10 @@ Commands:\r\n\
 	}
 	else if (checkInput(input, "reboot")) {
 		CPUReset();
+		return 0;
+	}
+	else if (checkInput(input, "scroll")) {
+		kernTTY.scroll(arguments);
 		return 0;
 	}
 	return ERR_UNK_CMD;

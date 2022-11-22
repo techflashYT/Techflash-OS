@@ -1,6 +1,6 @@
 int memcmp(const void *s1, const void *s2, int len) {
-	unsigned char *p = s1;
-	unsigned char *q = s2;
+	const unsigned char *p = s1;
+	const unsigned char *q = s2;
 	int charCompareStatus = 0;
 	// If both pointer pointing same memory block
 	if (s1 == s2) {

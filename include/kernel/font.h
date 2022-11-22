@@ -10,4 +10,5 @@ typedef struct {
 	uint32_t width;
 	uint8_t glyphs;
 } __attribute__((packed)) psf2_t;
+extern psf2_t *font;
 extern volatile unsigned char _binary_font_psf_start;

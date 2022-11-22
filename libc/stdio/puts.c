@@ -6,14 +6,14 @@
 #include <kernel/tty.h>
 
 int puts(const char *s) {
-	uint64_t len = strlen(s);
-
 	/*
 		Each iteration of this while loop prints a single character.
 	*/
-	while(*s) {
+	int len = 0;
+	while (*s) {
 		putchar(*s);
 		s++;
+		len++;
 		// kx++;
 	}
 	return len;

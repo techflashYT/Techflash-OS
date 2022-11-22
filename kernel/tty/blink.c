@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <kernel/tty.h>
 #include <kernel/graphics.h>
+#include <kernel/custom.h>
 
 // FIXME: The cursor doesn't get erased properly
 bool blink = false;

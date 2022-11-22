@@ -25,9 +25,12 @@ void padNumTo(char *src, uint8_t padding);
 bool alreadyPanicing = false;
 bool mentionDualPanic = false;
 void panic(const char* message, registers_t *regs) {
-	if (alreadyPanicing) {
-		mentionDualPanic = true;
-		return;
+	// if it's true: we already paniced, and it paniced during that as well, now it did it again, give up to avoid making this bombshell even worse.
+	if (!mentionDualPanic) {
+		if (alreadyPanicing) {
+			mentionDualPanic = true;
+			return;
+		}
 	}
 	alreadyPanicing = true;
 	kernTTY.cursorX = 0;

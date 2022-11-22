@@ -11,7 +11,6 @@
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
 void __kernTTY_init() {
-	psf2_t *font = (psf2_t*)&_binary_font_psf_start;
 	kernTTY.ready = false;
 	kernTTY.cursorX = 0;
 	kernTTY.cursorY = 0;

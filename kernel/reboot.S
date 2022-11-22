@@ -8,4 +8,5 @@ CPUReset:
 
 	mov $0xFE, %al
 	out %al, $0x64
-
+	xor %ax, %ax
+	ret

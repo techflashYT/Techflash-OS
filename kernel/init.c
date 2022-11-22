@@ -5,20 +5,22 @@
 #include <kernel/boot.h>
 #include <kernel/graphics.h>
 #include <kernel/hardware/CPU/regs.h>
-
+#include <kernel/font.h>
 #include <stdint.h>
+#include <stdlib.h> 
 
 registers_t regsDump;
 extern void __kernTTY_init();
 extern void __kernTTY_setBackground(const uint32_t color);
 extern void __kernTTY_printPrompt();
 extern void __kernTTY_blink();
+extern void __kernTTY_scroll(const char *numLines);
 _kernTTY_t kernTTY;
 
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
 extern void __keyboardSetLED(const uint8_t led, const bool value);
 __keyboard_t keyboard;
-extern int __serialInit();
+extern bool __serialInit();
 extern char __serialReadNext(const uint16_t port);
 extern void __serialWrite(const uint16_t port, const char value);
 extern void __serialWriteString(const uint16_t port, const char* value);
@@ -54,46 +56,51 @@ bool haveAllocated;
 unsigned char *lastValidHeapAddress;
 unsigned char *heapSpace;
 
+psf2_t *font;
 extern char *arguments;
 void __initThings() {
+	font = (psf2_t*)&_binary_font_psf_start;
+
 	boot.percent = 0;
 	boot.progressBar.create  = __bootProgressBarCreate;
 	boot.progressBar.update  = __bootProgressBarUpdate;
 	boot.progressBar.fadeOut = __bootProgressBarFadeOut;
 	// Start setting up the serial struct.
-	serial.init = __serialInit;
-	serial.readNext = __serialReadNext;
-	serial.write = __serialWrite;
-	serial.writeString = __serialWriteString;
-	serial.init();
+	serial.init              = __serialInit;
+	serial.readNext          = __serialReadNext;
+	serial.write             = __serialWrite;
+	serial.writeString       = __serialWriteString;
+	// serial.init();
 
-	vga.colors.black = __VGAColorBlack;
-	vga.colors.blue = __VGAColorBlue;
-	vga.colors.green = __VGAColorGreen;
-	vga.colors.cyan = __VGAColorCyan;
-	vga.colors.red = __VGAColorRed;
-	vga.colors.purple = __VGAColorPurple;
-	vga.colors.brown = __VGAColorBrown;
-	vga.colors.lgray = __VGAColorLGray;
-	vga.colors.dgray = __VGAColorDGray;
-	vga.colors.lblue = __VGAColorLBlue;
-	vga.colors.lgreen = __VGAColorLGreen;
-	vga.colors.lcyan = __VGAColorLCyan;
-	vga.colors.lred = __VGAColorLRed;
-	vga.colors.pink = __VGAColorPink;
-	vga.colors.yellow = __VGAColorYellow;
-	vga.colors.white = __VGAColorWhite;
+
+	vga.colors.black         = __VGAColorBlack;
+	vga.colors.blue          = __VGAColorBlue;
+	vga.colors.green         = __VGAColorGreen;
+	vga.colors.cyan          = __VGAColorCyan;
+	vga.colors.red           = __VGAColorRed;
+	vga.colors.purple        = __VGAColorPurple;
+	vga.colors.brown         = __VGAColorBrown;
+	vga.colors.lgray         = __VGAColorLGray;
+	vga.colors.dgray         = __VGAColorDGray;
+	vga.colors.lblue         = __VGAColorLBlue;
+	vga.colors.lgreen        = __VGAColorLGreen;
+	vga.colors.lcyan         = __VGAColorLCyan;
+	vga.colors.lred          = __VGAColorLRed;
+	vga.colors.pink          = __VGAColorPink;
+	vga.colors.yellow        = __VGAColorYellow;
+	vga.colors.white         = __VGAColorWhite;
 	
 	// Start initializing a TTY.
-	kernTTY.init = __kernTTY_init;
-	kernTTY.setBackground = __kernTTY_setBackground;
-	kernTTY.printPrompt = __kernTTY_printPrompt;
-	kernTTY.blink = __kernTTY_blink;
+	kernTTY.init             = __kernTTY_init;
+	kernTTY.setBackground    = __kernTTY_setBackground;
+	kernTTY.printPrompt      = __kernTTY_printPrompt;
+	kernTTY.blink            = __kernTTY_blink;
+	kernTTY.scroll           = __kernTTY_scroll;
 	kernTTY.init();
 
 	// Start setting up the keyboard struct.
-	keyboard.getStatusLED = __keyboardGetStatusOfLED;
-	keyboard.setLED = __keyboardSetLED;
+	keyboard.getStatusLED    = __keyboardGetStatusOfLED;
+	keyboard.setLED          = __keyboardSetLED;
 
 
 	arguments = malloc(128);
