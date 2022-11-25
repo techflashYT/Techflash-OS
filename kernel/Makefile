@@ -42,7 +42,7 @@ all: ../bin/tfos_kernel.elf
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
 ../build/kernel/panic.c: panic.c $(shell find ../include/ -type f)
 	@echo "CC    $< => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $(subst .o,.c,$@) -o $@
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $< -o $@
 # fs/tar.o:
 # 	@echo "CC    $(subst .o,.c,$@) => $@"
 # 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
