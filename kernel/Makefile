@@ -40,14 +40,14 @@ all: ../bin/tfos_kernel.elf
 ../build/kernel/%.o: %.c $(shell find ../include/ -type f)
 	@echo "CC    $< => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
-../build/kernel/panic.o: panic.c $(shell find ../include/ -type f)
+../build/kernel/panic.c: panic.c $(shell find ../include/ -type f)
 	@echo "CC    $< => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $(subst .o,.c,$@) -o $@
 # fs/tar.o:
 # 	@echo "CC    $(subst .o,.c,$@) => $@"
 # 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
-.S.o:
+../build/kernel/%.o: %.S
 	@echo "AS    $< => $@"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 clean:
