@@ -7,7 +7,8 @@ LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -stat
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 SHELL=/bin/bash
-
+vpath %.c ./
+vpath %.h ../include
 include compLnk.mk
 
 
@@ -24,7 +25,8 @@ endif
 CFLAGS += -DCONFIG_KERN_VERSION_MAJOR=$(CONFIG_KERN_VERSION_MAJOR) -DCONFIG_KERN_VERSION_MINOR=$(CONFIG_KERN_VERSION_MINOR) -DCONFIG_KERN_VERSION_PATCH=$(CONFIG_KERN_VERSION_PATCH)
 .SUFFIXES: .o .c .S
 
-all: $(compile)
+all: ../bin/tfos_kernel.elf 
+../bin/tfos_kernel.elf: $(compile)
 	@echo "Building Font..."
 	$(shell x86_64-elf-ld -r -b binary font.psf -o ../build/kernel/font.o)
 	@echo "CCLD  $(subst ../build/,,$(link)) => bin/tfos_kernel.elf"
@@ -32,22 +34,22 @@ all: $(compile)
 	@echo "Stripping Debug Symbols..."
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
-	@rm $(link)
+#@rm $(link)
 	@make --no-print-directory -f ../util/Makefile sysroot
 
-.c.o:
-	@echo "CC    $(subst .o,.c,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $(subst .o,.c,$@) -o ../build/kernel/$@
-panic.o:
-	@echo "CC    $(subst .o,.c,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $(subst .o,.c,$@) -o ../build/kernel/$@
+../build/kernel/%.o: %.c $(shell find ../include/ -type f)
+	@echo "CC    $< => $@"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
+../build/kernel/panic.o: panic.c $(shell find ../include/ -type f)
+	@echo "CC    $< => $@"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $(subst .o,.c,$@) -o $@
 # fs/tar.o:
 # 	@echo "CC    $(subst .o,.c,$@) => $@"
 # 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
 .S.o:
-	@echo "AS    $(subst .o,.S,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.S,$@) -o ../build/kernel/$@
+	@echo "AS    $< => $@"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 clean:
 	@rm -f $(link) ../bin/*.elf || true
 

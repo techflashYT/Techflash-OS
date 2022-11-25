@@ -58,7 +58,9 @@ unsigned char *heapSpace;
 
 psf2_t *font;
 extern char *arguments;
+bool timerReady;
 void __initThings() {
+	timerReady = false;
 	font = (psf2_t*)&_binary_font_psf_start;
 
 	boot.percent = 0;

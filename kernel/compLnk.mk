@@ -1,4 +1,4 @@
-compile=\
+compile=$(addprefix ../build/kernel/,\
 entryPoint.o \
 kernel.o \
 init.o \
@@ -34,43 +34,5 @@ fs/tar.o \
 hardware/PIT/PIT.o \
 graphics/debug.o \
 graphics/pixel.o \
-graphics/vga.o
-
-link=\
-../build/kernel/entryPoint.o \
-../build/kernel/kernel.o \
-../build/kernel/init.o \
-../build/kernel/boot.o \
-../build/kernel/panic.o \
-../build/kernel/stack.o \
-../build/kernel/environment.o \
-../build/kernel/tty/tty.o \
-../build/kernel/tty/blink.o \
-../build/kernel/tty/scroll.o \
-../build/kernel/graphics/debug.o \
-../build/kernel/graphics/pixel.o \
-../build/kernel/graphics/vga.o \
-../build/kernel/hardware/IO/in.o \
-../build/kernel/hardware/IO/out.o \
-../build/kernel/hardware/IO/wait.o \
-../build/kernel/hardware/kbd.o \
-../build/kernel/hardware/kbdLEDs.o \
-../build/kernel/hardware/kbdASM.o \
-../build/kernel/hardware/PIT/PIT.o \
-../build/kernel/hardware/serial/serial.o \
-../build/kernel/hardware/CPU/SSE.o \
-../build/kernel/hardware/FPU.o \
-../build/kernel/hardware/CPU/interrupts/GDT.o \
-../build/kernel/hardware/CPU/interrupts/GDTASM.o \
-../build/kernel/hardware/CPU/interrupts/IDT.o \
-../build/kernel/hardware/CPU/interrupts/IDTASM.o \
-../build/kernel/hardware/CPU/interrupts/exceptionHandler.o \
-../build/kernel/hardware/CPU/interrupts/ISRASM.o \
-../build/kernel/hardware/CPU/interrupts/ISR.o \
-../build/kernel/hardware/CPU/interrupts/IRQ.o \
-../build/kernel/hardware/CPU/interrupts/PIC.o \
-../build/kernel/fs/tar.o \
-../build/kernel/font.o \
-../build/kernel/shell.o \
-../build/kernel/memory.o \
-../build/kernel/reboot.o
+graphics/vga.o \
+)

@@ -14,7 +14,8 @@ if [ ! -f .config ]; then
 	echo "Uh oh!  Looks like never ran ./configure!  Please run ./configure and then run this script again."
 	exit 2
 fi
-./clean.sh
+rm -rf isodir
+# ./clean.sh
 if ! [ -d bin ]; then
 	make --no-print-directory -f util/Makefile builddirs
 fi

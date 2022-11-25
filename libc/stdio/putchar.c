@@ -2,6 +2,8 @@
 #include <kernel/environment.h>
 #include <kernel/tty.h>
 #include <kernel/hardware/IO.h>
+#include <kernel/hardware/PIT.h>
+extern bool timerReady;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wsign-compare"

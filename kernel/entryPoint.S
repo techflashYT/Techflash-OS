@@ -1,8 +1,8 @@
-.section .data
+.section .bss
 .global kernelStackBottom
 .global kernelStackTop
 kernelStackBottom:
-.skip 0x150000, 0
+.skip 0x150001, 0
 kernelStackTop:
 .section .text
 

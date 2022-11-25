@@ -37,7 +37,7 @@ void PICInit();
 void keyboardInit();
 uint8_t maxTasks = 11;
 float currentTasks = 0.0f;
-
+extern bool timerReady;
 // cppcheck-suppress unusedFunction
 void kernelMain() {
 	/*** NOTE: this code runs on all cores in parallel ***/
@@ -110,8 +110,8 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	sleep(250);
-	boot.progressBar.fadeOut();
-
+	timerReady = true;
+	// boot.progressBar.fadeOut();
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;
 	kernTTY.cursorAfterPromptX = 0;
@@ -132,7 +132,7 @@ void kernelMain() {
 				if (val == 1) {
 					printf("Unknown command: \'%s\'\r\n", command);
 				}
-				memset(command, 0, 512);
+				memset(command, 0, commandStrIndex); // zero out the string
 
 				if (strcmp(kernTTY.promptStr, "") == 0) {
 					DUMPREGS
