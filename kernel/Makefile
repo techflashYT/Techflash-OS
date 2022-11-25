@@ -38,17 +38,14 @@ all: ../bin/tfos_kernel.elf
 	@make --no-print-directory -f ../util/Makefile sysroot
 
 ../build/kernel/%.o: %.c $(shell find ../include/ -type f)
-	@echo "CC    $< => $@"
+	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
 ../build/kernel/panic.c: panic.c $(shell find ../include/ -type f)
-	@echo "CC    $< => $@"
+	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $< -o $@
-# fs/tar.o:
-# 	@echo "CC    $(subst .o,.c,$@) => $@"
-# 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/kernel/$@
 
 ../build/kernel/%.o: %.S
-	@echo "AS    $< => $@"
+	@echo "AS    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 clean:
 	@rm -f $(link) ../bin/*.elf || true

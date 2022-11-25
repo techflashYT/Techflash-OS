@@ -40,7 +40,7 @@ all: ../lib/$(outFileName)
 	@echo "C library ready for use with kernel."
 
 ../build/libc/%.o: %.c $(shell find ../include/ -type f)
-	@echo "CC    $< => $@"
+	@echo "CC    $< => $(subst ../build/libc/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 
 clean:
