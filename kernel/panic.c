@@ -113,9 +113,10 @@ Error: "
 	if (mentionDualPanic) {
 		puts("Additionally, an error has occurred during the printing of this message.\r\n");
 	}
-
-	asm volatile (
-		"cli\n"
-		"hlt"
-	);
+	while (true) {
+		asm volatile (
+			"cli\n"
+			"hlt"
+		);
+	}
 }

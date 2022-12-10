@@ -5,7 +5,7 @@ void zeroDivHandler(registers_t *regs) {
 	panic("(#DE) Integer Division by Zero", regs);
 }
 // 1, 3
-void debugHandler(registers_t *regs) {
+void debugHandler(__attribute__ ((unused)) registers_t *regs) {
 	// TODO: Start a kernel debugger here
 	printf("\r\nWould start a kernel debugger here but it's not implemented!\r\n");
 }

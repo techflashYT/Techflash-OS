@@ -1,5 +1,5 @@
 #include <kernel/hardware/CPU/ISR.h>
-#include "exceptions.c"
+#include <kernel/exceptions.h>
 
 void initExceptions() {
 	registerInterruptHandler(0,  &zeroDivHandler);

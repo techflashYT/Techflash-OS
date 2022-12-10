@@ -51,15 +51,13 @@ uint32_t oct2bin(unsigned char *str, uint32_t size) {
 }
 
 size_t readFile(unsigned char *archive, char *filename, unsigned char **out) {
-	unsigned char *ptr = archive;
- 
-	while (!memcmp(ptr + 257, "ustar", 5)) {
-		int filesize = oct2bin(ptr + 0x7c, 11);
-		if (!memcmp(ptr, filename, strlen(filename) + 1)) {
-			*out = ptr + 512;
+	while (!memcmp(archive + 257, "ustar", 5)) {
+		int filesize = oct2bin(archive + 0x7c, 11);
+		if (!memcmp(archive, filename, strlen(filename) + 1)) {
+			*out = archive + 512;
 			return filesize;
 		}
-		ptr += (((filesize + 511) / 512) + 1) * 512;
+		archive += (((filesize + 511) / 512) + 1) * 512;
 	}
 	return 0;
 }

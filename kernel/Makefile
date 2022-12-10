@@ -2,8 +2,8 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
-LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib  -O2 -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
+LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 SHELL=/bin/bash
@@ -25,30 +25,35 @@ endif
 CFLAGS += -DCONFIG_KERN_VERSION_MAJOR=$(CONFIG_KERN_VERSION_MAJOR) -DCONFIG_KERN_VERSION_MINOR=$(CONFIG_KERN_VERSION_MINOR) -DCONFIG_KERN_VERSION_PATCH=$(CONFIG_KERN_VERSION_PATCH)
 .SUFFIXES: .o .c .S
 
-all: ../bin/tfos_kernel.elf 
+all: ../bin/tfos_kernel.elf
 ../bin/tfos_kernel.elf: $(compile)
-	@echo "Building Font..."
-	$(shell x86_64-elf-ld -r -b binary font.psf -o ../build/kernel/font.o)
-	@echo "CCLD  $(subst ../build/,,$(link)) => bin/tfos_kernel.elf"
-	$(shell x86_64-elf-gcc $(LDFLAGS) $(link) $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?)
+	@mkdir -p ../bin
+	@echo "CCLD  $(subst ../build/,,$(compile)) => ../bin/tfos_kernel.elf"
+	@$(CC) $(LDFLAGS) $(compile) $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
 	@echo "Stripping Debug Symbols..."
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
-#@rm $(link)
+#@rm $(compile)
 	@make --no-print-directory -f ../util/Makefile sysroot
 
 ../build/kernel/%.o: %.c $(shell find ../include/ -type f)
+	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
-../build/kernel/panic.c: panic.c $(shell find ../include/ -type f)
+../build/kernel/panic.o: panic.c $(shell find ../include/ -type f)
+	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $< -o $@
-
+../build/kernel/font.o:
+	@mkdir -p $(@D)
+	@echo "Building Font..."
+	@$(LD) -r -b binary font.psf -o ../build/kernel/font.o
 ../build/kernel/%.o: %.S
+	@mkdir -p $(@D)
 	@echo "AS    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 clean:
-	@rm -f $(link) ../bin/*.elf || true
+	@rm -f $(compile) ../bin/*.elf || true
 
 softclean:
-	@rm -f $(link) || true
+	@rm -f $(compile) || true

@@ -4,7 +4,8 @@
 
 .type SSEInit,@function
 .type FPUInit,@function
-.section .data
+
+.section .bss
 SSSE3:
 .byte 0
 .section .text
@@ -19,7 +20,6 @@ SSEEnable:
 	mov %cr4, %rax
 	or $3 << 9, %ax
 	mov %rax, %cr4
-	ret
 SSECheckAdditional:
 	# Check for the rest of SSE versions that aren't garunteed with x86_64
 
@@ -89,6 +89,5 @@ SSECheckAdditional:
 		jmp .retrn
 SSEInit:
 	# Since we are running in x86_64 mode, according to the AMD64 docs, we are garunteed to have at least SSE and SSE2
-	call SSEEnable
-	call SSECheckAdditional
+	call SSEEnable # Calls SSECheckAdditional by simply continuing down.
 	ret

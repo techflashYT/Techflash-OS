@@ -1,38 +1,6 @@
-compile=$(addprefix ../build/kernel/,\
-entryPoint.o \
-kernel.o \
-init.o \
-reboot.o \
-boot.o \
-memory.o \
-panic.o \
-stack.o \
-shell.o \
-environment.o \
-tty/tty.o \
-tty/scroll.o \
-tty/blink.o \
-hardware/IO/in.o \
-hardware/IO/out.o \
-hardware/IO/wait.o \
-hardware/kbd.o \
-hardware/kbdLEDs.o \
-hardware/kbdASM.o \
-hardware/serial/serial.o \
-hardware/FPU.o \
-hardware/CPU/SSE.o \
-hardware/CPU/interrupts/GDT.o \
-hardware/CPU/interrupts/GDTASM.o \
-hardware/CPU/interrupts/IDT.o \
-hardware/CPU/interrupts/IDTASM.o \
-hardware/CPU/interrupts/exceptionHandler.o \
-hardware/CPU/interrupts/ISRASM.o \
-hardware/CPU/interrupts/ISR.o \
-hardware/CPU/interrupts/IRQ.o \
-hardware/CPU/interrupts/PIC.o \
-fs/tar.o \
-hardware/PIT/PIT.o \
-graphics/debug.o \
-graphics/pixel.o \
-graphics/vga.o \
-)
+# compile=$(addprefix ../build/kernel/,$(subst .S,.o,$(subst .psf,.o,$(subst .c,.o,$(subst ./,,$(shell find . -type f | grep -v "\.md" | grep -v "Makefile" | grep -v "\.ld" | grep -v "\.mk" | grep -v "entryPoint"))))))
+
+override compile_S   := $(shell find . -type f -name '*.S')
+override compile_c   := $(shell find . -type f -name '*.c')
+override compile_psf := $(shell find . -type f -name '*.psf')
+compile=$(addprefix ../build/kernel/,$(subst ./,,$(subst .psf,.o,$(subst .c,.o,$(subst .S,.o,$(compile_S) $(compile_c) $(compile_psf))))))

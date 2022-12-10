@@ -22,7 +22,7 @@ all: $(compile)
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/installer/$@
 
 clean:
-	@rm -f $(link) ../build/installer/*.elf || true
+	@rm -f $(compile) ../build/installer/*.elf || true
 
 softclean:
-	@rm -f $(link) || true
+	@rm -f $(compile) || true

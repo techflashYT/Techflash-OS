@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 typedef struct {
 	char filename[100];
 	char mode[8];
@@ -13,3 +14,4 @@ typedef struct {
 uint64_t getSize(const char* archive);
 uint64_t parseTar(void *address);
 void ls(const char* dir);
+size_t readFile(unsigned char *archive, char *filename, unsigned char **out);

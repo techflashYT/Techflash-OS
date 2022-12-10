@@ -15,10 +15,11 @@ cp bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 # Make initrd
 mkdir -p tmp/initrd/sys
 cp -r sysroot/* tmp/initrd/
-mv tmp/initrd/boot/tfos.elf tmp/initrd/boot/install
+cp "test" tmp/initrd/
+mv tmp/initrd/boot/tfos.elf tmp/initrd/sys/core
 prevDir=$(pwd)
 pushd tmp/initrd > /dev/null 2>&1
-tar -czf $prevDir/isodir/BOOTBOOT/INITRD *
+tar -czf $prevDir/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
 rm -rf tmp/initrd

@@ -48,7 +48,7 @@ bool __serialInit() {
 	// (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
 	outb(SERIAL_PORT_COM1 + 4, 0x0F);
 
-	__serialWriteString(SERIAL_PORT_COM1, "SERIAL TEST!!!!!!!");
+	__serialWriteString(SERIAL_PORT_COM1, "SERIAL TEST!!!!!!!\r\n");
 	return true;
 }
 int __serialReceived() {

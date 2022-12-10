@@ -1,16 +1,20 @@
+/*
 .section .bss
 .global kernelStackBottom
 .global kernelStackTop
 kernelStackBottom:
 .skip 0x150001, 0
 kernelStackTop:
+*/
 .section .text
 
+.global kernelMain
+.type kernelMain, @function
 .global _start
 .type _start, @function
 _start:
 	cli
-	mov $kernelStackTop, %rsp
+	# mov $kernelStackTop, %rsp
 	# disable serial port interrupts since I know they cause issues
 	push %rax
 	push %rdx
@@ -19,4 +23,9 @@ _start:
 	outb %al, %dx
 	pop %rdx
 	pop %rax
-	jmp kernelMain
+	call kernelMain
+	# just in case
+	.loop:
+		cli
+		hlt
+		jmp .loop

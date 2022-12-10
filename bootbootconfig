@@ -1,2 +1,2 @@
-kernel=/boot/install
+kernel=sys/core
 experimental.progressBarBoot=true

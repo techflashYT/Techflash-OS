@@ -1,22 +1,24 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <kernel/hardware/serial.h>
-void log(const char module[8], const char* message) {
-	char buffer[256] = {'\0'};
-	uint8_t endModName = (uint8_t)strlen(module);
-	for (uint16_t i = 0; i > endModName; i++) {
-		buffer[i] = message[i];
-	}
-	buffer[endModName] = ':';
-	buffer[endModName + 1] = ' ';
+void log(const char *module, const char* message) {
+	char *buffer = malloc(256);
+	buffer[0] = '[';
+	memset(buffer + 1, ' ', 8);
+	strcpy(buffer + 1, module);
+	buffer[strlen(module) + 1] = ' ';
+	buffer[9] = ']';
+	buffer[10] = ' ';
 	uint16_t endOfString = 0;
-	for (; message[endOfString] != '\0'; endOfString++) {
-		buffer[endOfString + endModName] = message[endOfString];
-	}
-	buffer[endOfString + endModName] = '\0';
+	strcpy(buffer + 11, message);
+	size_t end = strlen(buffer);
+	buffer[end] = '\r';
+	buffer[end + 1] = '\n';
+	buffer[end + 2] = '\0';
 	// Results in:
-	// {module}: {message}{NULL terminator}
+	// [{module}] {message}{newline}{NULL terminator}
 	// neatly put into the buffer.
 	serial.writeString(SERIAL_PORT_COM1, buffer);
 	/* TODO: When logLevel kernel param is implemented, use the below code:
@@ -25,4 +27,5 @@ void log(const char module[8], const char* message) {
 	}
 	*/
 	puts(buffer);
+	free(buffer);
 }

@@ -16,9 +16,6 @@ if [ ! -f .config ]; then
 fi
 rm -rf isodir
 # ./clean.sh
-if ! [ -d bin ]; then
-	make --no-print-directory -f util/Makefile builddirs
-fi
 if ! ./build.sh; then
 	sleep 0.05
 	echo "Uh oh!  Looks like something failed to build!  Please check the above output to see what went wrong."

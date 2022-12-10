@@ -1,7 +1,6 @@
 #include <stdint.h>
 uint32_t readPixel(const uint16_t x, const uint16_t y);
-
-
+void putPixel(const uint16_t x, const uint16_t y, const uint32_t value);
 typedef struct {
 	struct {
 		uint32_t black;

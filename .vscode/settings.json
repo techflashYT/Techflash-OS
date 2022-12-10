@@ -76,12 +76,13 @@
 	"c-cpp-flylint.flawfinder.enable": false,
 	"C_Cpp.errorSquiggles": "enabled",
 	"search.exclude": {
-		"**/sysroot"        : true,
-		"**/isodir"         : true,
-		"**/bin"            : true,
-		"**/build"          : true,
-		"**/lib"            : true,
-		"**/util/mkbootimg" : true,
+		"**/bin": true,
+		"**/build": true,
+		"**/isodir": true,
+		"**/lib": true,
+		"**/sysroot": true,
+		"**/tmp": true,
+		"**/util/mkbootimg": true
 	},
 	"vim.useCtrlKeys": false,
 	"cSpell.ignoreWords": [
@@ -99,5 +100,7 @@
 		"Panicing",
 		"utoa",
 		"Framebuffer"
-	]
+	],
+	"editor.suggest.snippetsPreventQuickSuggestions": false,
+	"aiXcoder.showTrayIcon": true
 }

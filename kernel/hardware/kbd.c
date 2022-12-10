@@ -92,7 +92,7 @@ char *kbdGetLastSpecialKey() {
 }
 
 
-void keyboardIRQ(registers_t *regs) {
+void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
 	kernTTY.nextBlinkShouldBeOn = true;
 	kernTTY.blink();
 	int scancode = 0;

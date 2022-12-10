@@ -51,27 +51,28 @@ int printf(const char* format, ...) {
 					break;
 				case 'l': 
 					switch (*(format + 1)) {
-						case 'l':
+						case 'l': {
 							switch (*(format + 2)) {
 								case 'd': // %lld / %lli
 								case 'i':
 									ret += puts(itoa(va_arg(args, long long int), itoaBuf, 10));
-									format += 3;
+									format++;
 									break;
 								case 'u': // %llu
 									ret += puts(utoa(va_arg(args, long long unsigned int), itoaBuf, 10));
-									format += 3;
+									format++;
 									break;
 							}
-							__attribute__((fallthrough)); case 'd':
-							case 'i':
-								ret += puts(itoa(va_arg(args, long int), itoaBuf, 10));
-								format += 2;
-								break;
-							case 'u':
-								ret += puts(utoa(va_arg(args, long unsigned int), itoaBuf, 10));
-								format += 2;
-								break;
+						}
+						__attribute__((fallthrough)); case 'd':
+						case 'i':
+							ret += puts(itoa(va_arg(args, long int), itoaBuf, 10));
+							format += 2;
+							break;
+						case 'u':
+							ret += puts(utoa(va_arg(args, long unsigned int), itoaBuf, 10));
+							format += 2;
+							break;
 					}
 					break;
 				case 'u':
@@ -88,6 +89,11 @@ int printf(const char* format, ...) {
 					ret++;
 					break;
 				case 'x':
+					ret += puts(utoa(va_arg(args, int), itoaBuf, 16));
+					format++;
+					break;
+				case 'p':
+					ret += puts("0x");
 					ret += puts(utoa(va_arg(args, int), itoaBuf, 16));
 					format++;
 					break;

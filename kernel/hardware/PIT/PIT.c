@@ -12,7 +12,7 @@
 
 
 uint32_t PITTick = 0;
-void timerCallback(registers_t *regs) {
+void timerCallback(__attribute__ ((unused)) registers_t *regs) {
 	PITTick++;
 	kernTTY.blink();
 }

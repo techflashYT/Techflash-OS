@@ -1,0 +1,1 @@
+void log(const char module[8], const char* message);

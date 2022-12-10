@@ -26,6 +26,8 @@
 #include <kernel/fs/tar.h>
 #include <kernel/shell.h>
 #include <kernel/memory.h>
+#include <kernel/elf.h>
+#include <kernel/arch.h>
 
 #include <kernel/custom.h>
 
@@ -44,7 +46,10 @@ void kernelMain() {
 	// int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
-
+	putPixel(1, 1, 0x00FFFFFF);
+	putPixel(2, 1, 0x00FFFFFF);
+	putPixel(1, 2, 0x00FFFFFF);
+	putPixel(2, 2, 0x00FFFFFF);
 	SSEInit();
 	__initThings();
 	keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
@@ -111,11 +116,33 @@ void kernelMain() {
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	sleep(250);
 	timerReady = true;
-	// boot.progressBar.fadeOut();
+	boot.progressBar.fadeOut();
+	uint8_t *outPtr = 0;
+	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "test", &outPtr);
+	printf("size: %llu\r\naddress: %p\r\nfirst 4 bytes: 0x%x, 0x%x, 0x%x, 0x%x\r\n", size, outPtr, outPtr[0], outPtr[1], outPtr[2], outPtr[3]);
+	uint8_t valid = elfLoader.isValid(outPtr, ARCH_X86_64);
+	printf("elf is valid: %u\r\n", valid);
+	printf("LOADING ELF!!\r\n");
+	serial.writeString(SERIAL_PORT_COM1, "LOADING ELF!!\r\n");
+	void *address = elfLoader.load(outPtr);
+	serial.writeString(SERIAL_PORT_COM1, "address of elf: 0x");
+	char *itoaBuffer = malloc(32);
+	utoa(address, itoaBuffer, 16);
+	serial.writeString(SERIAL_PORT_COM1, itoaBuffer);
+	free(itoaBuffer);
+	serial.writeString(SERIAL_PORT_COM1, "\r\n");
+	// if (address == 0 || address == (uint64_t)-1) {
+		// DUMPREGS
+		// panic("oh fuck oh shit this elf is dead", regs);
+	// }
+
+	printf("STARTING ELF!!  CYA IN DEBUG HELL!\r\n");
+	serial.writeString(SERIAL_PORT_COM1, "STARTING ELF!!  CYA IN DEBUG HELL!\r\n");
+	void (*addrToCall)() = address;
+	// addrToCall();
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;
 	kernTTY.cursorAfterPromptX = 0;
-
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
 	while (true) {

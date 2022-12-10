@@ -6,8 +6,13 @@
 #include <kernel/graphics.h>
 #include <kernel/hardware/CPU/regs.h>
 #include <kernel/font.h>
+#include <kernel/elf.h>
 #include <stdint.h>
-#include <stdlib.h> 
+#include <stdlib.h>
+
+elfLoader_t elfLoader;
+extern uint8_t elfCheckIsValid(void *header, uint8_t arch);
+extern void *elfLoad(void *file);
 
 registers_t regsDump;
 extern void __kernTTY_init();
@@ -60,6 +65,8 @@ psf2_t *font;
 extern char *arguments;
 bool timerReady;
 void __initThings() {
+	elfLoader.isValid        = elfCheckIsValid;
+	elfLoader.load			 = elfLoad;
 	timerReady = false;
 	font = (psf2_t*)&_binary_font_psf_start;
 
