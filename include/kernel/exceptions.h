@@ -21,3 +21,7 @@ void controlProtectionExceptionHandler(registers_t *regs);
 void hypervisorInjectionExceptionHandler(registers_t *regs);
 void VMMCommunicationExceptionHandler(registers_t *regs);
 void securityExceptionHandler(registers_t *regs);
+
+
+
+void randomGoofyInterruptsHandler(registers_t *regs);

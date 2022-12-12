@@ -93,3 +93,8 @@ void VMMCommunicationExceptionHandler(registers_t *regs) {
 void securityExceptionHandler(registers_t *regs) {
 	panic("(#SX) Security Exception", regs);
 }
+
+void randomGoofyInterruptsHandler(registers_t *regs) {
+	// use this to handle random stupid interrupts that we don't want to deal with.
+	return;
+}
