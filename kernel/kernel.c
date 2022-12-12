@@ -28,6 +28,7 @@
 #include <kernel/memory.h>
 #include <kernel/elf.h>
 #include <kernel/arch.h>
+#include <kernel/log.h>
 
 #include <kernel/custom.h>
 
@@ -46,10 +47,6 @@ void kernelMain() {
 	// int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
-	putPixel(1, 1, 0x00FFFFFF);
-	putPixel(2, 1, 0x00FFFFFF);
-	putPixel(1, 2, 0x00FFFFFF);
-	putPixel(2, 2, 0x00FFFFFF);
 	SSEInit();
 	__initThings();
 	keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
@@ -106,7 +103,7 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	// Now the interrupts are ready, enable them
-	printf("INTERRUPTS ARE BEING ENABLED!\r\n");
+	log("KERNEL", "INTERRUPTS ARE BEING ENABLED!!!");
 	asm volatile ("sti");
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
@@ -117,29 +114,44 @@ void kernelMain() {
 	sleep(250);
 	timerReady = true;
 	boot.progressBar.fadeOut();
+	/* FIXME: avoid reading the file because it's super busted for some reason
 	uint8_t *outPtr = 0;
 	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "test", &outPtr);
-	printf("size: %llu\r\naddress: %p\r\nfirst 4 bytes: 0x%x, 0x%x, 0x%x, 0x%x\r\n", size, outPtr, outPtr[0], outPtr[1], outPtr[2], outPtr[3]);
-	uint8_t valid = elfLoader.isValid(outPtr, ARCH_X86_64);
-	printf("elf is valid: %u\r\n", valid);
-	printf("LOADING ELF!!\r\n");
-	serial.writeString(SERIAL_PORT_COM1, "LOADING ELF!!\r\n");
-	void *address = elfLoader.load(outPtr);
-	serial.writeString(SERIAL_PORT_COM1, "address of elf: 0x");
-	char *itoaBuffer = malloc(32);
-	utoa(address, itoaBuffer, 16);
-	serial.writeString(SERIAL_PORT_COM1, itoaBuffer);
-	free(itoaBuffer);
-	serial.writeString(SERIAL_PORT_COM1, "\r\n");
+	*/
+	extern uint8_t _binary_test_size;
+	extern uint8_t _binary_test_start;
+	extern uint8_t _binary_test_end;
+	size_t size = (&_binary_test_end - &_binary_test_start);
+	
+	uint8_t *outPtr = &_binary_test_start;
+	// asm("cli; hlt");
+	printf("outptr: %p\r\n", outPtr);
+	printf("size: %llu\r\n", size);
+	printf("first 4 bytes: 0x%x, 0x", outPtr[0]);
+	printf("%x, 0x", outPtr[1]);
+	printf("%x, 0x", outPtr[2]);
+	printf("%x\r\n", outPtr[3]);
+	log("KERNEL", "Loading `test` binary!");
+	elfStruct_t *address = elfLoader.load(outPtr, size);
+	char *logBuffer = malloc(32);
+	strcpy(logBuffer, "address of elf: 0x");
+	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);
+	log("KERNEL", logBuffer);
+	free(logBuffer);
 	// if (address == 0 || address == (uint64_t)-1) {
 		// DUMPREGS
 		// panic("oh fuck oh shit this elf is dead", regs);
 	// }
 
-	printf("STARTING ELF!!  CYA IN DEBUG HELL!\r\n");
-	serial.writeString(SERIAL_PORT_COM1, "STARTING ELF!!  CYA IN DEBUG HELL!\r\n");
-	void (*addrToCall)() = address;
-	// addrToCall();
+	int (*addrToCall)() = (void *)(address->startOfData + address->entryPointOffset);
+	logBuffer = malloc(32);
+	strcpy(logBuffer, "address of entryPoint: 0x");
+	utoa((uint64_t)addrToCall, logBuffer + strlen(logBuffer), 16);
+	log("KERNEL", logBuffer);
+	free(logBuffer);
+	log("KERNEL", "ELF Loaded, attempting to launch.");
+	addrToCall();
+	log("KERNEL", "HOLY CRAP THAT WORKED?!?!?!");
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;
 	kernTTY.cursorAfterPromptX = 0;

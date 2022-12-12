@@ -11,20 +11,20 @@
 #include <stdlib.h>
 
 elfLoader_t elfLoader;
-extern uint8_t elfCheckIsValid(void *header, uint8_t arch);
-extern void *elfLoad(void *file);
+extern uint8_t elfCheckIsValid(uint8_t *header, uint8_t arch);
+extern elfStruct_t *elfLoad(uint8_t *file);
 
 registers_t regsDump;
-extern void __kernTTY_init();
-extern void __kernTTY_setBackground(const uint32_t color);
-extern void __kernTTY_printPrompt();
-extern void __kernTTY_blink();
-extern void __kernTTY_scroll(const char *numLines);
+extern void kernTTY_init();
+extern void kernTTY_setBackground(const uint32_t color);
+extern void kernTTY_printPrompt();
+extern void kernTTY_blink();
+extern void kernTTY_scroll(const char *numLines);
 _kernTTY_t kernTTY;
 
 extern bool __keyboardGetStatusOfLED(const uint8_t led);
 extern void __keyboardSetLED(const uint8_t led, const bool value);
-__keyboard_t keyboard;
+keyboard_t keyboard;
 extern bool __serialInit();
 extern char __serialReadNext(const uint16_t port);
 extern void __serialWrite(const uint16_t port, const char value);
@@ -33,9 +33,9 @@ __serial_t serial;
 
 __environment_t env;
 
-extern void __bootProgressBarUpdate(const uint8_t percent);
-extern void __bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
-extern void __bootProgressBarFadeOut();
+extern void bootProgressBarUpdate(const uint8_t percent);
+extern void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
+extern void bootProgressBarFadeOut();
 __boot_t boot;
 
 extern uint32_t __VGAColorBlack;
@@ -54,7 +54,7 @@ extern uint32_t __VGAColorLRed;
 extern uint32_t __VGAColorPink;
 extern uint32_t __VGAColorYellow;
 extern uint32_t __VGAColorWhite;
-__vga vga;
+vga_t vga;
 
 bool heapSetUp;
 bool haveAllocated;
@@ -71,9 +71,9 @@ void __initThings() {
 	font = (psf2_t*)&_binary_font_psf_start;
 
 	boot.percent = 0;
-	boot.progressBar.create  = __bootProgressBarCreate;
-	boot.progressBar.update  = __bootProgressBarUpdate;
-	boot.progressBar.fadeOut = __bootProgressBarFadeOut;
+	boot.progressBar.create  = bootProgressBarCreate;
+	boot.progressBar.update  = bootProgressBarUpdate;
+	boot.progressBar.fadeOut = bootProgressBarFadeOut;
 	// Start setting up the serial struct.
 	serial.init              = __serialInit;
 	serial.readNext          = __serialReadNext;
@@ -100,11 +100,11 @@ void __initThings() {
 	vga.colors.white         = __VGAColorWhite;
 	
 	// Start initializing a TTY.
-	kernTTY.init             = __kernTTY_init;
-	kernTTY.setBackground    = __kernTTY_setBackground;
-	kernTTY.printPrompt      = __kernTTY_printPrompt;
-	kernTTY.blink            = __kernTTY_blink;
-	kernTTY.scroll           = __kernTTY_scroll;
+	kernTTY.init             = kernTTY_init;
+	kernTTY.setBackground    = kernTTY_setBackground;
+	kernTTY.printPrompt      = kernTTY_printPrompt;
+	kernTTY.blink            = kernTTY_blink;
+	kernTTY.scroll           = kernTTY_scroll;
 	kernTTY.init();
 
 	// Start setting up the keyboard struct.

@@ -5,17 +5,32 @@
 #include <kernel/environment.h>
 #include <kernel/font.h>
 #include <kernel/hardware/serial.h>
-void __kernTTY_scroll(const char *numLines) {
-	printf("fb_width * 10 * 4: %llu\r\n", (uint64_t)(((uint64_t)bootboot.fb_width * 10) * 4));
-	for (uint64_t i = 1; i != (bootboot.fb_width * 10) * 4; i++) {
-		serial.writeString(SERIAL_PORT_COM1, "Scrolling left, iteration #");
-		char *buffer = malloc(5);
-		memset(buffer, '\0', 5);
-		itoa(i, buffer, 10);
-		serial.writeString(SERIAL_PORT_COM1, buffer);
-		free(buffer);
-		serial.writeString(SERIAL_PORT_COM1, "\r\n");
-		((uint32_t *)&fb)[i - 1] = ((uint32_t *)&fb)[i];
-	}
+#include <kernel/tty.h>
+// Thanks to @quietfanatic on StackOverflow for this code, they helped make this actually optimized, check out their comment:
+// https://stackoverflow.com/a/74765904/16387557
+// along with my original question of how to optimize it:
+// https://stackoverflow.com/questions/74765778/c-osdev-how-could-i-shift-the-contents-of-a-32-bit-framebuffer-upwards-effic
+void kernTTY_scroll(const char *numLines) {
+	// Convert string to integer
+	uint32_t numLinesInt = atoi(numLines);
 
+	// Figure out how many pixels we need to move in order to move 1 line
+	numLinesInt *= font->height;
+
+	// The destination of the move is just the top of the framebuffer
+	uint32_t* destination = (uint32_t*)&fb;
+
+	// Start the move from the top of the framebuffer plus number
+	// of lines to scroll.
+	uint32_t* source = (uint32_t*)&fb + (numLinesInt * bootboot.fb_width);
+
+	// The total number of pixels to move is the size of the
+	// framebuffer minus the amount of lines we want to scroll.
+	uint32_t pixel_size = (bootboot.fb_height - numLinesInt) * bootboot.fb_width;
+
+	// The total number of bytes is that times the size of one pixel.
+	uint32_t byteSize = pixel_size * sizeof(uint32_t);
+
+	// Do the move
+	memmove(destination, source, byteSize);
 }

@@ -1,9 +1,14 @@
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
+typedef struct {
+	uint8_t *startOfData;
+	uint64_t entryPointOffset;
+} elfStruct_t;
 
 typedef struct {
-	uint8_t (*isValid)(void *header, uint8_t arch);
-	void *(*load)(void *file)
+	uint8_t (*isValid)(uint8_t *header, uint8_t arch);
+	elfStruct_t *(*load)(uint8_t *file, size_t fileSize);
 } elfLoader_t;
 extern elfLoader_t elfLoader;
 #define EI_NIDENT	16
@@ -34,3 +39,15 @@ typedef struct ElfProgramHeader {
 	uint32_t p_flags;
 	uint32_t p_align;  //alignment
 } ElfProgramHeader;
+
+enum {
+	PT_NULL,
+	PT_LOAD,
+	PT_DYNAMIC,
+	PT_INTERP,
+	PT_NOTE,
+	PT_SHLIB,
+	PT_PHDR,
+	PT_LOPROC = 0x70000000, //reserved
+	PT_HIPROC = 0x7FFFFFFF  //reserved
+};

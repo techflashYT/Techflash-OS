@@ -2,7 +2,8 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib  -O2 -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES)
+OPTIMIZE   = -O2
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) $(OPTIMIZE)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
@@ -26,16 +27,17 @@ CFLAGS += -DCONFIG_KERN_VERSION_MAJOR=$(CONFIG_KERN_VERSION_MAJOR) -DCONFIG_KERN
 .SUFFIXES: .o .c .S
 
 all: ../bin/tfos_kernel.elf
-../bin/tfos_kernel.elf: $(compile)
+../bin/tfos_kernel.elf: ../build/kernel/testELF.o $(compile)
 	@mkdir -p ../bin
 	@echo "CCLD  $(subst ../build/,,$(compile)) => ../bin/tfos_kernel.elf"
-	@$(CC) $(LDFLAGS) $(compile) $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
+	@$(CC) $(LDFLAGS) $(compile) ../build/kernel/testELF.o $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
 	@echo "Stripping Debug Symbols..."
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
 #@rm $(compile)
 	@make --no-print-directory -f ../util/Makefile sysroot
-
+../build/kernel/testELF.o: ../test
+	@cd ../ && mkdir -p build/kernel && $(LD) -r -b binary test -o build/kernel/testELF.o && cd kernel
 ../build/kernel/%.o: %.c $(shell find ../include/ -type f)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"

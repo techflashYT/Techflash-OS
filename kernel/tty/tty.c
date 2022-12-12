@@ -10,7 +10,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
-void __kernTTY_init() {
+void kernTTY_init() {
 	kernTTY.ready = false;
 	kernTTY.cursorX = 0;
 	kernTTY.cursorY = 0;
@@ -20,7 +20,7 @@ void __kernTTY_init() {
 	kernTTY.promptStr = malloc(256);
 	strcpy(kernTTY.promptStr, "> ");
 }
-void __kernTTY_setBackground(const uint32_t color) {
+void kernTTY_setBackground(const uint32_t color) {
 	kernTTY.textBackground = color;
 	int s = bootboot.fb_scanline;
 	for (uint32_t y = 0; y < bootboot.fb_height; y++) {
@@ -29,7 +29,7 @@ void __kernTTY_setBackground(const uint32_t color) {
 		}
 	}
 }
-void __kernTTY_clear() {
+void kernTTY_clear() {
 	int s = bootboot.fb_scanline;
 	// Set cursor to top left corner.
 	kernTTY.cursorX = 0;
@@ -43,7 +43,7 @@ void __kernTTY_clear() {
 }
 #pragma GCC diagnostic pop
 
-void __kernTTY_printPrompt() {
+void kernTTY_printPrompt() {
 	puts(kernTTY.promptStr);
 	kernTTY.cursorAfterPromptX = 0;
 }

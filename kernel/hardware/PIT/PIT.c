@@ -32,7 +32,7 @@ void sleep(uint64_t ms) {
 }
 void initPIT(uint32_t frequency) {
 	// Register timer callback
-	registerInterruptHandler(IRQ0, &timerCallback);
+	registerInterruptHandler(0x20, &timerCallback); // IRQ0 specified manually because weirdness
 	// Divide clock to get frequency
 	uint32_t divisor = 1193180 / frequency;
 	// Send command

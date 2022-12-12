@@ -21,7 +21,7 @@ char *rip;
 char *cr2;
 char *intNo;
 
-void padNumTo(char *src, uint8_t padding);
+extern void padNumTo(char *src, uint8_t padding);
 bool alreadyPanicing = false;
 bool mentionDualPanic = false;
 void panic(const char* message, registers_t *regs) {
