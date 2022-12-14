@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/log.h>
+#include <string.h>
 char elfMagic[] = {0x7f, 'E', 'L', 'F'};
 uint8_t elfCheckIsValid(uint8_t *header, uint8_t arch) {
 	// if (header[0] != 0x7f || header[1] != 'E' || header[2] != 'L' || header[3] != 'F') {

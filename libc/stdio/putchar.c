@@ -3,6 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/PIT.h>
+#include <kernel/hardware/serial.h>
 extern bool timerReady;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
@@ -20,9 +21,12 @@ int putchar(const int ch) {
 		kernTTY.cursorX += 4;
 		return '\t';
 	}
-	if (kernTTY.cursorX >= kernTTY.width - 15) {
+	if (kernTTY.cursorX >= kernTTY.width) {
 		kernTTY.cursorX = 0;
 		kernTTY.cursorY++;
+	}
+	if (kernTTY.cursorY >= kernTTY.height) {
+		kernTTY.scroll("1");
 	}
 	
 	int bpl = (font->width + 7) / 8;
@@ -30,6 +34,9 @@ int putchar(const int ch) {
 	unsigned char *glyph = (unsigned char*)&_binary_font_psf_start + font->headerSize + (ch > 0 && ch < font->numOfGlyphs ? ch : 0) *font->bytesPerGlyph;
 	int kx = kernTTY.cursorX;
 	int offsY = (font->height * (((kernTTY.cursorY * bootboot.fb_width) * 4) == 0 ? 0 : (((kernTTY.cursorY * bootboot.fb_width) * 4))));
+	// Moved these to the top of putchar in order to avoid issues of blinking interrupting the current character.
+	kernTTY.cursorX++;
+	kernTTY.cursorAfterPromptX++;
 	
 	offs = ((kx * (font->width + 1) * 4) + offsY);
 	uint32_t y;
@@ -40,18 +47,14 @@ int putchar(const int ch) {
 		mask = 1 << (font->width - 1);
 		uint32_t x;
 		for (x = 0; x < font->width; x++) {
-			*((uint32_t*)((uint64_t)&fb + line)) = (((int) * glyph) & (mask)) ? kernTTY.color : kernTTY.textBackground;
-			ioWait();
+			*((uint32_t*)((uint64_t)&fb + line)) = (((int) *glyph) & (mask)) ? kernTTY.color : kernTTY.textBackground;
 			mask >>= 1;
 			line += 4;
 		}
 		*((uint32_t*)((uint64_t) &fb + line)) = kernTTY.textBackground;
-		ioWait();
 		glyph += bpl;
 		offs += bootboot.fb_scanline;
 	}
-	kernTTY.cursorX++;
-	kernTTY.cursorAfterPromptX++;
 	return ch;
 }
 #pragma GCC diagnostic pop

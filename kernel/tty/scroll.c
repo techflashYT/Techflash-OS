@@ -6,6 +6,8 @@
 #include <kernel/font.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/tty.h>
+#include <kernel/panic.h>
+#include <kernel/misc.h>
 // Thanks to @quietfanatic on StackOverflow for this code, they helped make this actually optimized, check out their comment:
 // https://stackoverflow.com/a/74765904/16387557
 // along with my original question of how to optimize it:
@@ -14,23 +16,47 @@ void kernTTY_scroll(const char *numLines) {
 	// Convert string to integer
 	uint32_t numLinesInt = atoi(numLines);
 
+	// Test if we'll be scrolling to outside of the framebuffer
+	kernTTY.cursorY--; // idk why i need to do this, but I do.
+	int32_t testForBounds = kernTTY.cursorY;
+	testForBounds -= numLinesInt;
+	// Would this place it before the framebuffer?
+	if (testForBounds < 0) {
+		// Yes, panic
+		DUMPREGS;
+		panic("TTY: Attempted to scroll to an invalid line!", regs);
+	}
 	// Figure out how many pixels we need to move in order to move 1 line
-	numLinesInt *= font->height;
+	uint32_t numPixels = numLinesInt * font->height;
 
 	// The destination of the move is just the top of the framebuffer
 	uint32_t* destination = (uint32_t*)&fb;
 
 	// Start the move from the top of the framebuffer plus number
 	// of lines to scroll.
-	uint32_t* source = (uint32_t*)&fb + (numLinesInt * bootboot.fb_width);
+	uint32_t* source = (uint32_t*)&fb + (numPixels * bootboot.fb_width);
 
 	// The total number of pixels to move is the size of the
 	// framebuffer minus the amount of lines we want to scroll.
-	uint32_t pixel_size = (bootboot.fb_height - numLinesInt) * bootboot.fb_width;
+	uint32_t pixelSize = (bootboot.fb_height - numPixels) * bootboot.fb_width;
 
 	// The total number of bytes is that times the size of one pixel.
-	uint32_t byteSize = pixel_size * sizeof(uint32_t);
+	uint32_t byteSize = pixelSize * sizeof(uint32_t);
+
+	// Save the original value for whether the cursor should blink
+	bool blinkingCursorOrig = kernTTY.blinkingCursor;
+
+	// Disable the blinking cursor, it could cause issues.
+	kernTTY.blinkingCursor = false;
 
 	// Do the move
 	memmove(destination, source, byteSize);
+
+	
+	// Set the cursor to the right position
+	kernTTY.cursorY -= numLinesInt;
+
+	// Set the blinking cursor to the previous value.
+	kernTTY.blinkingCursor = blinkingCursorOrig;
+	return;
 }

@@ -62,11 +62,11 @@ size_t readFile(unsigned char *archive, char *filename, unsigned char **out) {
 	return 0;
 }
 void ls(const char* dir) {
-	printf("dir: %s\r\n", dir);
 	for (uint64_t i = 0; i < numHeaders; i++) {
 		if (strstr(headers[i]->filename, dir) == NULL) {
 			continue;
 		}
-		printf("%s\r\n", headers[i]->filename);
+		puts(headers[i]->filename);
+		puts("\r\n");
 	}
 }

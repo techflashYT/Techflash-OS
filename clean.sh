@@ -6,4 +6,4 @@ rm -rf bin
 rm -rf lib
 rm -rf sysroot
 rm -rf isodir
-rm bootboot.bin
+# rm bootboot.bin

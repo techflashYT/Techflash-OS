@@ -5,6 +5,7 @@
 #include <kernel/shell.h>
 #include <kernel/fs/tar.h>
 #include <kernel/tty.h>
+#include <kernel/environment.h>
 void CPUReset();
 char *arguments;
 bool checkInput(const char* str1, const char* str2) {
@@ -57,6 +58,13 @@ Commands:\r\n\
 	}
 	else if (checkInput(input, "scroll")) {
 		kernTTY.scroll(arguments);
+		return 0;
+	}
+	else if (checkInput(input, "clear")) {
+		memset(&fb, 0, bootboot.fb_size);
+		kernTTY.cursorX = 0;
+		kernTTY.cursorY = 0;
+		kernTTY.cursorAfterPromptX = 0;
 		return 0;
 	}
 	return ERR_UNK_CMD;

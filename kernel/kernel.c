@@ -157,6 +157,7 @@ void kernelMain() {
 	kernTTY.cursorAfterPromptX = 0;
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
+	
 	while (true) {
 		// Main kernel loop
 		char userInput = keyboardGetLastKey();
