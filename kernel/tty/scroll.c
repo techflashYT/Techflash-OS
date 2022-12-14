@@ -17,7 +17,7 @@ void kernTTY_scroll(const char *numLines) {
 	uint32_t numLinesInt = atoi(numLines);
 
 	// Test if we'll be scrolling to outside of the framebuffer
-	kernTTY.cursorY--; // idk why i need to do this, but I do.
+	// kernTTY.cursorY--; // idk why i need to do this, but I do.
 	int32_t testForBounds = kernTTY.cursorY;
 	testForBounds -= numLinesInt;
 	// Would this place it before the framebuffer?
