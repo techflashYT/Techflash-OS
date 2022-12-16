@@ -25,3 +25,4 @@ void securityExceptionHandler(registers_t *regs);
 
 
 void randomGoofyInterruptsHandler(registers_t *regs);
+void systemCallHandler(registers_t *regs);

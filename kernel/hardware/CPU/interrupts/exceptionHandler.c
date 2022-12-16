@@ -33,4 +33,5 @@ void initExceptions() {
 	registerInterruptHandler(31, &reservedHandler);
 
 	registerInterruptHandler(0x27, &randomGoofyInterruptsHandler);
+	registerInterruptHandler(0x80, &systemCallHandler);
 }

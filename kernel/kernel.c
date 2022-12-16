@@ -29,6 +29,7 @@
 #include <kernel/elf.h>
 #include <kernel/arch.h>
 #include <kernel/log.h>
+#include <kernel/syscall.h>
 
 #include <kernel/custom.h>
 
@@ -108,6 +109,7 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 
+	initSyscalls();
 	parseTar((void *)bootboot.initrd_ptr);
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
@@ -138,10 +140,6 @@ void kernelMain() {
 	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);
 	log("KERNEL", logBuffer);
 	free(logBuffer);
-	// if (address == 0 || address == (uint64_t)-1) {
-		// DUMPREGS
-		// panic("oh fuck oh shit this elf is dead", regs);
-	// }
 
 	int (*addrToCall)() = (void *)(address->startOfData + address->entryPointOffset);
 	logBuffer = malloc(32);
@@ -157,7 +155,6 @@ void kernelMain() {
 	kernTTY.cursorAfterPromptX = 0;
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
-	
 	while (true) {
 		// Main kernel loop
 		char userInput = keyboardGetLastKey();
