@@ -5,7 +5,7 @@ OPTIMIZE = -O2
 CFLAGS   = $(WARN) $(FEATURE) $(OPTIMIZE) -nostdlib -I../include -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
 override compile_S   := $(shell find . -type f -name '*.S')
-override compile_c   := $(shell find . -type f -name '*.c')
+override compile_c   := $(shell find -L . -type f -name '*.c')
 compile=$(addprefix ../build/userspaceLibcWrappers/,$(subst ./,,$(subst .c,.o,$(subst .S,.o,$(compile_S) $(compile_c)))))
 
 vpath %.c ./
