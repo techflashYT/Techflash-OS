@@ -1,3 +1,4 @@
+// NOTE: Yes, this is indeed the same file between both the internal libc and the userspace wrappers, I just symlinked it across.
 #include <stdio.h>
 int puts(const char *s) {
 	/*
