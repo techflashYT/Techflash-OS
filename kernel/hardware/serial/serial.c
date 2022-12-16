@@ -9,7 +9,7 @@ void __serialWriteString(const uint16_t port, const char* value) {
 	if (!serial.working) {
 		return;
 	}
-	while(*value != '\0') {
+	while (*value != '\0') {
 		serial.write(port, *value);
 		value++;
 	}
