@@ -1,10 +1,4 @@
-#include <stdint.h>
 #include <stdio.h>
-#include <string.h>
-#include <kernel/font.h>
-#include <kernel/environment.h>
-#include <kernel/tty.h>
-#include <kernel/hardware/serial.h>
 int puts(const char *s) {
 	/*
 		Each iteration of this while loop prints a single character.

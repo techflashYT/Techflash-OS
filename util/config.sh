@@ -1,6 +1,6 @@
 #!/bin/sh
-SYSTEM_HEADER_PROJECTS="libc kernel"
-PROJECTS="libc kernel"
+SYSTEM_HEADER_PROJECTS="libc kernel userspaceLibcWrappers"
+PROJECTS="libc kernel userspaceLibcWrappers"
 
 export MAKE="${MAKE:-make --no-print-directory}"
 export HOST="${HOST:-$(./util/default-host.sh)}"
