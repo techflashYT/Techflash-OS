@@ -1,9 +1,5 @@
 #include "include/stdio.h"
 int _start() {
-	putchar('a');
-	putchar('b');
-	putchar('c');
-	putchar('\r');
-	putchar('\n');
+	puts("abc\r\n");
 	return 0;
 }
