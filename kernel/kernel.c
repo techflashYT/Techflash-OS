@@ -104,7 +104,7 @@ void kernelMain() {
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
 	// Now the interrupts are ready, enable them
-	log("KERNEL", "INTERRUPTS ARE BEING ENABLED!!!");
+	log("KERNEL", "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
 	currentTasks += 1.0f;
 	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
@@ -133,23 +133,23 @@ void kernelMain() {
 	printf("%x, 0x", outPtr[1]);
 	printf("%x, 0x", outPtr[2]);
 	printf("%x\r\n", outPtr[3]);
-	log("KERNEL", "Loading `test` binary!");
+	log("KERNEL", "Loading `test` binary!", LOGLEVEL_DEBUG);
 	elfStruct_t *address = elfLoader.load(outPtr, size);
 	char *logBuffer = malloc(32);
 	strcpy(logBuffer, "address of elf: 0x");
 	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);
-	log("KERNEL", logBuffer);
+	log("KERNEL", logBuffer, LOGLEVEL_DEBUG);
 	free(logBuffer);
 
 	int (*addrToCall)() = (void *)(address->startOfData + address->entryPointOffset);
 	logBuffer = malloc(32);
 	strcpy(logBuffer, "address of entryPoint: 0x");
 	utoa((uint64_t)addrToCall, logBuffer + strlen(logBuffer), 16);
-	log("KERNEL", logBuffer);
+	log("KERNEL", logBuffer, LOGLEVEL_DEBUG);
 	free(logBuffer);
-	log("KERNEL", "ELF Loaded, attempting to launch.");
+	log("KERNEL", "ELF Loaded, attempting to launch.", LOGLEVEL_DEBUG);
 	addrToCall();
-	log("KERNEL", "HOLY CRAP THAT WORKED?!?!?!");
+	log("KERNEL", "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;
 	kernTTY.cursorAfterPromptX = 0;

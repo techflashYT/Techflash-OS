@@ -46,7 +46,7 @@ void ISRHandler(registers_t* regs) {
 		padNumTo(tempBuffer, 2);
 		badIntMsg[intMsgNumOffset] = tempBuffer[0];
 		badIntMsg[intMsgNumOffset + 1] = tempBuffer[1];
-		log("X86INT", badIntMsg);
+		log("X86INT", badIntMsg, LOGLEVEL_WARN);
 		free(tempBuffer);
 	}
 	
