@@ -2,7 +2,9 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
-OPTIMIZE   = -O2
+OPTIMIZE   = -Ofast # NORMAL
+# OPTIMIZE   = -O2 # STABLE
+# OPTIMIZE   = -OO -g # DEBUG
 CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) $(OPTIMIZE)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk

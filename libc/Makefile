@@ -1,7 +1,9 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 WARN     = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
 FEATURE  = -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-OPTIMIZE = -O2
+OPTIMIZE   = -Ofast # NORMAL
+# OPTIMIZE   = -O2 # STABLE
+# OPTIMIZE   = -OO -g # DEBUG
 CFLAGS   = $(WARN) $(FEATURE) $(OPTIMIZE) -nostdlib -I../include -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
 override compile_S   := $(shell find . -type f -name '*.S')
