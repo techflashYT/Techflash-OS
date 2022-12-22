@@ -14,8 +14,6 @@ if [ ! -f .config ]; then
 	echo "Uh oh!  Looks like never ran ./configure!  Please run ./configure and then run this script again."
 	exit 2
 fi
-rm -rf isodir
-# ./clean.sh
 if ! ./build.sh; then
 	sleep 0.05
 	echo "Uh oh!  Looks like something failed to build!  Please check the above output to see what went wrong."
@@ -23,4 +21,8 @@ if ! ./build.sh; then
 fi
 echo "ISO"
 ./iso.sh
+
+printf "Cleaning up temporary files...\r\n"
+rm -rf sysroot isodir tmp
+printf "Done!\r\n"
 echo "Done!  Boot ISO is in bin/TFOS_ISO.iso"

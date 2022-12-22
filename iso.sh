@@ -24,7 +24,6 @@ pushd tmp/initrd > /dev/null 2>&1
 tar -czf $prevDir/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
-rm -rf tmp/initrd
 cat bootboot/config > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub
 cd isodir/boot/grub
