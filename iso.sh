@@ -19,21 +19,26 @@ mkdir -p tmp/initrd/sys
 cp -r sysroot/* tmp/initrd/
 cp "test" tmp/initrd/
 mv tmp/initrd/boot/tfos.elf tmp/initrd/sys/core
+
 prevDir=$(pwd)
+
 pushd tmp/initrd > /dev/null 2>&1
 tar -czf $prevDir/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
+
 cat bootboot/config > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub
 cd isodir/boot/grub
 mkdir fonts themes locale
 cd ../../..
+
 cd grub
 cat ISO_GRUB_CFG.cfg > ../isodir/boot/grub/grub.cfg
 cp grub_bg.png ../isodir/boot/bg.png
 cp font.pf2 ../isodir/boot/grub/fonts/unicode.pf2
 cd ..
+
 if ( command -v grub-mkrescue > /dev/null ); then
 	grub-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
 else
