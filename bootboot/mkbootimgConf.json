@@ -1,6 +1,6 @@
 {
 	"disksize": 4,
-	"config": "./bootbootconfig",
+	"config": "./config",
 	"iso9660": true,
 	"initrd": {
 		"type": "tar",

@@ -4,13 +4,15 @@ if [ ! -f sysroot/boot/tfos.elf ]; then
 	printf "ERROR: Kernel not found!  Please run ./build.sh first.\r\n"
 	exit 1
 fi
-if [ ! -f bootboot.bin ]; then
+if [ ! -f bootboot/bootboot.bin ]; then
+	cd bootboot
 	wget https://gitlab.com/bztsrc/bootboot/-/raw/master/dist/bootboot.bin -q --progress=bar --show-progress
+	cd ..
 fi
 cp -r sysroot isodir
 mkdir isodir/BOOTBOOT
 mv isodir/boot/tfos.elf isodir/boot/install
-cp bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
+cp bootboot/bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 
 # Make initrd
 mkdir -p tmp/initrd/sys
@@ -23,7 +25,7 @@ tar -czf $prevDir/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
 rm -rf tmp/initrd
-cat bootbootconfig > isodir/BOOTBOOT/CONFIG
+cat bootboot/config > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub
 cd isodir/boot/grub
 mkdir fonts themes locale
