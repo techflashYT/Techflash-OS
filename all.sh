@@ -6,8 +6,8 @@ if ! ( command -v grub-mkrescue > /dev/null || command -v grub2-mkrescue > /dev/
 	echo "Uh oh!  Looks like you don't have grub(2)-mkrescue and xorriso!  These are required to create the bootable ISO image."
 	exit 1
 fi
-if ! ( command -v i686-elf-gcc > /dev/null || ! command -v i686-elf-as > /dev/null || ! command -v i686-elf-ld > /dev/null ) && ( ! command -v x86_64-elf-gcc > /dev/null || ! command -v x86_64-elf-as > /dev/null || ! command -v x86_64-elf-ld > /dev/null ); then
-	echo "Uh oh!  Looks like you never installed the i686-elf-gcc/x86_64-elf-gcc cross compiler!  Please follow the steps in the wiki to install it."
+if ! ( command -v x86_64-elf-gcc > /dev/null || command -v x86_64-elf-as > /dev/null || command -v x86_64-elf-ld > /dev/null ); then
+	echo "Uh oh!  Looks like you never installed the x86_64-elf-gcc cross compiler!  Please follow the steps in the wiki to install it."
 	exit 1
 fi
 if [ ! -f .config ]; then
