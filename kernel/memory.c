@@ -46,7 +46,9 @@ void *alignedPtr(void *ptr) {
 
 	return ptr;
 }
-
+void *mallocAt(void *ptr, size_t size) {
+	
+}
 void *malloc(size_t size) {
 	if (!heapSetUp) {
 		lastValidHeapAddress = heapSpace;

@@ -5,60 +5,93 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#define MIN2(a, b) ((a) < (b) ? (a) : (b))
-#define MAX2(a, b) ((a) > (b) ? (a) : (b)) // GUESSING
+#include <kernel/custom.h>
 
 elfStruct_t retVal;
-ElfHeader header;
-ElfProgramHeader ph;
+static uint8_t load(ELF64ProgramHeader *ph);
 elfStruct_t *elfLoad(uint8_t *file, size_t fileSize) {
-	int i;
-	uintptr_t base = UINTPTR_MAX;
+	// NOTE: This function 100% assumes that everything about the ELF is valid
+	//       We expect the caller to have already ran elfLoader.isValid() on the ELF
+	//       in order to verify it's validity before calling elfLoader.load() to run this.
+	log("ELFLOAD", "Starting to load ELF file", LOGLEVEL_DEBUG);
+	retVal.entryPointOffset = 0;
+	retVal.startOfData = 0;
+	// Map the header to the start of the file
+	ELF64FileHeader *header;
+	header = file;
+	uint16_t phNum = 0;
+	ELF64ProgramHeader *ph = NULL;
+	for (uint64_t pos = header->phTablePos; phNum != header->phtableEntriesNum; pos += header->phTableEntrySize) {
+		phNum++;
+		ph = file + pos;
+		switch (ph->segmentType) {
+			case PH_TYPE_INTERPRETER: {
+				log("ELFLOAD", "This ELF requires an interpreter!  We haven't implemented that yet.", LOGLEVEL_ERROR);
+				retVal.err = true;
+				return &retVal;
+				break;
+			}
+			case PH_TYPE_DYNAMIC: {
+				log("ELFLOAD", "This ELF is dynamically linked!  We haven't implemented that yet.", LOGLEVEL_ERROR);
+				retVal.err = true;
+				return &retVal;
+				break;
+			}
+			case PH_TYPE_NOTE: {
+				log("ELFLOAD", "Note section, ignoring.", LOGLEVEL_DEBUG);
+				break;
+			}
+			case PH_TYPE_LOAD: {
+				// the juicy stuff, this is some code/data right here.
+				uint8_t err = load(ph);
+				break;
+			}
+			default: {
+				log("ELFLOAD", "Unknown section, ignoring.", LOGLEVEL_DEBUG);
+				// something else, very likely something we don't care about, skip
+				break;
+			}
+		}
+	}
+	free(ph);
+	retVal.startOfData = 0;
+	retVal.entryPointOffset = header->entryPoint;
+	// TODO: Set up a stack
+	return &retVal;
+}
+static uint8_t load(ELF64ProgramHeader *ph) {
+	// we're just gonna use the memory it wants and hope that it's free
 
-	memcpy(&header, file, sizeof(header));
+	// copy it into memory
+	// a couple of variables, since we're gonna be logging this info before we use it, no sense calculating it twice!
+	char *buffer = malloc(128);
+	void *srcAddr = (ph + ph->p_offset);
+	void *destAddr = ph->p_vaddr;
+	uint64_t size = ph->p_filesz;
 
-	if (elfLoader.isValid(file, ARCH_X86_64) != 0) {
-		retVal.entryPointOffset = 0;
-		retVal.startOfData = 0;
-		return &retVal;
+	if (size == 0)  {
+		strcpy(buffer, "Not bothering to copy ");
+	}
+	else {
+		strcpy(buffer, "Loading ");
 	}
 
-	/*note that we copy each program header into ph
-	  to avoid any alignment errors
-	*/
-
-	for (i = 0; i < header.e_phnum; i++) {
-		memcpy(file + header.e_phoff + header.e_phentsize*i, &ph, sizeof(ph));
-
-		base = MIN2(base, ph.p_vaddr);
+	utoa(size, buffer + strlen(buffer), 10);
+	strcpy(buffer + strlen(buffer), " bytes into memory from 0x");
+	utoa(srcAddr, buffer + strlen(buffer), 16);
+	strcpy(buffer + strlen(buffer), " to 0x");
+	utoa(destAddr, buffer + strlen(buffer), 16);
+	if (size == 0) {
+		strcpy(buffer + strlen(buffer), ", since there's nothing to copy!");
 	}
-
-	uintptr_t size = 0;
-
-	for (i = 0; i < header.e_phnum; i++) {
-		uintptr_t segmentEnd;
-
-		memcpy(file + header.e_phoff + header.e_phentsize*i, &ph, sizeof(ph));
-
-		segmentEnd = ph.p_vaddr - base + ph.p_memsz;
-		size = MAX2(size, segmentEnd);
+	else {
+		strcpy(buffer + strlen(buffer), ".  This could cause issues.");
 	}
-	// uint8_t *finalImage = malloc(size); // for PIC
-	uint8_t *finalImage = malloc(fileSize);
-	// unsigned char *finalImage = (unsigned char*) base; // for absolute
+	log("ELFLOAD", buffer, LOGLEVEL_WARN);
 
-	for (i = 0; i < header.e_phnum; i++) {
-		uintptr_t addr;
-
-		memcpy(file + header.e_phoff + header.e_phentsize * i, &ph, sizeof(ph));
-
-		addr = (ph.p_vaddr - base) + (uintptr_t)finalImage;
-
-		memset(finalImage + addr, 0, ph.p_memsz);
-		memcpy(finalImage + addr, file + ph.p_offset, ph.p_filesz);
+	free(buffer);
+	if (size != 0) {
+		memcpy(destAddr, srcAddr, size);
 	}
-	memcpy(finalImage, file, fileSize);
-	retVal.startOfData = finalImage;
-	retVal.entryPointOffset = header.e_entry;
-	return &retVal; 
+	return 0;
 }

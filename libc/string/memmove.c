@@ -10,7 +10,7 @@ void *memmove(void *dest, const void *src, size_t n) {
 		return dest;
 	}
 
-	if (to > from && to-from < (int)n) {
+	if (to > from && to - from < (int)n) {
 		// "to" overlaps "from", copy in reverse
 		int i;
 		for (i = (n - 1); i >= 0; i--) {

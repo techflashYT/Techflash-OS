@@ -4,8 +4,8 @@
 FEATURES   = -march=core2 -mno-3dnow -mno-mmx
 OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
-# OPTIMIZE   = -OO -g # DEBUG
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) $(OPTIMIZE)
+# OPTIMIZE   = -O0 -g # DEBUG
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) $(OPTIMIZE)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
@@ -52,6 +52,10 @@ all: ../bin/tfos_kernel.elf
 	@mkdir -p $(@D)
 	@echo "Building Font..."
 	@$(LD) -r -b binary font.psf -o ../build/kernel/font.o
+../test: ../test.c
+	$(error Hey!  Fix the ELF tester binaries first!)
+../test.c:
+	$(error Hey!  Fix the ELF tester binaries first!)
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)
 	@echo "AS    $< => $(subst ../build/kernel/,,$@)"

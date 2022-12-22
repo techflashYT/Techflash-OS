@@ -4,9 +4,11 @@
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
-void (*syscallHandlers[0xFFFF])(uint64_t arg1, uint64_t arg2, uint64_t arg3);
+#include <kernel/hardware/serial.h>
+void (*syscallHandlers[0xFF])(uint64_t arg1, uint64_t arg2, uint64_t arg3);
 void initSyscalls() {
 	syscallHandlers[0] = &putchar;
+	syscallHandlers[1] = &utoa;
 }
 void systemCallHandler(registers_t *regsArg) {
 	DUMPREGS

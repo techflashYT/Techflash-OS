@@ -1,5 +1,17 @@
-#include "include/stdio.h"
-int _start() {
-	puts("abc\r\n");
-	return 0;
-}
+asm (
+".global _start;"
+".type _start, @function;"
+".section .rodata;"
+"str:;"
+".asciz \"abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad\\r\\n\";"
+".section .text;"
+"_start:;"
+"	cli;"
+"	hlt;"
+"	mov str, %rdi;"
+"	mov str, %rsi;"
+"	mov str, %r8;"
+"	call puts;"
+"	mov $0x0, %rax;"
+"	ret;"
+);

@@ -134,7 +134,18 @@ void kernelMain() {
 	printf("%x, 0x", outPtr[2]);
 	printf("%x\r\n", outPtr[3]);
 	log("KERNEL", "Loading `test` binary!", LOGLEVEL_DEBUG);
+	uint8_t elfValid = elfLoader.isValid(outPtr, ARCH_X86_64);
+	DUMPREGS
+	if (elfValid == 1) {
+		panic("Init binary is not a valid ELF!", regs);
+	}
+	else if (elfValid == 2 || elfValid == 3) {
+		panic("Init binary is a valid ELF, but not for this CPU!", regs);
+	}
 	elfStruct_t *address = elfLoader.load(outPtr, size);
+	if (address->err) {
+		panic("Error loading init.  The serial log may have more info.", regs);
+	}
 	char *logBuffer = malloc(32);
 	strcpy(logBuffer, "address of elf: 0x");
 	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);

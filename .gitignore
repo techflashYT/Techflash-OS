@@ -13,3 +13,4 @@ isodir
 util/mkbootimg
 util/fasm
 tmp
+*__pycache__*
