@@ -82,6 +82,6 @@ typedef struct {
 		3 - Valid ELF, for this CPU too, but endianness mismatch
 	*/
 	uint8_t (*isValid)(uint8_t *header, uint8_t arch);
-	elfStruct_t *(*load)(uint8_t *file, size_t fileSize);
+	elfStruct_t *(*load)(uint8_t *file);
 } elfLoader_t;
 extern elfLoader_t elfLoader;

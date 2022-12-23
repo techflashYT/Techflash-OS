@@ -26,13 +26,13 @@ uint8_t elfCheckIsValid(uint8_t *file, uint8_t arch) {
 	}
 	// Ok, it's a valid ELF, but is it correct for this arch?
 	ELF64FileHeader *header;
-	header = file;
+	header = (ELF64FileHeader *)file;
 	if (header->arch != archConvert[arch]) {
 		// Nope, log and return 2
 		log("ELFLOAD", "File is a valid ELF, but is not valid for this CPU architecture.", LOGLEVEL_ERROR);
 		char *buffer = malloc(128);
 		strcpy(buffer, "You are running the ");
-		uint8_t *currentPtr = buffer + strlen(buffer);
+		char *currentPtr = buffer + strlen(buffer);
 		strcpy(currentPtr, archConvertStr[arch]);
 		currentPtr = buffer + strlen(buffer);
 		strcpy(currentPtr, " version of Techflash OS.  However, this ELF file is only for ");

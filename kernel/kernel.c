@@ -13,6 +13,7 @@
 #include <kernel/environment.h>
 #include <kernel/tty.h>
 #include <kernel/hardware/serial.h>
+#include <kernel/hardware/parallel.h>
 #include <kernel/hardware/PIT.h>
 #include <kernel/boot.h>
 #include <kernel/graphics.h>
@@ -35,7 +36,7 @@
 
 #include <kernel/misc.h>
 uint8_t SSEFeaturesBits = 0;
-void __initThings();
+void initThings();
 void initExceptions();
 void PICInit();
 void keyboardInit();
@@ -49,15 +50,26 @@ void kernelMain() {
 	// int w = bootboot.fb_width;
 	// int h = bootboot.fb_height;
 	SSEInit();
-	__initThings();
+	// This is safe here because all it does it set a variable.
+	mallocInit((void*)0x0000000001000000);
+	initThings();
+	// initialize serial logging.
+	serial.init(115200);
 	keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
 	// Say that the kernel is loading and to please wait.
 	puts("Techflash OS v");
+	serial.writeString(SERIAL_PORT_COM1, "Techflash OS v");
 	kernTTY.color = vga.colors.cyan + 0x002020;
-	printf("%d.%d.%d ", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
+	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
 	kernTTY.color = 0xAAAAAA;
-	puts("Loading...\r\n");
+	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MAJOR + '0');
+	serial.write(SERIAL_PORT_COM1, '.');
+	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MINOR + '0');
+	serial.write(SERIAL_PORT_COM1, '.');
+	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_PATCH + '0');
+	puts(" Loading...\r\n");
 	env = handleEnv();
+	serial.writeString(SERIAL_PORT_COM1, " Loading...\r\n");
 	// if (env.experimental.progressBarBoot) {
 	boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
 
@@ -69,50 +81,42 @@ void kernelMain() {
 	// Initialize the Global Descriptor Table
 	GDTInit();
 
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+	
 
 	// Initialize the Interrupt Descriptor Table
 	IDTInit();
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+	
 
-	mallocInit((void*)0x0000000001000000);
 	// Init the keyboard driver
 	keyboardInit();
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
+		
 
-	setKeyboardInterruptState(0, false);
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
+	keyboard.setIntState(0, false);
+		
 	// Initialize some exception handlers
 	initExceptions();
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
+		
 
-	serial.init();
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));	
+		
+	
 
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
-
-	setKeyboardInterruptState(0, true);
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+	keyboard.setIntState(0, true);
+	
 	// Now the interrupts are ready, enable them
 	log("KERNEL", "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+
+	// we have the PIC, now lets unmask some interrupts
+	// IRQSetMask(3, false);
+	// IRQSetMask(4, false);
+	// Initialize the parallel port (we need interrupts for this, since it has a timeout)
+	parallel.init();
 
 	initSyscalls();
 	parseTar((void *)bootboot.initrd_ptr);
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+	
 	sleep(250);
 	timerReady = true;
 	boot.progressBar.fadeOut();
@@ -120,12 +124,16 @@ void kernelMain() {
 	uint8_t *outPtr = 0;
 	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "test", &outPtr);
 	*/
+	// FIXME: Once the elf parser works, remove the if 0
+	#if 0
 	extern uint8_t _binary_test_size;
 	extern uint8_t _binary_test_start;
 	extern uint8_t _binary_test_end;
 	size_t size = (&_binary_test_end - &_binary_test_start);
 	
 	uint8_t *outPtr = &_binary_test_start;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Warray-bounds"
 	// asm("cli; hlt");
 	printf("outptr: %p\r\n", outPtr);
 	printf("size: %llu\r\n", size);
@@ -133,6 +141,7 @@ void kernelMain() {
 	printf("%x, 0x", outPtr[1]);
 	printf("%x, 0x", outPtr[2]);
 	printf("%x\r\n", outPtr[3]);
+	#pragma GCC diagnostic pop
 	log("KERNEL", "Loading `test` binary!", LOGLEVEL_DEBUG);
 	uint8_t elfValid = elfLoader.isValid(outPtr, ARCH_X86_64);
 	DUMPREGS
@@ -142,7 +151,7 @@ void kernelMain() {
 	else if (elfValid == 2 || elfValid == 3) {
 		panic("Init binary is a valid ELF, but not for this CPU!", regs);
 	}
-	elfStruct_t *address = elfLoader.load(outPtr, size);
+	elfStruct_t *address = elfLoader.load(outPtr);
 	if (address->err) {
 		panic("Error loading init.  The serial log may have more info.", regs);
 	}
@@ -161,6 +170,7 @@ void kernelMain() {
 	log("KERNEL", "ELF Loaded, attempting to launch.", LOGLEVEL_DEBUG);
 	addrToCall();
 	log("KERNEL", "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
+	#endif
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;
 	kernTTY.cursorAfterPromptX = 0;
@@ -168,10 +178,10 @@ void kernelMain() {
 	uint16_t commandStrIndex = 0;
 	while (true) {
 		// Main kernel loop
-		char userInput = keyboardGetLastKey();
+		char userInput = keyboard.getLastKey();
 		if ((uint8_t)userInput == 0xFF) {
 			// Special key
-			char *specialKey = kbdGetLastSpecialKey();
+			char *specialKey = keyboard.getLastSpecialKey();
 			if (specialKey[0] == '\r' && specialKey[1] == '\n') {
 				// Enter
 				puts("\r\n");

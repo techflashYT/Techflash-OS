@@ -10,14 +10,22 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
+extern void kernTTY_blink();
+extern void kernTTY_scroll(const char *numLines);
+void kernTTY_setBackground(const uint32_t color);
+void kernTTY_printPrompt();
 void kernTTY_init() {
-	kernTTY.ready = false;
-	kernTTY.cursorX = 0;
-	kernTTY.cursorY = 0;
-	kernTTY.color = vga.colors.lgray; // VGA light gray.
-	kernTTY.width = ((bootboot.fb_width / font->width) * 0.885);
-	kernTTY.height = ((bootboot.fb_height / font->height) * 0.99);
-	kernTTY.promptStr = malloc(256);
+	kernTTY.setBackground = kernTTY_setBackground;
+	kernTTY.printPrompt   = kernTTY_printPrompt;
+	kernTTY.blink         = kernTTY_blink;
+	kernTTY.scroll        = kernTTY_scroll;
+	kernTTY.ready         = false;
+	kernTTY.cursorX       = 0;
+	kernTTY.cursorY       = 0;
+	kernTTY.color         = vga.colors.lgray; // VGA light gray.
+	kernTTY.width         = ((bootboot.fb_width / font->width) * 0.885);
+	kernTTY.height        = ((bootboot.fb_height / font->height) * 0.99);
+	kernTTY.promptStr     = malloc(256);
 	strcpy(kernTTY.promptStr, "> ");
 }
 void kernTTY_setBackground(const uint32_t color) {

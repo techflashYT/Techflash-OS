@@ -16,7 +16,6 @@ typedef struct {
 	uint32_t index;
 	
 	char *promptStr;
-	void (*init)();
 	void (*setBackground)(const uint32_t color);
 	void (*printPrompt)();
 	void (*blink)();

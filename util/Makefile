@@ -11,5 +11,5 @@ sysroot:
 		cd sysroot &&\
 		mkdir -p bin usr/include/TechflashOS usr/src/TechflashOS boot installContents &&\
 		cp ../bin/tfos_kernel.elf boot/tfos.elf &&\
-		cp -r ../{.vscode,include,kernel,misc,util,.config,.git*,bootboot*,*.sh,configure,grub,README.md} usr/src/TechflashOS\
+		cp -r ../{.vscode,include,kernel,misc,util,.config,.giti*,.gita*,bootboot*,*.sh,configure,grub,README.md} usr/src/TechflashOS\
 	)

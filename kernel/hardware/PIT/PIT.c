@@ -11,13 +11,15 @@
 #include <kernel/graphics.h>
 
 
-uint32_t PITTick = 0;
+uint64_t PITTick = 0;
 void timerCallback(__attribute__ ((unused)) registers_t *regs) {
 	PITTick++;
-	kernTTY.blink();
+	
 }
 // FIXME: Sometimes takes twice as long as it should and I have no idea why
 void sleep(uint64_t ms) {
+	// enable irq0
+	
 	uint32_t oldTick = 0;
 	while (true) {
 		if (oldTick != PITTick) {

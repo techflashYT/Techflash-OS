@@ -1,9 +1,27 @@
 .global inb
-.type inb,@function
+.global inw
+.global inl
+.type inb, @function
+.type inw, @function
+.type inl, @function
 /*
-	%edi: address
+	%rdi: address
 */
 inb:
-	mov %edi, %edx
-	inb %dx, %al
+	xor %rax, %rax
+	xor %rdx, %rdx
+	mov %rdi, %rdx
+	inb %dx,  %al
+	ret
+inw:
+	xor %rax, %rax
+	xor %rdx, %rdx
+	mov %rdi, %rdx
+	inw %dx,  %ax
+	ret
+inl:
+	xor %rax, %rax
+	xor %rdx, %rdx
+	mov %rdi, %rdx
+	inl %dx,  %eax
 	ret

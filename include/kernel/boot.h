@@ -6,5 +6,5 @@ typedef struct {
 		void (*update)(uint8_t percent);
 		void (*fadeOut)();
 	} progressBar;
-} __boot_t;
-extern __boot_t boot;
+} boot_t;
+extern boot_t boot;

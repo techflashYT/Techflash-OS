@@ -23,6 +23,6 @@ typedef struct {
 			} features;
 		} CPU;
 	} hardware;
-} __environment_t;
-extern __environment_t env;
-__environment_t handleEnv();
+} environment_t;
+extern environment_t env;
+environment_t handleEnv();

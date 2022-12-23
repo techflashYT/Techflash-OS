@@ -6,6 +6,16 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/PIT.h>
 #include <stdlib.h>
+#include <kernel/boot.h>
+void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
+void bootProgressBarFadeOut();
+void bootProgressBarUpdate(const uint8_t percent);
+void bootInit() {
+	boot.percent = 0;
+	boot.progressBar.create  = bootProgressBarCreate;
+	boot.progressBar.update  = bootProgressBarUpdate;
+	boot.progressBar.fadeOut = bootProgressBarFadeOut;
+}
 uint8_t bootProgressBarX = 0;
 uint8_t bootProgressBarY = 0;
 uint8_t bootProgressBarWidth = 0;

@@ -9,9 +9,11 @@
 #include <stdint.h>
 typedef struct {
 	bool working;
-	bool (*init)();
-	char (*readNext)(const uint16_t port);
-	void (*write)(const uint16_t port, const char value);
-	void (*writeString)(const uint16_t port, const char* value);
-} __serial_t;
-extern __serial_t serial;
+	bool (*init)         (const uint64_t speed);
+	char (*readNext)     (const uint16_t port);
+	void (*write)        (const uint16_t port, const uint8_t value);
+	void (*writeString)  (const uint16_t port, const char *value);
+	int  (*readBufEmpty) (const uint16_t port);
+	int  (*writeBufEmpty)(const uint16_t port);
+} serial_t;
+extern serial_t serial;

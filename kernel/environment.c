@@ -18,7 +18,7 @@ bool findString(const char* str, uint16_t pos) {
 	}
 	return correctSoFar;
 }
-__environment_t defaultEnv = {
+environment_t defaultEnv = {
 	.experimental.progressBarBoot   = false,
 	.hardware.CPU.features.SSE.v1   = true,
 	.hardware.CPU.features.SSE.v2   = true,
@@ -28,8 +28,8 @@ __environment_t defaultEnv = {
 	.hardware.CPU.features.SSE.v4_A = false,
 	.hardware.CPU.features.SSE.v5   = false,
 };
-__environment_t handleEnv() {
-	__environment_t buildEnv = defaultEnv;
+environment_t handleEnv() {
+	environment_t buildEnv = defaultEnv;
 	// FIXME: **VERY** SLOW. Iterates through env each time to find a str. Unknown keys are ignored (bad).
 	for (uint16_t i = 0; environment[i] == 'E' && environment[++i] == 'O' && environment[i + 2] == 'F'; i++) {
 		if (environment[i] == '\r' || environment[i] == '\n') {

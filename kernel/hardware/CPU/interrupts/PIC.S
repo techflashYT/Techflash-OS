@@ -45,7 +45,7 @@ PICInit:
 	outb %al, $PIC_2_DATA
 
 	# All done. Null out the data registers
-	movb $0,%al
+	xor %al, %al
 	outb %al, $PIC_1_DATA
 	outb %al, $PIC_2_DATA
 	ret

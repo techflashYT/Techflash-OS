@@ -1,17 +1,28 @@
 .global outb
 .global outw
 .global outl
-.global outq
 .type outb, @function
 .type outw, @function
 .type outl, @function
-.type outq, @function
 /*
-	%esi: value
-	%edi: address
+	%rsi: value
+	%rdi: addrrss
 */
 outb:
-	mov %esi, %eax
-	mov %edi, %edx
-	outb %al, %dx
+	xor  %rax, %rax
+	mov  %rsi, %rax # Port
+	mov  %rdi, %rdx # Data
+	outb %al, %dx   # do the io
+	ret
+outw:
+	xor  %rax, %rax
+	mov  %rsi, %rax # Port
+	mov  %rdi, %rdx # Data
+	outw %ax, %dx   # do the io
+	ret
+outl:
+	xor  %rax, %rax
+	mov  %rsi, %rax # Port
+	mov  %rdi, %rdx # Data
+	outl %eax, %dx  # do the io
 	ret

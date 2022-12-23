@@ -9,16 +9,6 @@ int puts(const char *s) {
 	*/
 	// len = 0;
 	if ((*s) == 0) {
-		asm (
-			"mov $0x01, %%rax;"
-			"mov %0, %%rdi;"
-			"mov %1, %%rsi;"
-			"mov $10,%%r8;"
-			"int $0x80;"
-			:
-			: "r" (s), "r" (buffer)
-			:
-		);
 		putchar('w');
 		putchar('e');
 		putchar(' ');
@@ -27,11 +17,7 @@ int puts(const char *s) {
 		putchar('d');
 		putchar(' ');
 		putchar(' ');
-		uint8_t i = 0;
-		while (buffer[i] != 0) {
-			putchar(buffer[i]);
-			i++;
-		}
+		return 0;
 	}
 	while (*s) {
 		putchar(*s);

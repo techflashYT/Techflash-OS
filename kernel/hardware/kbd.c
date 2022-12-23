@@ -85,7 +85,7 @@ char kbdScancodeToASCII(uint8_t scancode) {
 	return key;
 }
 
-char *kbdGetLastSpecialKey() {
+char *keyboardGetLastSpecialKey() {
 	lastNextKey = nextKey;
 	nextKey = "\0\0\0";
 	return lastNextKey;
@@ -120,12 +120,9 @@ char keyboardGetLastKey() {
 	lastKey = 0;
 	return ret;
 }
-
-void keyboardInit() {
-	nextKey = "\0\0\0";
-	registerInterruptHandler(IRQ1, &keyboardIRQ);
-}
-
+// false = init struct on keyboardInit
+// true  = init IRQ on keyboardInit
+bool initStruct = false;
 void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
 	if (PS2Port == 0) {
 		outb(0x64, (uint8_t)(0xA7 + state));
@@ -135,3 +132,19 @@ void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
 		panic("setKeyboardInterruptState(): Called with invalid PS2 Port number\r\n       or with port 2 which is unsupported", regs);
 	}
 }
+void keyboardSetLED(uint8_t led, bool value);
+bool keyboardGetStatusOfLED(uint8_t led);
+void keyboardInit() {
+	if (!initStruct) {
+		initStruct = true;
+		keyboard.getStatusLED      = keyboardGetStatusOfLED;
+		keyboard.setLED            = keyboardSetLED;
+		keyboard.setIntState       = setKeyboardInterruptState;
+		keyboard.getLastKey        = keyboardGetLastKey;
+		keyboard.getLastSpecialKey = keyboardGetLastSpecialKey;
+		return;
+	}
+	nextKey = "\0\0\0";
+	registerInterruptHandler(IRQ1, &keyboardIRQ);
+}
+
