@@ -4,24 +4,29 @@
 #include <kernel/hardware/PIT.h>
 #include <kernel/log.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+MODULE("PARALLEL");
+parallel_t parallel;
 bool structInit = false;
 uint16_t LPT1 = 0;
 uint16_t LPT2 = 0;
 uint16_t LPT3 = 0;
+extern void padNumTo(char *src, uint8_t padding);
+// NOTE: This will always take a minimum of 20ms, since we wait for the device to read.
 bool parallelWrite(const uint16_t port, const uint8_t data) {
 	if (port == 0) {
 		return false;
 	}
 	// is the device ready?
-	uint8_t i = 0;
-	while (!(inb(port + 1) & 0x80)) {
-		sleep(10);
-		i++;
-		if (i == 10) {
-			// it's been too long, abort
-			return false;
-		}
-	}
+	// while (!(inb(port + 1) & 0x80)) {
+	// 	sleep(10);
+	// 	i++;
+	// 	if (i == 10) {
+	// 		// it's been too long, abort
+	// 		return false;
+	// 	}
+	// }
 	outb(port, data);
 
 	// pulse the strobe line to tell the device to read
@@ -29,15 +34,7 @@ bool parallelWrite(const uint16_t port, const uint8_t data) {
 	outb(port + 2, control | 1);
 	sleep(10);
 	outb(port + 3, control);
-	i = 0;
-	while (!(inb(port + 1) & 0x80)) {
-		sleep(10);
-		i++;
-		if (i == 10) {
-			// it's been too long, abort
-			return false;
-		}
-	}
+	sleep(10);
 
 	return true;
 }
@@ -61,19 +58,18 @@ void parallelInit() {
 		return;
 	}
 	outl(LPT1 + 2, 0); // reset control port with null
-	bool failed = false;
-	if (!parallelWrite(LPT1, 'A')) {
-		failed = true;
-	}
-	if (!parallelWrite(LPT1, 'B')) {
-		failed = true;
-	}
-	if (!parallelWrite(LPT1, 'C')) {
-		failed = true;
-	}
-	if (failed) {
-		log("LPTPORT", "Your parallel ports don't seem to work, disabling parallel logging.", LOGLEVEL_WARN);
-		parallel.working = false;
-	}
+	uint8_t offset1 = 53;
+	uint8_t offset2 = 68;
+	uint8_t offset3 = 83;
+	char *str = "I/O Ports according to the BIOS Data Area: Port 1: 0xAAA; Port 2: 0xAAA; Port 3: 0xAAA";
+	char *buffer = malloc(8);
+	padNumTo(utoa(LPT1, buffer, 16), 3);
+	memcpy(str + offset1, buffer, 3);
+	padNumTo(utoa(LPT2, buffer, 16), 3);
+	memcpy(str + offset2, buffer, 3);
+	padNumTo(utoa(LPT3, buffer, 16), 3);
+	memcpy(str + offset3, buffer, 3);
+	free(buffer);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
 	return;
 }

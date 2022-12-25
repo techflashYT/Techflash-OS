@@ -35,6 +35,7 @@
 #include <kernel/custom.h>
 
 #include <kernel/misc.h>
+MODULE("KERNEL");
 uint8_t SSEFeaturesBits = 0;
 void initThings();
 void initExceptions();
@@ -105,7 +106,7 @@ void kernelMain() {
 	keyboard.setIntState(0, true);
 	
 	// Now the interrupts are ready, enable them
-	log("KERNEL", "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
+	log(MODNAME, "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
 
 	// we have the PIC, now lets unmask some interrupts
@@ -142,7 +143,7 @@ void kernelMain() {
 	printf("%x, 0x", outPtr[2]);
 	printf("%x\r\n", outPtr[3]);
 	#pragma GCC diagnostic pop
-	log("KERNEL", "Loading `test` binary!", LOGLEVEL_DEBUG);
+	log(MODNAME, "Loading `test` binary!", LOGLEVEL_DEBUG);
 	uint8_t elfValid = elfLoader.isValid(outPtr, ARCH_X86_64);
 	DUMPREGS
 	if (elfValid == 1) {
@@ -158,18 +159,18 @@ void kernelMain() {
 	char *logBuffer = malloc(32);
 	strcpy(logBuffer, "address of elf: 0x");
 	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);
-	log("KERNEL", logBuffer, LOGLEVEL_DEBUG);
+	log(MODNAME, logBuffer, LOGLEVEL_DEBUG);
 	free(logBuffer);
 
 	int (*addrToCall)() = (void *)(address->startOfData + address->entryPointOffset);
 	logBuffer = malloc(32);
 	strcpy(logBuffer, "address of entryPoint: 0x");
 	utoa((uint64_t)addrToCall, logBuffer + strlen(logBuffer), 16);
-	log("KERNEL", logBuffer, LOGLEVEL_DEBUG);
+	log(MODNAME, logBuffer, LOGLEVEL_DEBUG);
 	free(logBuffer);
-	log("KERNEL", "ELF Loaded, attempting to launch.", LOGLEVEL_DEBUG);
+	log(MODNAME, "ELF Loaded, attempting to launch.", LOGLEVEL_DEBUG);
 	addrToCall();
-	log("KERNEL", "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
+	log(MODNAME, "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
 	#endif
 	kernTTY.printPrompt();
 	kernTTY.blinkingCursor = true;

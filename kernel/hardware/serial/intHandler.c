@@ -3,17 +3,21 @@
 #include <kernel/hardware/CPU/ISR.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/log.h>
+#include <stdio.h>
 void serialHandler(registers_t *regs) {
-	// serial clock!  let's check if we got anything
-	if (serial.readBufEmpty(SERIAL_PORT_COM1) == 0) {
-		// empty, nothing to do, leave
-		return;
-	}
+	// we got something from serial, echo it
+	// if (serial.writeBufEmpty(SERIAL_PORT_COM1) == 0) {
+	// 	// empty, nothing to do, leave
+	// 	return;
+	// }
 	(void)regs;
-	char *buffer = malloc(64);
-	strcpy(buffer, "Received a byte!  Byte: 0x");
-	utoa(serial.readNext(SERIAL_PORT_COM1), buffer + strlen(buffer), 16);
-	log("SERIAL", buffer, LOGLEVEL_DEBUG);
-	free(buffer);
+	uint8_t byte = serial.readNext(SERIAL_PORT_COM1);
+	if (serial.echo) {
+		if (byte == '\r') {
+			serial.write(SERIAL_PORT_COM1, '\n');
+		}
+		serial.write(SERIAL_PORT_COM1, byte);
+	}
+	
 	return;
 }

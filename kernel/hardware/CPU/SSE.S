@@ -6,6 +6,7 @@
 .type FPUInit,@function
 
 .section .bss
+.
 SSSE3:
 .byte 0
 .section .text

@@ -9,13 +9,15 @@
 #define LOG_COLOR
 char *logLevelColorsEscCode[] = {
 	"\x1b[0m", // debug
+	"\x1b[0m\x1b[1;39m", // debug
 	"\x1b[0m\x1b[33m", // warn
 	"\x1b[0m\x1b[31m"  // err
 };
 uint32_t logLevelColorsFrameBuf[] = {
 	0x00AAAAAA, // debug
+	0x00DDDDDD, // info
 	0x00FFD866, // warn
-	0x00BB0000  // err
+	0x00FF4444  // err
 };
 void log(const char *module, const char* message, uint8_t logLevel) {
 	// colorize using actual ANSI escape sequences for the serial logging

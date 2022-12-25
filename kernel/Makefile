@@ -1,11 +1,13 @@
 # Original version Copyright 2017 - 2021 bzt (bztsrc@git.lab)
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
-FEATURES   = -march=core2 -mno-3dnow -mno-mmx
+CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
+FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
 OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 -g # DEBUG
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(FEATURES) $(OPTIMIZE)
+DEFINES    = -D'MODULE(x)=static const char *MODNAME = (x)'
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(DEFINES) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack

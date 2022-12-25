@@ -13,30 +13,14 @@
 #include <stdlib.h>
 
 extern void elfInit();
-elfLoader_t elfLoader;
-
 registers_t regsDump;
 
 extern void kernTTY_init();
-_kernTTY_t kernTTY;
-
 extern void keyboardInit();
-keyboard_t keyboard;
-
 extern bool serialInit(uint64_t speed);
-serial_t serial;
-
-environment_t env;
-
 extern void bootInit();
-boot_t boot;
-
 extern void VGAInit();
-vga_t vga;
-
 extern void parallelInit();
-parallel_t parallel;
-
 bda_t *bda;
 bool heapSetUp;
 bool haveAllocated;

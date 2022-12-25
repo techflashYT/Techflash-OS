@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/tty.h>
-
+keyboard_t keyboard;
 char lastKey;
 
 bool isShifted = false;

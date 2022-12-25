@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <kernel/misc.h>
 extern uint8_t SSEFeaturesBits;
+environment_t env;
 bool findString(const char* str, uint16_t pos) {
 	bool correctSoFar = false;
 	for (uint16_t i = 0; i < strlen(str); i++) {

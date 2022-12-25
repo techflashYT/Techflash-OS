@@ -7,9 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kernel/graphics.h>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#pragma GCC diagnostic ignored "-Wstringop-overflow"
+_kernTTY_t kernTTY;
 extern void kernTTY_blink();
 extern void kernTTY_scroll(const char *numLines);
 void kernTTY_setBackground(const uint32_t color);
@@ -28,6 +26,9 @@ void kernTTY_init() {
 	kernTTY.promptStr     = malloc(256);
 	strcpy(kernTTY.promptStr, "> ");
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
 void kernTTY_setBackground(const uint32_t color) {
 	kernTTY.textBackground = color;
 	int s = bootboot.fb_scanline;

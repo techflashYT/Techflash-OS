@@ -1,17 +1,27 @@
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/log.h>
+#include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/CPU/IRQNums.h>
 #include <kernel/hardware/CPU/ISR.h>
 #include <kernel/misc.h>
 #include <kernel/panic.h>
+MODULE("SERIAL");
+serial_t serial;
 void serialHandler(registers_t *regs);
 char serialReadNext(const uint16_t port);
 void serialWrite(const uint16_t port, const uint8_t value);
 void serialWriteString(const uint16_t port, const char* value);
 int serialReadBufEmpty(const uint16_t port);
 int serialWriteBufEmpty(const uint16_t port);
+extern void padNumTo(char *src, uint8_t padding);
+uint16_t SERIAL_PORT_COM1;
+uint16_t SERIAL_PORT_COM2;
+uint16_t SERIAL_PORT_COM3;
+uint16_t SERIAL_PORT_COM4;
 // false = set up the struct and return
 // true  = set up the serial port and return
 bool structReady = false;
@@ -19,7 +29,14 @@ bool serialInit(const uint64_t speed) {
 	// is the struct ready yet?  if not, this is the first time calling serialInit,
 	// we're still in `initThings` initializing globals, so let's initialize the struct.
 	if (!structReady) {
+		bda->serialPortAddrs[0] = 0x0000;
 		structReady          = true;
+		serial.working       = false;
+		serial.echo          = true;
+		SERIAL_PORT_COM1     = bda->serialPortAddrs[0];
+		SERIAL_PORT_COM2     = bda->serialPortAddrs[1];
+		SERIAL_PORT_COM3     = bda->serialPortAddrs[2];
+		SERIAL_PORT_COM4     = bda->serialPortAddrs[3];
 		serial.init          = serialInit;
 		serial.readNext      = serialReadNext;
 		serial.write         = serialWrite;
@@ -29,6 +46,33 @@ bool serialInit(const uint64_t speed) {
 		return false;
 	}
 	// it's true, lets enable serial
+	uint8_t offset1 = 53;
+	uint8_t offset2 = 68;
+	uint8_t offset3 = 83;
+	uint8_t offset4 = 98;
+	char *str = "I/O Ports according to the BIOS Data Area: Port 1: 0xAAA; Port 2: 0xAAA; Port 3: 0xAAA; Port 4: 0xAAA";
+	char *buffer = malloc(8);
+	padNumTo(utoa(SERIAL_PORT_COM1, buffer, 16), 3);
+	memcpy(str + offset1, buffer, 3);
+	padNumTo(utoa(SERIAL_PORT_COM2, buffer, 16), 3);
+	memcpy(str + offset2, buffer, 3);
+	padNumTo(utoa(SERIAL_PORT_COM3, buffer, 16), 3);
+	memcpy(str + offset3, buffer, 3);
+	padNumTo(utoa(SERIAL_PORT_COM4, buffer, 16), 3);
+	memcpy(str + offset4, buffer, 3);
+	free(buffer);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
+	// wait! wait! wait!
+	// before we do anything, does the BIOS say that serial is disabled?
+	uint8_t origPort = 0;
+	origPort = SERIAL_PORT_COM1;
+	if (SERIAL_PORT_COM1 == 0) {
+		// it DOES!  Don't bother to do anything then.
+		serial.working = false;
+
+		log("SERIAL", "Serial appears to be disabled in your computer's BIOS, testing to make sure.", LOGLEVEL_WARN);
+		SERIAL_PORT_COM1 = 0x3F8; // Most common
+	}
 	outb(SERIAL_PORT_COM1 + 1, 0x00); ioWait();    // Disable all interrupts  (we already did this during boot, but just in case)
 	outb(SERIAL_PORT_COM1 + 3, 0x80); ioWait();    // Enable DLAB (set baud rate divisor)
 	if ((115200 % speed) != 0) {
@@ -48,20 +92,26 @@ bool serialInit(const uint64_t speed) {
 	outb(SERIAL_PORT_COM1 + 0, 0xAE); ioWait();    // Test serial chip (send byte 0xAE and check if serial returns same byte)
 
 	registerInterruptHandler(IRQ4, &serialHandler); // register the interrupt handler for ports 1 & 3
+	registerInterruptHandler(IRQ3, &serialHandler); // register the interrupt handler for ports 2 & 4
 	// Check if serial is faulty (i.e: not same byte as sent)
 	if (inb(SERIAL_PORT_COM1 + 0) != 0xAE) {
 		serial.working = false;
-		log("SERIAL", "Your serial port appears not to be functioning, serial logging will be disabled.", LOGLEVEL_WARN);
+		if (origPort == 0) {
+			log("SERIAL", "After testing, it appears that the serial port is indeed disabled.  Disabling serial logging...", LOGLEVEL_ERROR);
+			return false;
+		}
+		log("SERIAL", "Your serial port appears not to be functioning, serial logging will be disabled.", LOGLEVEL_ERROR);
 		return false;
+	}
+	if (origPort == 0) {
+		log("SERIAL", "After testing, it appears that the serial port is actually working despite the BIOS saying it isn't!  Enabling serial logging...", LOGLEVEL_INFO);
 	}
 	// If serial is not faulty set it in normal operation mode
 	// (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
 	serial.working = true; // remember that serial is working
-	ioWait(); ioWait();
-	// registerInterruptHandler(IRQ3, &serialHandler); // register the interrupt handler for ports 2 & 4
 	outb(SERIAL_PORT_COM1 + 4, 0x0F);
 	// enable interrupts
-	outb(SERIAL_PORT_COM1 + 1, 0x02);
+	outb(SERIAL_PORT_COM1 + 1, 0x01);
 
 	serialWriteString(SERIAL_PORT_COM1, "SERIAL TEST!!!!!!!\r\n");
 	return true;

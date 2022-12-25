@@ -3,7 +3,7 @@
 .type ISRStub, @function
 .global sendEOI
 .type sendEOI, @function
-__temporaryStackPointer:
+temporaryStackPointer:
 	.space 1*8
 .section .text
 .global ISRCommonStub

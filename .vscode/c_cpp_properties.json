@@ -1,34 +1,37 @@
 {
-	"configurations": [
-		{
-			"name": "Linux",
-			"includePath": [
-				"include",
-				"apps/installer/include",
-				"/opt/cross/lib/gcc/x86_64-elf/13.0.0/include"
-			],
-			"defines": [
-				"CONFIG_KERN_VERSION_MAJOR=0",
-				"CONFIG_KERN_VERSION_MINOR=1",
-				"CONFIG_KERN_VERSION_PATCH=0",
-				"CONFIG_BITS=64",
-				"true=1",
-				"false=0",
-				"bool=_Bool"
-			],
-			"compilerPath": "/opt/TechflashSoftware/crossCompiler/bin/x86_64-elf-gcc",
-			"cStandard": "gnu17",
-			"cppStandard": "gnu++23",
-			"intelliSenseMode": "linux-gcc-x64",
-			"compilerArgs": [
-				"-Ofast",
-				"-std=gnu2x",
-				"-ffreestanding",
-				"-march=core2",
-				"-mno-3dnow",
-				"-mno-mmx"
-			]
-		}
-	],
-	"version": 4
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "include",
+                "apps/installer/include",
+                "/opt/TechflashSoftware/crossCompiler/lib/gcc/x86_64-elf/13.0.0/include"
+            ],
+            "defines": [
+                "CONFIG_KERN_VERSION_MAJOR=0",
+                "CONFIG_KERN_VERSION_MINOR=1",
+                "CONFIG_KERN_VERSION_PATCH=0",
+                "CONFIG_BITS=64",
+                "true=1",
+                "false=0",
+                "bool=_Bool",
+                "MODULE(x)=static const char *MODNAME = (x)"
+            ],
+            "compilerPath": "/opt/TechflashSoftware/crossCompiler/bin/x86_64-elf-gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++23",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                "-nostdlib",
+                "-nostdinc",
+                "-Ofast",
+                "-std=gnu2x",
+                "-ffreestanding",
+                "-march=core2",
+                "-mno-3dnow",
+                "-mno-mmx"
+            ]
+        }
+    ],
+    "version": 4
 }

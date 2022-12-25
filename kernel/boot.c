@@ -7,6 +7,7 @@
 #include <kernel/hardware/PIT.h>
 #include <stdlib.h>
 #include <kernel/boot.h>
+boot_t boot;
 void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
 void bootProgressBarFadeOut();
 void bootProgressBarUpdate(const uint8_t percent);

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/IO.h>
+MODULE("SERIAL");
 void serialWriteString(const uint16_t port, const char* value) {
 	if (!serial.working) {
 		return;

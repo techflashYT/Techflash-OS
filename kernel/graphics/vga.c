@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/graphics.h>
+vga_t vga;
 void VGAInit() {
 	vga.colors.black  = 0x000000;
 	vga.colors.blue   = 0x0000AA;

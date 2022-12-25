@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <kernel/custom.h>
-
+elfLoader_t elfLoader;
 elfStruct_t retVal;
 static uint8_t load(ELF64ProgramHeader *ph);
 elfStruct_t *elfLoad(uint8_t *file) {
