@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kernel/hardware/serial.h>
-#include <kernel/log.h>
 #include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/CPU/IRQNums.h>
@@ -29,7 +28,6 @@ bool serialInit(const uint64_t speed) {
 	// is the struct ready yet?  if not, this is the first time calling serialInit,
 	// we're still in `initThings` initializing globals, so let's initialize the struct.
 	if (!structReady) {
-		bda->serialPortAddrs[0] = 0x0000;
 		structReady          = true;
 		serial.working       = false;
 		serial.echo          = true;

@@ -1,16 +1,14 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 #include <kernel/hardware/kbd.h>
-#include <kernel/hardware/serial.h>
 #include <kernel/hardware/CPU/ISR.h>
 #include <kernel/hardware/CPU/IRQNums.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/panic.h>
 #include <kernel/misc.h>
-#include <stdint.h>
-#include <string.h>
-#include <kernel/tty.h>
 keyboard_t keyboard;
 char lastKey;
 
@@ -34,7 +32,24 @@ char scancodes[] = {0xFF,
 	'\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',0xFF, '*', 0xFF,
 	' ', 0xFF,
 };
-
+uint8_t convertArr[] = {
+	[0x00] = 0x00,
+	[0x01] = 0x01,
+	[0x0E] = 0x02,
+	[0x0F] = 0x03,
+	[0x1C] = 0x04,
+	[0x1D] = 0x05,
+	[0x36] = 0x06,
+	0, // fill everything not set with 0
+};
+char *keyStrs[] = {
+	0,
+	"ESC",
+	"\b",
+	"Tab",
+	"\r\n",
+	"LCtrl"
+};
 char kbdScancodeToASCII(uint8_t scancode) {
 	char key;
 	if (scancode > 0x3A) {
@@ -51,26 +66,10 @@ char kbdScancodeToASCII(uint8_t scancode) {
 		if (scancode == 0x00) {
 			return 0x0;
 		}
-		else if (scancode == 0x01) {
-			strcpy(nextKey, "ESC");
-			return 0xFF;
-		}
-		// Backspace
-		else if (scancode == 0x0E) {
-			strcpy(nextKey, "\b");
-			return 0xFF;
-		}
-		else if (scancode == 0x0F) {
-			strcpy(nextKey, "Tab");
-			return 0xFF;
-		}
-		else if (scancode == 0x1C) {
-			strcpy(nextKey, "\r\n");
-			return 0xFF;
-		}
-		else if (scancode == 0x1D) {
-			strcpy(nextKey, "LCt");
-			return 0xFF;
+		char *tmp;
+		tmp = keyStrs[convertArr[scancode]];
+		if (tmp != 0) {
+			strcpy(nextKey, tmp);
 		}
 		else if (scancode == 0x36) {
 			isShifted = true;
@@ -81,7 +80,6 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			isShifted = true;
 		}
 	}
-	// printf("key: %c", key);
 	return key;
 }
 
@@ -93,8 +91,8 @@ char *keyboardGetLastSpecialKey() {
 
 
 void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
-	kernTTY.nextBlinkShouldBeOn = true;
-	kernTTY.blink();
+	// kernTTY.nextBlinkShouldBeOn = true;
+	// kernTTY.blink();
 	int scancode = 0;
 	int key = 0;
 
@@ -111,18 +109,12 @@ void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
 	
 	key = kbdScancodeToASCII(scancode);
 	lastKey = key;
-	// kernTTY.cursorX = 0;
-	// kernTTY.cursorY = 5;
-	// printf("Keyboard IRQ!  Key: %c\r\nScancode: 0x%x  \r\n", key, scancode);
 }
 char keyboardGetLastKey() {
 	char ret = lastKey;
 	lastKey = 0;
 	return ret;
 }
-// false = init struct on keyboardInit
-// true  = init IRQ on keyboardInit
-bool initStruct = false;
 void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
 	if (PS2Port == 0) {
 		outb(0x64, (uint8_t)(0xA7 + state));
@@ -134,6 +126,9 @@ void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
 }
 void keyboardSetLED(uint8_t led, bool value);
 bool keyboardGetStatusOfLED(uint8_t led);
+// false = init struct on keyboardInit
+// true  = init IRQ on keyboardInit
+bool initStruct = false;
 void keyboardInit() {
 	if (!initStruct) {
 		initStruct = true;
@@ -144,7 +139,7 @@ void keyboardInit() {
 		keyboard.getLastSpecialKey = keyboardGetLastSpecialKey;
 		return;
 	}
-	nextKey = "\0\0\0";
+	nextKey = malloc(8);
 	registerInterruptHandler(IRQ1, &keyboardIRQ);
 }
 

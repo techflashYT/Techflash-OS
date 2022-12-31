@@ -6,8 +6,7 @@ FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstac
 OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 -g # DEBUG
-DEFINES    = -D'MODULE(x)=static const char *MODNAME = (x)'
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -nostdlib -g -I../include -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(DEFINES) $(FEATURES)
+CFLAGS     = -Wall -Wextra -Wno-uninitialized -nostdlib -g -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
@@ -61,7 +60,7 @@ all: ../bin/tfos_kernel.elf
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)
 	@echo "AS    $< => $(subst ../build/kernel/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
+	@x86_64-elf-gcc -mno-red-zone -c $< -o $@
 clean:
 	@rm -f $(compile) ../bin/*.elf || true
 

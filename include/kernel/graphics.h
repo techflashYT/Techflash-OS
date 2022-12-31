@@ -2,6 +2,11 @@
 uint32_t readPixel(const uint16_t x, const uint16_t y);
 void putPixel(const uint16_t x, const uint16_t y, const uint32_t value);
 typedef struct {
+	char character;
+	uint32_t color;
+} colorChar_t;
+
+typedef struct {
 	struct {
 		uint32_t black;
 		uint32_t blue;

@@ -1,10 +1,7 @@
-#include <kernel/fs/tar.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
-#include <kernel/environment.h>
-#include <kernel/hardware/PIT.h> 
+#include <kernel/fs/tar.h>
 
 tarHeader_t *headers[2048];
 uint64_t numHeaders = 0;

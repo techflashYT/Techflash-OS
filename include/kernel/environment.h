@@ -5,24 +5,7 @@ extern BOOTBOOT bootboot;               // see bootboot.h
 extern unsigned char environment[4096]; // configuration, UTF-8 text key=value pairs
 extern uint8_t fb;                      // linear framebuffer mapped
 typedef struct {
-	struct {
-		bool progressBarBoot;
-	} experimental;
-	struct {
-		struct {
-			struct {
-				struct {
-					bool v1;
-					bool v2;
-					bool v3;
-					bool v4_1;
-					bool v4_2;
-					bool v4_A;
-					bool v5;
-				} SSE;
-			} features;
-		} CPU;
-	} hardware;
+	
 } environment_t;
-extern environment_t env;
+extern environment_t env[CONFIG_KERN_MAXARGS];
 environment_t handleEnv();

@@ -8,9 +8,11 @@
 #include <stdlib.h>
 #include <kernel/boot.h>
 boot_t boot;
+extern uint8_t maxTasks;
+float currentTasks = 0.0f;
 void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width);
 void bootProgressBarFadeOut();
-void bootProgressBarUpdate(const uint8_t percent);
+void bootProgressBarUpdate();
 void bootInit() {
 	boot.percent = 0;
 	boot.progressBar.create  = bootProgressBarCreate;
@@ -34,6 +36,15 @@ void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width
 	}
 }
 void bootProgressBarFadeOut() {
+	DUMPREGS;
+	uint8_t percent = (uint8_t)( (float)( currentTasks / maxTasks ) * 100 );
+	if (percent < 99.5f) {
+		panic("bootProgressBarFadeOut(): percent less than 100!  Did you forget to add more tasks before update maxTasks?", regs);
+	}
+	if (percent > 100.5f) {
+		panic("bootProgressBarFadeOut(): percent greater than 100!  Did you forget to update maxTasks before adding more?", regs);
+	}
+	
 	uint32_t bracketColor = vga.colors.lgray;
 	uint32_t hashColor    = vga.colors.white;
 	while (true) {
@@ -81,7 +92,10 @@ static uint8_t percentToCoords(const uint8_t percent) {
 	// Calculate the x coords for the progress bar.
 	return (bootProgressBarWidth - 1) * percent / 100;
 }
-void bootProgressBarUpdate(const uint8_t percent) {
+
+void bootProgressBarUpdate() {
+	currentTasks += 1.0f;
+	uint8_t percent = (uint8_t)( (float)( currentTasks / maxTasks ) * 100 );
 	// Verify that the percent is valid.
 	if (percent == 0 || percent > 100) {
 		DUMPREGS

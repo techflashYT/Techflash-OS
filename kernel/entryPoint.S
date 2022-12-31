@@ -1,11 +1,10 @@
-/*
 .section .bss
 .global kernelStackBottom
 .global kernelStackTop
 kernelStackBottom:
 .skip 0x150001, 0
 kernelStackTop:
-*/
+.word 0x0000 // (will be initialized to 0xDEAD in a sec) if this gets overwritten, we've stack overflowed
 .section .text
 
 .global kernelMain
@@ -14,8 +13,9 @@ kernelStackTop:
 .type _start, @function
 _start:
 	cli
-	# mov $kernelStackTop, %rsp
+	mov $kernelStackTop, %rsp
 	# disable serial port interrupts since I know they cause issues
+	movw $0xDEAD, (kernelStackTop)
 	push %rax
 	push %rdx
 	mov $0x00, %rdx

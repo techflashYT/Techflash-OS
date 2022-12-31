@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <external/bootboot.h>
 #include <kernel/environment.h>
 #include <kernel/tty.h>
 #include <kernel/hardware/serial.h>
@@ -22,27 +21,25 @@
 #include <kernel/hardware/CPU/SSE.h>
 #include <kernel/hardware/CPU/IRQ.h>
 #include <kernel/panic.h>
-#include <kernel/hardware/IO.h>
 #include <kernel/hardware/kbd.h>
 #include <kernel/fs/tar.h>
 #include <kernel/shell.h>
 #include <kernel/memory.h>
 #include <kernel/elf.h>
-#include <kernel/arch.h>
-#include <kernel/log.h>
 #include <kernel/syscall.h>
 
 #include <kernel/custom.h>
 
 #include <kernel/misc.h>
 MODULE("KERNEL");
+kernel_t kernel;
+
 uint8_t SSEFeaturesBits = 0;
 void initThings();
 void initExceptions();
 void PICInit();
 void keyboardInit();
-uint8_t maxTasks = 11;
-float currentTasks = 0.0f;
+uint8_t maxTasks = 10;
 extern bool timerReady;
 // cppcheck-suppress unusedFunction
 void kernelMain() {
@@ -56,70 +53,78 @@ void kernelMain() {
 	initThings();
 	// initialize serial logging.
 	serial.init(115200);
+
 	keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
+
 	// Say that the kernel is loading and to please wait.
 	puts("Techflash OS v");
 	serial.writeString(SERIAL_PORT_COM1, "Techflash OS v");
 	kernTTY.color = vga.colors.cyan + 0x002020;
 	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
-	kernTTY.color = 0xAAAAAA;
+	kernTTY.color = vga.colors.lgray;
+
 	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MAJOR + '0');
 	serial.write(SERIAL_PORT_COM1, '.');
 	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MINOR + '0');
 	serial.write(SERIAL_PORT_COM1, '.');
 	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_PATCH + '0');
+
 	puts(" Loading...\r\n");
-	env = handleEnv();
 	serial.writeString(SERIAL_PORT_COM1, " Loading...\r\n");
+
+	env = handleEnv();
 	// if (env.experimental.progressBarBoot) {
-	boot.progressBar.create((kernTTY.width / 2) - (kernTTY.width / 3), (kernTTY.height / 2) + (kernTTY.height / 8), kernTTY.width / 2);
+	uint8_t bootX = ((kernTTY.width / 2) - (kernTTY.width / 3)); // idk it looks centered to me
+	uint8_t bootY = ((kernTTY.height / 2) + (kernTTY.height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
+	boot.progressBar.create(bootX, bootY, kernTTY.width / 2);
 
 	// Initialize the 8259 Programmable Interrupt Controller
 	PICInit();
-	currentTasks += 1.0f;
-	boot.progressBar.update((uint8_t)( (float)( currentTasks / maxTasks ) * 100 ));
+	boot.progressBar.update();
 
 	// Initialize the Global Descriptor Table
 	GDTInit();
-
-	
+	boot.progressBar.update();
 
 	// Initialize the Interrupt Descriptor Table
 	IDTInit();
-	
+	boot.progressBar.update();
 
 	// Init the keyboard driver
 	keyboardInit();
-		
-
 	keyboard.setIntState(0, false);
-		
+	boot.progressBar.update();
+
 	// Initialize some exception handlers
 	initExceptions();
-		
+	boot.progressBar.update();
 
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
-		
+	boot.progressBar.update();
 	
-
 	keyboard.setIntState(0, true);
 	
 	// Now the interrupts are ready, enable them
 	log(MODNAME, "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
+	timerReady = true;
+	boot.progressBar.update();
 
 	// we have the PIC, now lets unmask some interrupts
 	// IRQSetMask(3, false);
 	// IRQSetMask(4, false);
 	// Initialize the parallel port (we need interrupts for this, since it has a timeout)
 	parallel.init();
+	boot.progressBar.update();
 
 	initSyscalls();
+	boot.progressBar.update();
 	parseTar((void *)bootboot.initrd_ptr);
+	boot.progressBar.update();
 	
 	sleep(250);
-	timerReady = true;
+	
 	boot.progressBar.fadeOut();
 	/* FIXME: avoid reading the file because it's super busted for some reason
 	uint8_t *outPtr = 0;

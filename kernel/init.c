@@ -1,16 +1,9 @@
-#include <kernel/tty.h>
-#include <kernel/hardware/kbd.h>
-#include <kernel/hardware/serial.h>
-#include <kernel/hardware/parallel.h>
-#include <kernel/environment.h>
-#include <kernel/boot.h>
-#include <kernel/graphics.h>
-#include <kernel/hardware/CPU/regs.h>
-#include <kernel/bda.h>
-#include <kernel/font.h>
-#include <kernel/elf.h>
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <kernel/font.h>
+#include <kernel/bda.h>
+#include <kernel/hardware/CPU/regs.h>
 
 extern void elfInit();
 registers_t regsDump;

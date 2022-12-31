@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <kernel/log.h>
 #include <kernel/elf.h>
 const char elfMagic[] = {EIMAG0, EIMAG1, EIMAG2, EIMAG3};
 const uint8_t archConvert[] = {

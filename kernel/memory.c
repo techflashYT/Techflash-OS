@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/memory.h>
+#include <kernel/misc.h>
+#include <kernel/panic.h>
 #include <stdlib.h>
 #if 0
 void testMalloc() {
@@ -84,7 +86,10 @@ void *malloc(size_t size) {
 	}
 
 	allocatedLocation += sizeof(memControlBlock);
-
+	if (allocatedLocation < 0x0000000001000000) {
+		DUMPREGS
+		panic("uh oh malloc took a crap", regs);
+	}
 	return allocatedLocation;
 }
 

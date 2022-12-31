@@ -2,7 +2,6 @@
 #include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/PIT.h>
-#include <kernel/log.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

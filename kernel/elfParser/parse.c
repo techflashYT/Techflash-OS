@@ -1,5 +1,4 @@
 #include <kernel/elf.h>
-#include <kernel/log.h>
 #include <kernel/arch.h>
 #include <string.h>
 #include <stdlib.h>

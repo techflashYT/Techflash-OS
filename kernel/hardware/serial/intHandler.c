@@ -2,7 +2,6 @@
 #include <string.h>
 #include <kernel/hardware/CPU/ISR.h>
 #include <kernel/hardware/serial.h>
-#include <kernel/log.h>
 #include <stdio.h>
 void serialHandler(registers_t *regs) {
 	// we got something from serial, echo it

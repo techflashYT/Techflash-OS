@@ -1,54 +1,30 @@
-#include <kernel/environment.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <kernel/environment.h>
 #include <kernel/misc.h>
-extern uint8_t SSEFeaturesBits;
-environment_t env;
-bool findString(const char* str, uint16_t pos) {
-	bool correctSoFar = false;
-	for (uint16_t i = 0; i < strlen(str); i++) {
-		if (str[i] == '\0') {
-			return correctSoFar;
-		}
-		if (str[i] == environment[pos + i]) {
-			correctSoFar = true;
-		}
-		else {
-			return false;
-		}
-	}
-	return correctSoFar;
-}
-environment_t defaultEnv = {
-	.experimental.progressBarBoot   = false,
-	.hardware.CPU.features.SSE.v1   = true,
-	.hardware.CPU.features.SSE.v2   = true,
-	.hardware.CPU.features.SSE.v3   = false,
-	.hardware.CPU.features.SSE.v4_1 = false,
-	.hardware.CPU.features.SSE.v4_2 = false,
-	.hardware.CPU.features.SSE.v4_A = false,
-	.hardware.CPU.features.SSE.v5   = false,
-};
+MODULE("KERN_ENV");
+static void parse(uint16_t size);
 environment_t handleEnv() {
-	environment_t buildEnv = defaultEnv;
-	// FIXME: **VERY** SLOW. Iterates through env each time to find a str. Unknown keys are ignored (bad).
-	for (uint16_t i = 0; environment[i] == 'E' && environment[++i] == 'O' && environment[i + 2] == 'F'; i++) {
-		if (environment[i] == '\r' || environment[i] == '\n') {
-			continue;
+	uint16_t i = 0;
+	log(MODNAME, "Printing entire env!", LOGLEVEL_VERBOSE);
+	while (environment[i] != '\0') {
+		char byte = environment[i];
+		if (byte == '\n') {
+			putchar('\r');
 		}
-		// handle tag "experimental.progressBarBoot"
-		char *strToCheck = "experimental.progressBarBoot";
-		if (findString(strToCheck, i)) {
-			i += strlen(strToCheck);
-			if (findString("true", i)) {
-				buildEnv.experimental.progressBarBoot = true;
-			}
-			else if (findString("false", i)) {
-				buildEnv.experimental.progressBarBoot = false;
-			}
-		}
+		putchar(byte);
+		i++;
 	}
+	puts("\r\n");
+	char *buffer = malloc(256);
+	strcpy(buffer, "Entire env printed,  ");
+	utoa(i, buffer + strlen(buffer), 10);
+	strcpy(buffer + strlen(buffer), " bytes.");
+	parse(i);
+	log(MODNAME, buffer, LOGLEVEL_VERBOSE);
+}
+static void parse(uint16_t size) {
 
-
-	return buildEnv;
 }

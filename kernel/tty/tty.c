@@ -1,11 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include <kernel/tty.h>
 #include <kernel/font.h>
 #include <kernel/environment.h>
-#include <external/bootboot.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <kernel/graphics.h>
 _kernTTY_t kernTTY;
 extern void kernTTY_blink();

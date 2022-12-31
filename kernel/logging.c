@@ -8,18 +8,24 @@
 #define LOG_TO_SERIAL
 #define LOG_COLOR
 char *logLevelColorsEscCode[] = {
+	"\x1b[0m", // verbose
 	"\x1b[0m", // debug
-	"\x1b[0m\x1b[1;39m", // debug
+	"\x1b[0m\x1b[1;39m", // info
 	"\x1b[0m\x1b[33m", // warn
 	"\x1b[0m\x1b[31m"  // err
 };
 uint32_t logLevelColorsFrameBuf[] = {
+	0x00AAAAAA, // verbose
 	0x00AAAAAA, // debug
 	0x00DDDDDD, // info
 	0x00FFD866, // warn
 	0x00FF4444  // err
 };
+colorChar_t *logBuffer;
 void log(const char *module, const char* message, uint8_t logLevel) {
+	if (logLevel < kernel.logLevel) {
+		return;
+	}
 	// colorize using actual ANSI escape sequences for the serial logging
 	char *buffer = malloc(256);
 
@@ -61,12 +67,6 @@ void log(const char *module, const char* message, uint8_t logLevel) {
 			serial.writeString(SERIAL_PORT_COM1, buffer);
 		#endif
 	#endif
-	/* TODO: When logLevel kernel param is implemented, use the below code:
-	if (env.logLevel < LOGLEVEL_WARN) {
-		puts(buffer);
-	}
-	*/
-
 	#ifdef LOG_COLOR
 		uint32_t origColor = kernTTY.color;
 		kernTTY.color = vga.colors.yellow;

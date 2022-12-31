@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Techflash OS",
             "includePath": [
                 "include",
                 "apps/installer/include",
@@ -11,11 +11,9 @@
                 "CONFIG_KERN_VERSION_MAJOR=0",
                 "CONFIG_KERN_VERSION_MINOR=1",
                 "CONFIG_KERN_VERSION_PATCH=0",
-                "CONFIG_BITS=64",
-                "true=1",
-                "false=0",
                 "bool=_Bool",
-                "MODULE(x)=static const char *MODNAME = (x)"
+                "true=1",
+                "false=0"
             ],
             "compilerPath": "/opt/TechflashSoftware/crossCompiler/bin/x86_64-elf-gcc",
             "cStandard": "gnu17",
@@ -30,7 +28,23 @@
                 "-march=core2",
                 "-mno-3dnow",
                 "-mno-mmx"
+            ],
+            "forcedInclude": [
+                "include/misc/defines.h",
+                "include/kernel/kernel.h",
+                "include/kernel/log.h"
             ]
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4
