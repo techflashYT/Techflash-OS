@@ -259,7 +259,7 @@ static bool end() {
 		strcpy(buffer, cwd);
 		strcpy(buffer + strlen(buffer), "/.config");
 		printf("Your configuration will be saved in %s\r\n", buffer);
-		FILE *fileHandle = fopen(buffer, "w");
+		FILE *fileHandle = fopen(buffer, "w+");
 		fputs(HEADER, fileHandle);
 		fputs(CONFIG, fileHandle);
 		fputs(FOOTER, fileHandle);
