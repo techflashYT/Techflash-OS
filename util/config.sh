@@ -3,8 +3,7 @@ SYSTEM_HEADER_PROJECTS="libc kernel userspaceLibcWrappers"
 PROJECTS="libc kernel userspaceLibcWrappers"
 
 export MAKE="${MAKE:-make --no-print-directory}"
-export HOST="${HOST:-$(./util/default-host.sh)}"
-export HOST32="${HOST32:-$(CONFIG_BITS=32 ./util/default-host.sh)}"
+export HOST="${HOST:-"x86_64-elf"}"
 
 export AR="${HOST}"-ar
 export AS="${HOST}"-as
@@ -12,14 +11,6 @@ export CC="${HOST}"-gcc
 export LD="${HOST}"-ld
 export CXX="${HOST}"-g++
 
-export PREFIX=/usr
-export EXEC_PREFIX=$PREFIX
-export BOOTDIR=/boot
-export LIBDIR=$EXEC_PREFIX/lib
-export INCLUDEDIR=$PREFIX/include
-
-export CFLAGS='-g -mcmodel=kernel'
-export CPPFLAGS=''
 export PROJECTS
 export SYSTEM_HEADER_PROJECTS
 
