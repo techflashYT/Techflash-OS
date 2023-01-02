@@ -262,6 +262,7 @@ static bool end() {
 		FILE *fileHandle = fopen(buffer, "w+");
 		fputs(HEADER, fileHandle);
 		fputs(CONFIG, fileHandle);
+		fputs("\r\nCFLAGS += -DCONFIG_KERN_VERSION_MAJOR=$(CONFIG_KERN_VERSION_MAJOR) -DCONFIG_KERN_VERSION_MINOR=$(CONFIG_KERN_VERSION_MINOR) -DCONFIG_KERN_VERSION_PATCH=$(CONFIG_KERN_VERSION_PATCH) -DCONFIG_KERN_MAXARGS=$(CONFIG_KERN_MAXARGS)\r\n", fileHandle);
 		fputs(FOOTER, fileHandle);
 		fclose(fileHandle);
 	}

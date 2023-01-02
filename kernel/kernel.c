@@ -72,7 +72,6 @@ void kernelMain() {
 	puts(" Loading...\r\n");
 	serial.writeString(SERIAL_PORT_COM1, " Loading...\r\n");
 
-	env = handleEnv();
 	// if (env.experimental.progressBarBoot) {
 	uint8_t bootX = ((kernTTY.width / 2) - (kernTTY.width / 3)); // idk it looks centered to me
 	uint8_t bootY = ((kernTTY.height / 2) + (kernTTY.height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
@@ -122,6 +121,7 @@ void kernelMain() {
 	boot.progressBar.update();
 	parseTar((void *)bootboot.initrd_ptr);
 	boot.progressBar.update();
+	handleEnv();
 	
 	sleep(250);
 	
