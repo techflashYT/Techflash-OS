@@ -40,4 +40,4 @@ Pretty easy, just set the ISO as the CD/DVD drive of the virtual machine and sta
 
 # Bugs
 
-None currently.  But since functionaly it extremely limited, it's kind of hard for there to be any bugs.
+None currently.  But since functionaly is extremely limited, it's kind of hard for there to be any bugs.
