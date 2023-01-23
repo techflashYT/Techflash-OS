@@ -8,11 +8,12 @@
 elfLoader_t elfLoader;
 elfStruct_t retVal;
 static uint8_t load(ELF64ProgramHeader *ph);
+MODULE("ELFLOAD");
 elfStruct_t *elfLoad(uint8_t *file) {
 	// NOTE: This function 100% assumes that everything about the ELF is valid
 	//       We expect the caller to have already ran elfLoader.isValid() on the ELF
 	//       in order to verify it's validity before calling elfLoader.load() to run this.
-	log("ELFLOAD", "Starting to load ELF file", LOGLEVEL_DEBUG);
+	log(MODNAME, "Starting to load ELF file", LOGLEVEL_DEBUG);
 	retVal.entryPointOffset = 0;
 	retVal.startOfData = 0;
 	// Map the header to the start of the file
@@ -25,19 +26,19 @@ elfStruct_t *elfLoad(uint8_t *file) {
 		ph = (ELF64ProgramHeader *)(file + pos);
 		switch (ph->segmentType) {
 			case PH_TYPE_INTERPRETER: {
-				log("ELFLOAD", "This ELF requires an interpreter!  We haven't implemented that yet.", LOGLEVEL_ERROR);
+				log(MODNAME, "This ELF requires an interpreter!  We haven't implemented that yet.", LOGLEVEL_ERROR);
 				retVal.err = 1;
 				return &retVal;
 				break;
 			}
 			case PH_TYPE_DYNAMIC: {
-				log("ELFLOAD", "This ELF is dynamically linked!  We haven't implemented that yet.", LOGLEVEL_ERROR);
+				log(MODNAME, "This ELF is dynamically linked!  We haven't implemented that yet.", LOGLEVEL_ERROR);
 				retVal.err = 2;
 				return &retVal;
 				break;
 			}
 			case PH_TYPE_NOTE: {
-				log("ELFLOAD", "Note section, ignoring.", LOGLEVEL_DEBUG);
+				log(MODNAME, "Note section, ignoring.", LOGLEVEL_DEBUG);
 				break;
 			}
 			case PH_TYPE_LOAD: {
@@ -50,7 +51,7 @@ elfStruct_t *elfLoad(uint8_t *file) {
 				break;
 			}
 			default: {
-				log("ELFLOAD", "Unknown section, ignoring.", LOGLEVEL_DEBUG);
+				log(MODNAME, "Unknown section, ignoring.", LOGLEVEL_DEBUG);
 				// something else, very likely something we don't care about, skip
 				break;
 			}
@@ -80,17 +81,17 @@ static uint8_t load(ELF64ProgramHeader *ph) {
 	}
 
 	utoa(size, buffer + strlen(buffer), 10);
-	strcpy(buffer + strlen(buffer), " bytes into memory from 0x");
+	strcat(buffer, " bytes into memory from 0x");
 	utoa((uint64_t)srcAddr, buffer + strlen(buffer), 16);
-	strcpy(buffer + strlen(buffer), " to 0x");
+	strcat(buffer, " to 0x");
 	utoa((uint64_t)destAddr, buffer + strlen(buffer), 16);
 	if (size == 0) {
-		strcpy(buffer + strlen(buffer), ", since there's nothing to copy!");
+		strcat(buffer, ", since there's nothing to copy!");
 	}
 	else {
-		strcpy(buffer + strlen(buffer), ".  This could cause issues.");
+		strcat(buffer, ".  This could cause issues.");
 	}
-	log("ELFLOAD", buffer, LOGLEVEL_WARN);
+	log(MODNAME, buffer, LOGLEVEL_WARN);
 
 	free(buffer);
 	if (size != 0) {
