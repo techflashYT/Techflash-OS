@@ -23,7 +23,7 @@ mv tmp/initrd/boot/tfos.elf tmp/initrd/sys/core
 prevDir=$(pwd)
 
 pushd tmp/initrd > /dev/null 2>&1
-tar -czf $prevDir/isodir/BOOTBOOT/INITRD -- *
+tar -czf "$prevDir"/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
 
@@ -38,11 +38,11 @@ cat ISO_GRUB_CFG.cfg > ../isodir/boot/grub/grub.cfg
 cp grub_bg.png ../isodir/boot/bg.png
 cp font.pf2 ../isodir/boot/grub/fonts/unicode.pf2
 cd ..
-
+grub=NONE
 if ( command -v grub-mkrescue > /dev/null ); then
-	grub-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
-else
-	if ( command -v grub2-mkrescue > /dev/null ); then
-		grub2-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
-	fi
+	grub=grub
 fi
+if ( command -v grub2-mkrescue > /dev/null ); then
+	grub=grub2
+fi
+$grub-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
