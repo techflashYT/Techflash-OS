@@ -71,8 +71,6 @@ void *malloc(size_t size) {
 
 			currentPtr += mcb->size;
 			currentPtr = (unsigned char*)alignedPtr(currentPtr);
-			// comout((const char*)currentPtr);
-			//printf("%p\r\n", currentPtr);
 		}
 	}
 
@@ -86,7 +84,7 @@ void *malloc(size_t size) {
 	}
 
 	allocatedLocation += sizeof(memControlBlock);
-	if (allocatedLocation < 0x0000000001000000) {
+	if (allocatedLocation < ((void *)0x0000000001000000)) {
 		DUMPREGS
 		panic("uh oh malloc took a crap", regs);
 	}

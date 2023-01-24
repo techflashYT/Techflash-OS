@@ -2,7 +2,6 @@
 .type AVXInit, @function
 
 AVXInit:
-	push %rax
 	push %rcx
 	push %rdx
 
@@ -13,5 +12,5 @@ AVXInit:
 
 	pop %rdx
 	pop %rcx
-	pop %rax
+	xor %rax, %rax
 	ret

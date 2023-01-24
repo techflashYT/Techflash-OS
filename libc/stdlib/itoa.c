@@ -23,19 +23,18 @@ char* itoa(long value, char* result, int base) {
 
 	char* ptr = result, *ptr1 = result, tmp_char;
 	long tmp_value;
-	do {
+	while (value) {
 		tmp_value = value;
 		value /= base;
 		*ptr++ = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" [(long)35 + (tmp_value - value * base)];
 	}
-	while (value);
 
 	// Apply negative sign
 	if (tmp_value < (long)0 && base == 10) {
 		*ptr++ = '-';
 	}
 	*ptr-- = '\0';
-	while(ptr1 < ptr) {
+	while (ptr1 < ptr) {
 		tmp_char = *ptr;
 		*ptr--   = *ptr1;
 		*ptr1++  = tmp_char;

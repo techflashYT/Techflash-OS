@@ -29,8 +29,8 @@ void bootProgressBarCreate(const uint8_t x, const uint8_t y, const uint8_t width
 	bootProgressBarWidth = width;
 	
 	// Create the progress bar.
-	putcAt('[', x, y, vga.colors.lgray);
-	putcAt(']', x + width, y, vga.colors.lgray);
+	putcAt('[', x, y, colors.vga.lgray);
+	putcAt(']', x + width, y, colors.vga.lgray);
 	for (uint8_t i = 0; i < (width - 1); i++) {
 		putcAt('#', x + 1 + i, y, 0x454550);
 	}
@@ -45,8 +45,8 @@ void bootProgressBarFadeOut() {
 		panic("bootProgressBarFadeOut(): percent greater than 100!  Did you forget to update maxTasks before adding more?", regs);
 	}
 	
-	uint32_t bracketColor = vga.colors.lgray;
-	uint32_t hashColor    = vga.colors.white;
+	uint32_t bracketColor = colors.vga.lgray;
+	uint32_t hashColor    = colors.vga.white;
 	while (true) {
 		sleep(12);
 		if (hashColor != 0x00000000) {
@@ -104,9 +104,9 @@ void bootProgressBarUpdate() {
 	// Update the progress bar.
 	uint8_t i = 0;
 	for (; i < percentToCoords(percent); i++) {
-		putcAt('#', bootProgressBarX + 1 + i, bootProgressBarY, vga.colors.white);
+		putcAt('#', bootProgressBarX + 1 + i, bootProgressBarY, colors.vga.white);
 	}
 	if (percent != 100) {
-		putcAt('#', bootProgressBarX + 1 + i, bootProgressBarY, vga.colors.lgray - 0x101010);
+		putcAt('#', bootProgressBarX + 1 + i, bootProgressBarY, colors.vga.lgray - 0x101010);
 	}
 }

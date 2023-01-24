@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/IO.h>
-MODULE("SERIAL");
+// MODULE("SERIAL");
 void serialWriteString(const uint16_t port, const char* value) {
 	if (!serial.working) {
 		return;
@@ -20,7 +20,7 @@ int serialReadBufEmpty(const uint16_t port) {
 int serialWriteBufEmpty(const uint16_t port) {
 	return inb(port + 5) & 0x20;
 }
-char serialReadNext(const uint16_t port) {
+uint8_t serialReadNext(const uint16_t port) {
 	if (!serial.working) {
 		return 0;
 	}

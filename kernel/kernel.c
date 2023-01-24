@@ -59,9 +59,9 @@ void kernelMain() {
 	// Say that the kernel is loading and to please wait.
 	puts("Techflash OS v");
 	serial.writeString(SERIAL_PORT_COM1, "Techflash OS v");
-	kernTTY.color = vga.colors.cyan + 0x002020;
+	kernTTY.color = colors.vga.cyan + 0x002020;
 	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
-	kernTTY.color = vga.colors.lgray;
+	kernTTY.color = colors.vga.lgray;
 
 	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MAJOR + '0');
 	serial.write(SERIAL_PORT_COM1, '.');
@@ -182,6 +182,8 @@ void kernelMain() {
 	kernTTY.cursorAfterPromptX = 0;
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
+	DUMPREGS;
+	panic("a", regs);
 	while (true) {
 		// Main kernel loop
 		char userInput = keyboard.getLastKey();

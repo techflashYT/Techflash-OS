@@ -1,4 +1,8 @@
 .section .bss
+.global emergencyStack
+emergencyStack:
+.quad 0x0000000000000000 # space for pointer
+
 .global kernelStackBottom
 .global kernelStackTop
 kernelStackBottom:
@@ -13,18 +17,23 @@ kernelStackTop:
 .type _start, @function
 _start:
 	cli
-	mov $kernelStackTop, %rsp
+	movq %rsp, emergencyStack  # Move bootboot's stack pointer into the emergencyStack variable, for use in case of a stack overflow
+	mov  $kernelStackTop, %rsp # Move our custom stack into the stack pointer
+	movw $0xDEAD, (kernelStackTop) # Move `0xDEAD` into the very end of the stack, if that gets overwritten, we're dead
+
 	# disable serial port interrupts since I know they cause issues
-	movw $0xDEAD, (kernelStackTop)
 	push %rax
 	push %rdx
-	mov $0x00, %rdx
-	mov $0x3F9, %rax
+	mov  $0x00, %rdx
+	mov  $0x3F9, %rax
 	outb %al, %dx
-	pop %rdx
-	pop %rax
+	pop  %rdx
+	pop  %rax
+
+	# call the main kernel function in C
 	call kernelMain
-	# just in case
+	
+	# just in case kernelMain somehow returns
 	.loop:
 		cli
 		hlt

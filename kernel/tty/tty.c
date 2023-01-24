@@ -19,7 +19,7 @@ void kernTTY_init() {
 	kernTTY.ready         = false;
 	kernTTY.cursorX       = 0;
 	kernTTY.cursorY       = 0;
-	kernTTY.color         = vga.colors.lgray; // VGA light gray.
+	kernTTY.color         = colors.vga.lgray; // VGA light gray.
 	kernTTY.width         = ((bootboot.fb_width / font->width) * 0.885);
 	kernTTY.height        = ((bootboot.fb_height / font->height) * 0.99);
 	kernTTY.promptStr     = malloc(256);

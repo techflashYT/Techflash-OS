@@ -9,13 +9,13 @@ extern uint16_t SERIAL_PORT_COM4;
 #define SERIAL_PORT_COM8 0x4E8
 #include <stdint.h>
 typedef struct {
-	bool working;
-	bool echo;
-	bool (*init)         (const uint64_t speed);
-	char (*readNext)     (const uint16_t port);
-	void (*write)        (const uint16_t port, const uint8_t value);
-	void (*writeString)  (const uint16_t port, const char *value);
-	int  (*readBufEmpty) (const uint16_t port);
-	int  (*writeBufEmpty)(const uint16_t port);
+	bool    working;
+	bool    echo;
+	bool    (*init)         (const uint64_t speed);
+	uint8_t (*readNext)     (const uint16_t port);
+	void    (*write)        (const uint16_t port, const uint8_t value);
+	void    (*writeString)  (const uint16_t port, const char *value);
+	int     (*readBufEmpty) (const uint16_t port);
+	int     (*writeBufEmpty)(const uint16_t port);
 } serial_t;
 extern serial_t serial;

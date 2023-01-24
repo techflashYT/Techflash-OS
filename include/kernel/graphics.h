@@ -24,6 +24,8 @@ typedef struct {
 		uint32_t pink;
 		uint32_t yellow;
 		uint32_t white;
-	} colors;
-} vga_t;
-extern vga_t vga;
+	} vga;
+	uint32_t warn;
+	uint32_t error;
+} colors_t;
+extern colors_t colors;

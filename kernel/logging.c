@@ -15,11 +15,11 @@ char *logLevelColorsEscCode[] = {
 	"\x1b[0m\x1b[31m"  // err
 };
 uint32_t logLevelColorsFrameBuf[] = {
-	0x00AAAAAA, // verbose
-	0x00AAAAAA, // debug
-	0x00DDDDDD, // info
-	0x00FFD866, // warn
-	0x00FF4444  // err
+	0x00AAAAAA,   // verbose
+	0x00AAAAAA,   // debug
+	0x00DDDDDD,   // info
+	warningColor, // warn
+	errorColor    // err
 };
 colorChar_t *logBuffer;
 void log(const char *module, const char* message, uint8_t logLevel) {
@@ -69,13 +69,13 @@ void log(const char *module, const char* message, uint8_t logLevel) {
 	#endif
 	#ifdef LOG_COLOR
 		uint32_t origColor = kernTTY.color;
-		kernTTY.color = vga.colors.yellow;
+		kernTTY.color = colors.vga.yellow;
 		putchar('[');
-		kernTTY.color = vga.colors.lcyan;
+		kernTTY.color = colors.vga.lcyan;
 		for (uint8_t i = 1; i != 9; i++) {
 			putchar(buffer[i]);
 		}
-		kernTTY.color = vga.colors.yellow;
+		kernTTY.color = colors.vga.yellow;
 		putchar(']');
 		putchar(' ');
 		kernTTY.color = logLevelColorsFrameBuf[logLevel];

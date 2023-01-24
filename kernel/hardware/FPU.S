@@ -2,5 +2,5 @@
 .type FPUInit, @function
 
 FPUInit:
-	FNINIT
+	fninit
 	ret

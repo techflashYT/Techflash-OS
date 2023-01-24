@@ -7,8 +7,6 @@ asm volatile (\
 );
 
 #define DUMPREGS \
-_Pragma("GCC diagnostic push")\
-_Pragma("GCC diagnostic ignored \"-Wuninitialized\"")\
 extern registers_t regsDump;\
 asm("movq %%rax, %0\r\n" : "=r" (regsDump.rax) : );\
 asm("movq %%rbx, %0\r\n" : "=r" (regsDump.rbx) : );\
@@ -18,5 +16,4 @@ asm("movq %%rdi, %0\r\n" : "=r" (regsDump.rdi) : );\
 asm("movq %%rsi, %0\r\n" : "=r" (regsDump.rsi) : );\
 asm("movq %%rsp, %0\r\n" : "=r" (regsDump.userRsp) : );\
 asm("movq %%rbp, %0\r\n" : "=r" (regsDump.rbp) : );\
-registers_t *regs = &regsDump;\
-_Pragma("GCC diagnostic pop")
+registers_t *regs = &regsDump;

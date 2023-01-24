@@ -257,7 +257,7 @@ static bool end() {
 		char *cwd = getcwd(NULL, 0);
 		char *buffer = malloc(strlen(cwd) + 9);
 		strcpy(buffer, cwd);
-		strcpy(buffer + strlen(buffer), "/.config");
+		strcat(buffer, "/.config");
 		printf("Your configuration will be saved in %s\r\n", buffer);
 		FILE *fileHandle = fopen(buffer, "w+");
 		fputs(HEADER, fileHandle);

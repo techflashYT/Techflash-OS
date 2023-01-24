@@ -1,7 +1,7 @@
 /*
 	Original version Copyright 2017 - 2021 bzt (bztsrc@gitlab)
 	as part of the 'bootboot' repository on GitLab.
-	Original file availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/dist/bootboot.h
+	Original file available at https://gitlab.com/bztsrc/bootboot/-/blob/master/dist/bootboot.h
 */
 
 #ifndef _BOOTBOOT_H_
@@ -77,7 +77,7 @@ typedef struct {
 	uint8_t    protocol;    /* 1, static addresses, see PROTOCOL_* and LOADER_* above */
 	uint8_t    fb_type;     /* framebuffer type, see FB_* above */
 	uint16_t   numcores;    /* number of processor cores */
-	uint16_t   bspid;       /* Bootsrap processor ID (Local APIC Id on x86_64) */
+	uint16_t   bspid;       /* Bootstrap processor ID (Local APIC Id on x86_64) */
 	int16_t    timezone;    /* in minutes -1440..1440 */
 	uint8_t    datetime[8]; /* in BCD yyyymmddhhiiss UTC (independent to timezone) */
 	uint64_t   initrd_ptr;  /* ramdisk image position and size */

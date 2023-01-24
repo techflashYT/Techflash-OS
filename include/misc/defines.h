@@ -13,3 +13,5 @@
 #define __GETCALLER_1(x) __builtin_extract_return_addr(__builtin_return_address(x))
 
 #define MODULE(x) static const char *MODNAME = (x)
+#define errorColor   0x00FF4444
+#define warningColor 0x00FFD866

@@ -12,7 +12,7 @@ extern void kernTTY_init();
 extern void keyboardInit();
 extern bool serialInit(uint64_t speed);
 extern void bootInit();
-extern void VGAInit();
+extern void colorsInit();
 extern void parallelInit();
 bda_t *bda;
 bool heapSetUp;
@@ -39,8 +39,8 @@ void initThings() {
 	// initialize the parallel struct.
 	parallelInit();
 
-	// initialize the vga struct
-	VGAInit();
+	// initialize the colors struct
+	colorsInit();
 	
 	// Start initializing a TTY.
 	kernTTY_init();

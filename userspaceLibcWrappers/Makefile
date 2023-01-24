@@ -6,8 +6,8 @@ OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O0 -g # DEBUG
 CFLAGS   = $(WARN) $(FEATURE) $(OPTIMIZE) -nostdlib -I../include -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
 
-override compile_S   := $(shell find . -type f -name '*.S')
-override compile_c   := $(shell find -L . -type f -name '*.c')
+override compile_S   := $(shell find -O3 . -type f -name '*.S')
+override compile_c   := $(shell find -O3 -L . -type f -name '*.c')
 compile=$(addprefix ../build/userspaceLibcWrappers/,$(subst ./,,$(subst .c,.o,$(subst .S,.o,$(compile_S) $(compile_c)))))
 
 vpath %.c ./
@@ -26,7 +26,7 @@ all: ../lib/$(outFileName)
 	@x86_64-elf-ar cr ../lib/$(outFileName) $(compile)
 	@echo "C library ready for use with userspace apps."
 
-../build/userspaceLibcWrappers/%.o: %.c $(shell find ../include/ -type f)
+../build/userspaceLibcWrappers/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/userspaceLibcWrappers/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@

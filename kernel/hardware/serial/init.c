@@ -11,7 +11,7 @@
 MODULE("SERIAL");
 serial_t serial;
 void serialHandler(registers_t *regs);
-char serialReadNext(const uint16_t port);
+uint8_t serialReadNext(const uint16_t port);
 void serialWrite(const uint16_t port, const uint8_t value);
 void serialWriteString(const uint16_t port, const char* value);
 int serialReadBufEmpty(const uint16_t port);

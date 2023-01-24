@@ -15,7 +15,7 @@ static void IDTSetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags) 
 	idtEntries[num].sel = sel;
 	idtEntries[num].always0 = 0;
 
-	// Uncoment the OR below for user mode sets the instruction privilege level to ring 3.
+	// Uncomment the OR below for user mode sets the instruction privilege level to ring 3.
 	idtEntries[num].flags = flags /* | 0x60 */;
 	idtEntries->reserved = 0;
 }

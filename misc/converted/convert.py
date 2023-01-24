@@ -78,7 +78,9 @@ f.write(
 	" * Converted File: " + bmp + "\n"
 	" * Converted Date: " + str(newToday) + "\n"
 	" * Icon Last Mod: " + str(IconLastModDateFull) + "\n"
-	"*****************************************/\n\n"
+	"*****************************************/\n"
+	"#include <stdint.h>\n"
+	"\n"
 )
 
 f.close()
@@ -90,24 +92,33 @@ f = open(output, "at")
 
 f.write(
 	"uint32_t g_" + newPicture + "_data[] = {\n"
-		"\t" f"{width}, {height}, "
+		f"\t{width}, {height}, // width, height\n"
+		 "\t/* data */ "
 )
+
 for y in range(height):
 	for x in range(width):
 
 		pixel = image[y, x]
 		rgba = 0
 
-		rgba |= (pixel[0] << 0)    # blue
-		rgba |= (pixel[1] << 8)    # green
-		rgba |= (pixel[2] << 16)   # red
+		rgba |= (pixel[0] << 0)    #blue
+		rgba |= (pixel[1] << 8)    #green
+		rgba |= (pixel[2] << 16)   #red
 
-		newHex = "0x00" + str(hex(rgba))[2] + ", "
+		hexWithout0x = str(hex(rgba)).split("x")
 
+		toAdd = ["0x00", "", ", "]
+		toAdd[1] = hexWithout0x[1] 
+
+		newHex = "".join(toAdd)
+
+		#if(pixel[2] == 0):
+		#    newHex = "0xffffffff, "
 
 		if(newHex == "0x000, "):
 			newHex = "0x00000000, "
-	f.write(newHex + "\n")
-f.write("};\n\n")
-
+		f.write(newHex)
+	f.write("\n")
+f.write("\n};")
 f.close()

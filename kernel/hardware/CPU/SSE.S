@@ -1,3 +1,4 @@
+# TODO: absolutely horrible, fix this mess
 .global SSEInit
 .global panic
 .global FPUInit
@@ -23,7 +24,6 @@ SSEEnable:
 SSECheckAdditional:
 	# Check for the rest of SSE versions that aren't garunteed with x86_64
 
-	push %rax
 	push %rbx
 	push %rcx
 	push %rdx
@@ -66,7 +66,6 @@ SSECheckAdditional:
 		pop %rdx
 		pop %rcx
 		pop %rbx
-		pop %rax
 		ret
 	.NoSSE3:
 		mov 0b00000011, %rax

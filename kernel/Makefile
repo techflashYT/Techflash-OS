@@ -6,15 +6,16 @@ FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstac
 OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 -g # DEBUG
-CFLAGS     = -Wall -Wextra -Wno-uninitialized -nostdlib -g -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
+WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
+CFLAGS     = $(WARNINGS) -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
+INCLUDES   = $(shell find -O3 ../include/ -type f)
 SHELL=/bin/bash
 vpath %.c ./
 vpath %.h ../include
 include compLnk.mk
-
 
 EXPECTED_CONFIG_KERN_VERSION_MAJOR=1
 EXPECTED_CONFIG_KERN_VERSION_MINOR=0
@@ -39,14 +40,14 @@ all: ../bin/tfos_kernel.elf
 	@make --no-print-directory -f ../util/Makefile sysroot
 ../build/kernel/testELF.o: ../test
 	@cd ../ && mkdir -p build/kernel && $(LD) -r -b binary test -o build/kernel/testELF.o && cd kernel
-../build/kernel/%.o: %.c $(shell find ../include/ -type f)
+../build/kernel/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
 	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
-../build/kernel/panic.o: panic.c $(shell find ../include/ -type f)
+../build/kernel/panic.o: panic.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=161 -c $< -o $@
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=192 -c $< -o $@
 ../build/kernel/font.o:
 	@mkdir -p $(@D)
 	@echo "Building Font..."

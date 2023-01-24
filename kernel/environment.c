@@ -6,15 +6,12 @@
 #include <kernel/misc.h>
 MODULE("KERN_ENV");
 static void parse(uint16_t size);
-void handleEnv()
-{
+void handleEnv() {
 	uint16_t i = 0;
 	log(MODNAME, "Printing entire env!", LOGLEVEL_VERBOSE);
-	while (environment[i] != '\0')
-	{
+	while (environment[i] != '\0') {
 		char byte = environment[i];
-		if (byte == '\n')
-		{
+		if (byte == '\n') {
 			putchar('\r');
 		}
 		putchar(byte);
@@ -24,31 +21,26 @@ void handleEnv()
 	char *buffer = malloc(256);
 	strcpy(buffer, "Entire env printed,  ");
 	utoa(i, buffer + strlen(buffer), 10);
-	strcpy(buffer + strlen(buffer), " bytes.");
+	strcat(buffer, " bytes.");
 	log(MODNAME, buffer, LOGLEVEL_VERBOSE);
 	parse(i);
 	return;
 }
-static void parse(uint16_t size)
-{
+static void parse(uint16_t size) {
 	log(MODNAME, "Started parsing the environment variables.", LOGLEVEL_VERBOSE);
 	uint16_t i = 0;
 	bool workingOn;
 	char *currentKey = malloc(51);
 	char *currentVal = malloc(51);
-	while (true)
-	{
+	while (true) {
+		break;
 		uint8_t currentKeyOrValIndex = 0;
-		if (i >= size)
-		{
+		if (i >= size) {
 			goto leave;
 		}
-		for (;; i++, currentKeyOrValIndex++)
-		{
-			if (workingOn)
-			{ // key
-				if (environment[i] == '=')
-				{
+		for (;; i++, currentKeyOrValIndex++) {
+			if (workingOn) { // key
+				if (environment[i] == '=') {
 					workingOn = false;
 					goto end;
 				}
