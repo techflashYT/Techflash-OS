@@ -90,8 +90,7 @@ char *keyboardGetLastSpecialKey() {
 
 
 void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
-	// kernTTY.nextBlinkShouldBeOn = true;
-	// kernTTY.blink();
+	// TTY_Blink();
 	int scancode = 0;
 	int key = 0;
 

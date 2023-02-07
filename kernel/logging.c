@@ -68,19 +68,19 @@ void log(const char *module, const char* message, uint8_t logLevel) {
 		#endif
 	#endif
 	#ifdef LOG_COLOR
-		uint32_t origColor = kernTTY.color;
-		kernTTY.color = colors.vga.yellow;
+		uint32_t origColor = TTY_Color;
+		TTY_Color = colors.vga.yellow;
 		putchar('[');
-		kernTTY.color = colors.vga.lcyan;
+		TTY_Color = colors.vga.lcyan;
 		for (uint8_t i = 1; i != 9; i++) {
 			putchar(buffer[i]);
 		}
-		kernTTY.color = colors.vga.yellow;
+		TTY_Color = colors.vga.yellow;
 		putchar(']');
 		putchar(' ');
-		kernTTY.color = logLevelColorsFrameBuf[logLevel];
+		TTY_Color = logLevelColorsFrameBuf[logLevel];
 		puts(buffer + 11);
-		kernTTY.color = origColor;
+		TTY_Color = origColor;
 	#else
 		puts(buffer);
 	#endif

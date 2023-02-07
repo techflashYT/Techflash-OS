@@ -3,12 +3,12 @@
 #include <stdint.h>
 #include <kernel/font.h>
 #include <kernel/bda.h>
+#include <kernel/tty/tty.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 
 extern void elfInit();
 registers_t regsDump;
 
-extern void kernTTY_init();
 extern void keyboardInit();
 extern bool serialInit(uint64_t speed);
 extern void colorsInit();
@@ -39,7 +39,7 @@ void initThings() {
 	colorsInit();
 	
 	// Start initializing a TTY.
-	kernTTY_init();
+	TTY_Init();
 
 	// Start setting up the keyboard struct.
 	keyboardInit();

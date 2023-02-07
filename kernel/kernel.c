@@ -56,9 +56,9 @@ void kernelMain() {
 	// Say that the kernel is loading and to please wait.
 	puts("Techflash OS v");
 	serial.writeString(SERIAL_PORT_COM1, "Techflash OS v");
-	kernTTY.color = colors.vga.cyan + 0x002020;
+	TTY_Color = colors.vga.cyan + 0x002020;
 	printf("%d.%d.%d", CONFIG_KERN_VERSION_MAJOR, CONFIG_KERN_VERSION_MINOR, CONFIG_KERN_VERSION_PATCH);
-	kernTTY.color = colors.vga.lgray;
+	TTY_Color = colors.vga.lgray;
 
 	serial.write(SERIAL_PORT_COM1, CONFIG_KERN_VERSION_MAJOR + '0');
 	serial.write(SERIAL_PORT_COM1, '.');
@@ -70,9 +70,9 @@ void kernelMain() {
 	serial.writeString(SERIAL_PORT_COM1, " Loading...\r\n");
 
 	// if (env.experimental.progressBarBoot) {
-	uint8_t bootX = ((kernTTY.width / 2) - (kernTTY.width / 3)); // idk it looks centered to me
-	uint8_t bootY = ((kernTTY.height / 2) + (kernTTY.height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
-	BP_Init(bootX, bootY, kernTTY.width / 2);
+	uint8_t bootX = ((TTY_Width / 2) - (TTY_Width / 3)); // idk it looks centered to me
+	uint8_t bootY = ((TTY_Height / 2) + (TTY_Height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
+	BP_Init(bootX, bootY, TTY_Width / 2);
 
 	// Initialize the 8259 Programmable Interrupt Controller
 	PICInit();
@@ -174,9 +174,9 @@ void kernelMain() {
 	addrToCall();
 	log(MODNAME, "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
 	#endif
-	kernTTY.printPrompt();
-	kernTTY.blinkingCursor = true;
-	kernTTY.cursorAfterPromptX = 0;
+	TTY_PrintPrompt();
+	TTY_BlinkingCursor = true;
+	TTY_CursorAfterPromptX = 0;
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
 	DUMPREGS;
@@ -197,19 +197,19 @@ void kernelMain() {
 				}
 				memset(command, 0, commandStrIndex); // zero out the string
 
-				if (strcmp(kernTTY.promptStr, "") == 0) {
+				if (strcmp(TTY_PromptStr, "") == 0) {
 					DUMPREGS
 					panic("DEBUG: Prompt was overwritten!  Malloc is trashed!", regs);
 				}
 				commandStrIndex = 0;
-				kernTTY.printPrompt();
+				TTY_PrintPrompt();
 			}
 			else if (specialKey[0] == '\b') {
 				// Backspace
-				if (kernTTY.cursorAfterPromptX != 0) {
-					putcAt(' ', kernTTY.cursorX - 1, kernTTY.cursorY, kernTTY.color);
-					kernTTY.cursorX--;
-					kernTTY.cursorAfterPromptX--;
+				if (TTY_CursorAfterPromptX != 0) {
+					putcAt(' ', TTY_CursorX - 1, TTY_CursorY, TTY_Color);
+					TTY_CursorX--;
+					TTY_CursorAfterPromptX--;
 					commandStrIndex--;
 				}
 			}

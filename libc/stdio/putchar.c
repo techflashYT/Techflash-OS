@@ -23,24 +23,24 @@ int putchar(const int ch) {
 		panic(str, regs);
 	}
 	if (ch == '\r') { // CR ('\r')
-		kernTTY.cursorX = 0;
+		TTY_CursorX = 0;
 		return '\r';
 	}
 	if (ch == '\n') { // CR ('\r')
-		kernTTY.cursorY++;
+		TTY_CursorY++;
 		return '\n';
 	}
 	if (ch == '\t') { // Tab ('\t')
-		kernTTY.cursorX += 4;
+		TTY_CursorX += 4;
 		return '\t';
 	}
-	if (kernTTY.cursorX >= kernTTY.width) {
-		kernTTY.cursorX = 0;
-		kernTTY.cursorY++;
+	if (TTY_CursorX >= TTY_Width) {
+		TTY_CursorX = 0;
+		TTY_CursorY++;
 	}
-	if (kernTTY.cursorY >= kernTTY.height) {
-		kernTTY.scroll("1");
+	if (TTY_CursorY >= TTY_Height) {
+		TTY_Scroll("1");
 	}
-	fbConDrawChar(ch, kernTTY.cursorX, kernTTY.cursorY);
+	fbConDrawChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }

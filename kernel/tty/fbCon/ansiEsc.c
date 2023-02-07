@@ -51,9 +51,9 @@ validate:
 			case 'H': {
 				if (escStarted) {
 					// move cursor to 0, 0
-					kernTTY.cursorX = 0;
-					kernTTY.cursorAfterPromptX = 0;
-					kernTTY.cursorY = 0;
+					TTY_CursorX = 0;
+					TTY_CursorAfterPromptX = 0;
+					TTY_CursorY = 0;
 					fbConEscState = STATE_READY;
 					return true;
 				}

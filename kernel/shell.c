@@ -115,14 +115,14 @@ uint8_t handleCommands(const char* input) {
 		return 0;
 	}
 	else if (checkInput(input, "scroll")) {
-		kernTTY.scroll(arguments);
+		TTY_Scroll(arguments);
 		return 0;
 	}
 	else if (checkInput(input, "clear")) {
 		memset(&fb, 0, bootboot.fb_size);
-		kernTTY.cursorX = 0;
-		kernTTY.cursorY = 0;
-		kernTTY.cursorAfterPromptX = 0;
+		TTY_CursorX = 0;
+		TTY_CursorY = 0;
+		TTY_CursorAfterPromptX = 0;
 		return 0;
 	}
 	else if (checkInput(input, "serialwrite")) {

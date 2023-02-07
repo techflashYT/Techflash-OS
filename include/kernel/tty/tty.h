@@ -1,25 +1,20 @@
-#ifndef _KERNEL_TTY_H
-#define _KERNEL_TTY_H
+#pragma once
 #include <stdbool.h>
 #include <stdint.h>
-typedef struct {
-	bool ready;
-	bool blinkingCursor;
-	bool nextBlinkShouldBeOn;
-	uint16_t cursorX;	
-	uint16_t cursorY;
-	uint16_t cursorAfterPromptX;
-	uint32_t color;
-	uint32_t textBackground;
-	uint32_t width;
-	uint32_t height;
-	uint32_t index;
-	
-	char *promptStr;
-	void (*setBackground)(const uint32_t color);
-	void (*printPrompt)();
-	void (*blink)();
-	void (*scroll)(const char *numLines);
-} __attribute__((packed)) _kernTTY_t;
-extern _kernTTY_t kernTTY;
-#endif
+extern bool     TTY_Ready;
+extern bool     TTY_BlinkingCursor;
+extern uint16_t TTY_CursorX;	
+extern uint16_t TTY_CursorY;
+extern uint16_t TTY_CursorAfterPromptX;
+extern uint32_t TTY_Color;
+extern uint32_t TTY_TextBackground;
+extern uint32_t TTY_Width;
+extern uint32_t TTY_Height;
+extern uint32_t TTY_Index;
+
+extern char    *TTY_PromptStr;
+extern void     TTY_SetBackground(const uint32_t color);
+extern void     TTY_PrintPrompt  ();
+extern void     TTY_Blink        ();
+extern void     TTY_Scroll       (const char *numLines);
+extern void     TTY_Init         ();

@@ -12,12 +12,12 @@
 // https://stackoverflow.com/a/74765904/16387557
 // along with my original question of how to optimize it:
 // https://stackoverflow.com/questions/74765778/c-osdev-how-could-i-shift-the-contents-of-a-32-bit-framebuffer-upwards-effic
-void kernTTY_scroll(const char *numLines) {
+void TTY_Scroll(const char *numLines) {
 	// Convert string to integer
 	uint32_t numLinesInt = atoi(numLines);
 
 	// Test if we'll be scrolling to outside of the framebuffer
-	int32_t testForBounds = kernTTY.cursorY;
+	int32_t testForBounds = TTY_CursorY;
 	testForBounds -= numLinesInt;
 	// Would this place it before the framebuffer?
 	if (testForBounds < 0) {
@@ -43,19 +43,19 @@ void kernTTY_scroll(const char *numLines) {
 	uint32_t byteSize = pixelSize * sizeof(uint32_t);
 
 	// Save the original value for whether the cursor should blink
-	bool blinkingCursorOrig = kernTTY.blinkingCursor;
+	bool blinkingCursorOrig = TTY_BlinkingCursor;
 
 	// Disable the blinking cursor, it could cause issues.
-	kernTTY.blinkingCursor = false;
+	TTY_BlinkingCursor = false;
 
 	// Do the move
 	memmove(destination, source, byteSize);
 
 	
 	// Set the cursor to the right position
-	kernTTY.cursorY -= numLinesInt;
+	TTY_CursorY -= numLinesInt;
 
 	// Set the blinking cursor to the previous value.
-	kernTTY.blinkingCursor = blinkingCursorOrig;
+	TTY_BlinkingCursor = blinkingCursorOrig;
 	return;
 }

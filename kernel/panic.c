@@ -40,10 +40,10 @@ void panic(const char* message, registers_t *regs) {
 	}
 
 	alreadyPanicing = true;
-	kernTTY.cursorX = 0;
-	kernTTY.cursorY = 0;
-	kernTTY.setBackground(0x0062A8); // light blue
-	kernTTY.color = colors.vga.white;
+	TTY_CursorX = 0;
+	TTY_CursorY = 0;
+	TTY_SetBackground(0x0062A8); // light blue
+	TTY_Color = colors.vga.white;
 
 	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
 	serial.writeString(SERIAL_PORT_COM1, message);
@@ -55,21 +55,21 @@ void panic(const char* message, registers_t *regs) {
 		"Please report this to Techflash at https://github.com/techflashYT/Techflash-OS\r\n"
 		"Please give the following information "
 	);
-	kernTTY.color = colors.error;
+	TTY_Color = colors.error;
 	puts("EXACTLY AS SHOWN BELOW");
-	kernTTY.color = colors.vga.white;
+	TTY_Color = colors.vga.white;
 	puts(" in the bug report:\r\n");
-	kernTTY.color = colors.error;
+	TTY_Color = colors.error;
 	puts("Error: ");
-	kernTTY.color = colors.vga.yellow;
+	TTY_Color = colors.vga.yellow;
 	puts(message);
-	kernTTY.color = colors.vga.lcyan;
+	TTY_Color = colors.vga.lcyan;
 	puts("\r\nCPU Registers ");
-	kernTTY.color = colors.error;
+	TTY_Color = colors.error;
 	puts("(include these in the bug report!!!!)");
-	kernTTY.color = colors.vga.lcyan;
+	TTY_Color = colors.vga.lcyan;
 	putchar(':');
-	kernTTY.color = colors.warn;
+	TTY_Color = colors.warn;
 	puts("\r\n	General Purpose Regs:\r\n");
 
 	rax = malloc(17); rbx = malloc(17); rcx = malloc(17);
@@ -122,7 +122,7 @@ void panic(const char* message, registers_t *regs) {
 		utoa(regs->intNo, intNo, 16); padNumTo(intNo, 16);
 	}
 	
-	kernTTY.color = colors.vga.white;
+	TTY_Color = colors.vga.white;
 	printf (
 		"		RAX: 0x%s	RBX: 0x%s	RCX: 0x%s\r\n"
 		"		RDX: 0x%s	RSI: 0x%s	RDI: 0x%s\r\n"
@@ -135,16 +135,16 @@ void panic(const char* message, registers_t *regs) {
 		r11, r12, r13,
 		r14, r15
 	);
-	kernTTY.color = colors.warn;
+	TTY_Color = colors.warn;
 	puts("	Pointer regs:\r\n");
-	kernTTY.color = colors.vga.white;
+	TTY_Color = colors.vga.white;
 	printf(
 		"		RBP: 0x%s	RSP: 0x%s	RIP: 0x%s\r\n",
 		rbp, rsp, rip
 	);
-	kernTTY.color = colors.warn;
+	TTY_Color = colors.warn;
 	puts("	Other regs:\r\n");
-	kernTTY.color = colors.vga.white;
+	TTY_Color = colors.vga.white;
 	puts("		CR2: 0x"); puts(intNo);
 	if (regs->intNo != 0) {
 		puts("		Interrupt Number: 0x"); puts(intNo); puts("\r\n");

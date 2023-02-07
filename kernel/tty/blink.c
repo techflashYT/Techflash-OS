@@ -5,5 +5,5 @@
 #include <kernel/custom.h>
 
 void kernTTY_blink() {
-	// putcAt('_', kernTTY.cursorX, kernTTY.cursorY, colors.vga.lgray);
+	// putcAt('_', TTY_CursorX, TTY_CursorY, colors.vga.lgray);
 }
