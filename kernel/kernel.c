@@ -16,10 +16,7 @@
 #include <kernel/hardware/PIT.h>
 #include <kernel/boot.h>
 #include <kernel/graphics.h>
-#include <kernel/hardware/CPU/GDT.h>
-#include <kernel/hardware/CPU/IDT.h>
-#include <kernel/hardware/CPU/SSE.h>
-#include <kernel/hardware/CPU/IRQ.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/panic.h>
 #include <kernel/hardware/kbd.h>
 #include <kernel/fs/tar.h>
@@ -75,7 +72,7 @@ void kernelMain() {
 	// if (env.experimental.progressBarBoot) {
 	uint8_t bootX = ((kernTTY.width / 2) - (kernTTY.width / 3)); // idk it looks centered to me
 	uint8_t bootY = ((kernTTY.height / 2) + (kernTTY.height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
-	BP_init(bootX, bootY, kernTTY.width / 2);
+	BP_Init(bootX, bootY, kernTTY.width / 2);
 
 	// Initialize the 8259 Programmable Interrupt Controller
 	PICInit();
@@ -125,7 +122,7 @@ void kernelMain() {
 	
 	sleep(250);
 	
-	boot.progressBar.fadeOut();
+	BP_FadeOut();
 	/* FIXME: avoid reading the file because it's super busted for some reason
 	uint8_t *outPtr = 0;
 	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "test", &outPtr);

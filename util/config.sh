@@ -7,7 +7,7 @@ export HOST="${HOST:-"x86_64-elf"}"
 
 export AR="${HOST}"-ar
 export AS="${HOST}"-as
-export CC="${HOST}"-gcc
+export CC="${CC:-${HOST}-gcc}"
 export LD="${HOST}"-ld
 export CXX="${HOST}"-g++
 

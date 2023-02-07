@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include <kernel/hardware/CPU/ISR.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/serial.h>
 #include <stdio.h>
 void serialHandler(registers_t *regs) {

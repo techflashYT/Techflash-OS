@@ -1,6 +1,5 @@
 #include <stdint.h>
-#include <kernel/hardware/CPU/GDT.h>
-#include <kernel/hardware/CPU/IDT.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 
 gdtEntry_t gdtEntries[5];
 gdtPtr_t   gdtPtr;

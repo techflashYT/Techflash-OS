@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <kernel/hardware/CPU/regs.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 
 #define BREAK \
 asm volatile (\

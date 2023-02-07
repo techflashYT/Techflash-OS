@@ -1,2 +1,2 @@
-#include <kernel/hardware/CPU/regs.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 void panic(const char *message, registers_t *regs);

@@ -1,4 +1,4 @@
-#include <kernel/hardware/CPU/ISR.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/panic.h>
 #include <kernel/misc.h>
 #include <stdio.h> 

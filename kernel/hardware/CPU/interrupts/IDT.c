@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <string.h>
-#include <kernel/hardware/CPU/IDT.h>
-#include <kernel/hardware/CPU/IRQ.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/IO.h>
 
 idtEntry_t idtEntries[256];

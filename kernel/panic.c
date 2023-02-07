@@ -6,7 +6,7 @@
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
 #include <kernel/tty/tty.h>
-#include <kernel/hardware/CPU/regs.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/misc.h>
 #include <kernel/fs/tar.h>
@@ -24,9 +24,12 @@ static uint64_t cr2val;
 static uint64_t r8val;  static uint64_t r9val;  static uint64_t r10val;
 static uint64_t r11val; static uint64_t r12val; static uint64_t r13val;
 static uint64_t r14val; static uint64_t r15val;
+
 extern void padNumTo(char *src, uint8_t padding);
+
 static bool alreadyPanicing = false;
 static bool mentionDualPanic = false;
+
 void panic(const char* message, registers_t *regs) {
 	// if it's true: we panicked during a panic during a panic, the panic code is probably dead, just give up.
 	if (!mentionDualPanic) {

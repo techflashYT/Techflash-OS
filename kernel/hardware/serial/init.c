@@ -4,8 +4,7 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
-#include <kernel/hardware/CPU/IRQNums.h>
-#include <kernel/hardware/CPU/ISR.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/misc.h>
 #include <kernel/panic.h>
 MODULE("SERIAL");
@@ -89,8 +88,8 @@ bool serialInit(const uint64_t speed) {
 	outb(SERIAL_PORT_COM1 + 4, 0x1E); ioWait();    // Set in loopback mode, test the serial chip
 	outb(SERIAL_PORT_COM1 + 0, 0xAE); ioWait();    // Test serial chip (send byte 0xAE and check if serial returns same byte)
 
-	registerInterruptHandler(IRQ4, &serialHandler); // register the interrupt handler for ports 1 & 3
-	registerInterruptHandler(IRQ3, &serialHandler); // register the interrupt handler for ports 2 & 4
+	registerInterruptHandler(0x24, &serialHandler); // register the interrupt handler for ports 1 & 3 on IRQ4
+	registerInterruptHandler(0x23, &serialHandler); // register the interrupt handler for ports 2 & 4 pm IRQ3
 	// Check if serial is faulty (i.e: not same byte as sent)
 	if (inb(SERIAL_PORT_COM1 + 0) != 0xAE) {
 		serial.working = false;

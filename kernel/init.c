@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <kernel/font.h>
 #include <kernel/bda.h>
-#include <kernel/hardware/CPU/regs.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 
 extern void elfInit();
 registers_t regsDump;
@@ -11,7 +11,6 @@ registers_t regsDump;
 extern void kernTTY_init();
 extern void keyboardInit();
 extern bool serialInit(uint64_t speed);
-extern void bootInit();
 extern void colorsInit();
 extern void parallelInit();
 bda_t *bda;
@@ -25,10 +24,10 @@ extern char *arguments;
 bool timerReady;
 // calls the init functions to initialize the function pointers for all of the structs
 void initThings() {
+	font = (psf2_t*)&_binary_font_psf_start;
 	bda = (void *)0x400;
 	elfInit();
 	timerReady = false;
-	font = (psf2_t*)&_binary_font_psf_start;
 
 	// Start setting up the serial struct.
 	serialInit(0);

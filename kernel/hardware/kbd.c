@@ -4,8 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/hardware/kbd.h>
-#include <kernel/hardware/CPU/ISR.h>
-#include <kernel/hardware/CPU/IRQNums.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/panic.h>
 #include <kernel/misc.h>
@@ -140,6 +139,6 @@ void keyboardInit() {
 		return;
 	}
 	nextKey = malloc(8);
-	registerInterruptHandler(IRQ1, &keyboardIRQ);
+	registerInterruptHandler(0x21, &keyboardIRQ); // register PS2 keyboard handler on IRQ1
 }
 

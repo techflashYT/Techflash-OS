@@ -1,5 +1,4 @@
-#include <kernel/hardware/CPU/regs.h>
-#include <kernel/hardware/CPU/ISR.h>
+#include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/IO.h>
 #include <stdio.h>
 #include <stdlib.h>
