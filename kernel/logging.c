@@ -4,7 +4,7 @@
 #include <string.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/graphics.h>
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 #define LOG_TO_SERIAL
 #define LOG_COLOR
 char *logLevelColorsEscCode[] = {

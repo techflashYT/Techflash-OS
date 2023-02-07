@@ -6,9 +6,11 @@
 #include <kernel/misc.h>
 MODULE("KERN_ENV");
 static void parse(uint16_t size);
+
 void handleEnv() {
 	uint16_t i = 0;
 	log(MODNAME, "Printing entire env!", LOGLEVEL_VERBOSE);
+	
 	while (environment[i] != '\0') {
 		char byte = environment[i];
 		if (byte == '\n') {
@@ -18,11 +20,12 @@ void handleEnv() {
 		i++;
 	}
 	puts("\r\n");
-	char *buffer = malloc(256);
-	strcpy(buffer, "Entire env printed,  ");
+	char *buffer = malloc(35);
+	strcpy(buffer, "Entire env printed, ");
 	utoa(i, buffer + strlen(buffer), 10);
 	strcat(buffer, " bytes.");
 	log(MODNAME, buffer, LOGLEVEL_VERBOSE);
+	free(buffer);
 	parse(i);
 	return;
 }

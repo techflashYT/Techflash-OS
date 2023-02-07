@@ -18,12 +18,13 @@ cp bootboot/bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 mkdir -p tmp/initrd/sys
 cp -r sysroot/* tmp/initrd/
 cp "test" tmp/initrd/
+cp misc/converted/panic_screen.bin tmp/initrd/panic_screen.sys
 mv tmp/initrd/boot/tfos.elf tmp/initrd/sys/core
 
 prevDir=$(pwd)
 
 pushd tmp/initrd > /dev/null 2>&1
-tar -czf "$prevDir"/isodir/BOOTBOOT/INITRD -- *
+tar --format=ustar -czf "$prevDir"/isodir/BOOTBOOT/INITRD -- *
 unset prevDir
 popd > /dev/null 2>&1
 
@@ -45,4 +46,4 @@ fi
 if ( command -v grub2-mkrescue > /dev/null ); then
 	grub=grub2
 fi
-$grub-mkrescue /usr/lib/grub/i386-pc --stdio_sync off -o bin/TFOS_ISO.iso isodir
+$grub-mkrescue --stdio_sync off -o bin/TFOS_ISO.iso isodir

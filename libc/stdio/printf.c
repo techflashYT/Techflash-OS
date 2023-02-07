@@ -34,7 +34,7 @@ int printf(const char* format, ...) {
 	int ret = 0;
 	va_list args;
 	va_start(args, format);
-	char itoaBuf[32] = {'\0'};
+	char *itoaBuf = malloc(32);
 	while (*format != '\0') {
 		if (*format == '%') {
 			format++;
@@ -44,8 +44,10 @@ int printf(const char* format, ...) {
 					format++;
 					ret++;
 					break;
-				__attribute__((fallthrough)); case 'd':
+				case 'd':
+					[[fallthrough]];
 				case 'i':
+					memset(itoaBuf, 0, 32);
 					ret += puts(itoa(va_arg(args, int), itoaBuf, 10));
 					format++;
 					break;
@@ -54,28 +56,37 @@ int printf(const char* format, ...) {
 						case 'l': {
 							switch (*(format + 2)) {
 								case 'd': // %lld / %lli
+									[[fallthrough]];
 								case 'i':
+									memset(itoaBuf, 0, 32);
 									ret += puts(itoa(va_arg(args, long long int), itoaBuf, 10));
 									format++;
 									break;
 								case 'u': // %llu
+									memset(itoaBuf, 0, 32);
 									ret += puts(utoa(va_arg(args, long long unsigned int), itoaBuf, 10));
 									format++;
 									break;
+								default:
+									
 							}
 						}
-						__attribute__((fallthrough)); case 'd':
+						case 'd':
+							[[fallthrough]];
 						case 'i':
+							memset(itoaBuf, 0, 32);
 							ret += puts(itoa(va_arg(args, long int), itoaBuf, 10));
 							format += 2;
 							break;
 						case 'u':
+							memset(itoaBuf, 0, 32);
 							ret += puts(utoa(va_arg(args, long unsigned int), itoaBuf, 10));
 							format += 2;
 							break;
 					}
 					break;
 				case 'u':
+					memset(itoaBuf, 0, 32);
 					ret += puts(utoa(va_arg(args, unsigned int), itoaBuf, 10));
 					format++;
 					break;
@@ -89,11 +100,13 @@ int printf(const char* format, ...) {
 					ret++;
 					break;
 				case 'x':
+					memset(itoaBuf, 0, 32);
 					ret += puts(utoa(va_arg(args, int), itoaBuf, 16));
 					format++;
 					break;
 				case 'p':
 					ret += puts("0x");
+					memset(itoaBuf, 0, 32);
 					ret += puts(utoa(va_arg(args, int), itoaBuf, 16));
 					format++;
 					break;
@@ -110,6 +123,7 @@ int printf(const char* format, ...) {
 			ret++;
 		}
 	}
+	free(itoaBuf);
 	va_end(args);
 	return ret;
 }

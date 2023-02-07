@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <kernel/shell.h>
 #include <kernel/fs/tar.h>
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 #include <kernel/environment.h>
 #include <kernel/hardware/serial.h>
 extern void CPUReset();

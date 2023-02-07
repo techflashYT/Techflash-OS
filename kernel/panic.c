@@ -5,7 +5,7 @@
 #include <string.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 #include <kernel/hardware/CPU/regs.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/misc.h>
@@ -121,7 +121,6 @@ void panic(const char* message, registers_t *regs) {
 	
 	kernTTY.color = colors.vga.white;
 	printf (
-		
 		"		RAX: 0x%s	RBX: 0x%s	RCX: 0x%s\r\n"
 		"		RDX: 0x%s	RSI: 0x%s	RDI: 0x%s\r\n"
 		"		R8:  0x%s	R9:  0x%s	R10: 0x%s\r\n"
@@ -143,25 +142,37 @@ void panic(const char* message, registers_t *regs) {
 	kernTTY.color = colors.warn;
 	puts("	Other regs:\r\n");
 	kernTTY.color = colors.vga.white;
-	printf(
-		"		CR2: 0x%s	Interrupt Number: 0x%s\r\n",
-		cr2, intNo
-	);
+	puts("		CR2: 0x"); puts(intNo);
+	if (regs->intNo != 0) {
+		puts("		Interrupt Number: 0x"); puts(intNo); puts("\r\n");
+	}
 	if (mentionDualPanic) {
 		puts("Additionally, an error has occurred during the printing of this message.\r\n");
 	}
+	// write panic_screen.sys to the fb
 	serial.writeString(SERIAL_PORT_COM1, "dumping img to fb... ");
-	uint8_t *filePtr = 0;
-	size_t fileSize = readFile(bootboot.initrd_ptr, "panic_screen.sys", &filePtr);
 
-	for (uint16_t x = 0; x != filePtr[0]; x++) {
-		for (uint16_t y = 0; y != filePtr[1]; y++) {
+	uint8_t *filePtr = 0;
+	size_t fileSize = readFile(((uint8_t *)bootboot.initrd_ptr), "panic_screen.sys", &filePtr);
+	printf("\r\npanic_screen.sys filesize: %llu\r\nptr: %p\r\n", fileSize, filePtr);
+	if (fileSize == 0) {
+		puts("\r\nFailed to read panic_screen.sys, not drawing panic img...\r\n");
+		goto doneImg;
+	}
+
+	uint16_t width  = filePtr[0];
+	uint16_t height = filePtr[1];
+	printf("width: %u\r\nheight: %u\r\n", width, height);
+	for (uint16_t x = 0; x != width; x++) {
+		for (uint16_t y = 0; y != height; y++) {
+			size_t fbOff = (((y + ((bootboot.fb_height / 2) - (height / 2))) * bootboot.fb_width) +  (x + ((bootboot.fb_width / 2) - (width / 2))));
 			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Warray-bounds"
-			((uint32_t *)&fb)[(y * bootboot.fb_width) + x] = filePtr[(y * filePtr[0]) + x];
+			((uint32_t *)&fb)[fbOff] = filePtr[(y * filePtr[0]) + x];
 			#pragma GCC diagnostic pop
 		}
 	}
+doneImg:
 	serial.writeString(SERIAL_PORT_COM1, "done\r\n");
 	serial.writeString(SERIAL_PORT_COM1, "halting...\r\n");
 	while (true) {

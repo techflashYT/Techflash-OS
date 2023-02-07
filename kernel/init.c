@@ -30,9 +30,6 @@ void initThings() {
 	timerReady = false;
 	font = (psf2_t*)&_binary_font_psf_start;
 
-	// initialize the boot struct.
-	bootInit();
-
 	// Start setting up the serial struct.
 	serialInit(0);
 

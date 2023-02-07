@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include <kernel/environment.h>
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/parallel.h>
 #include <kernel/hardware/PIT.h>
@@ -39,10 +39,10 @@ void initThings();
 void initExceptions();
 void PICInit();
 void keyboardInit();
-uint8_t maxTasks = 10;
 extern bool timerReady;
 // cppcheck-suppress unusedFunction
 void kernelMain() {
+	
 	/*** NOTE: this code runs on all cores in parallel ***/
 	// int s = bootboot.fb_scanline;
 	// int w = bootboot.fb_width;
@@ -75,32 +75,32 @@ void kernelMain() {
 	// if (env.experimental.progressBarBoot) {
 	uint8_t bootX = ((kernTTY.width / 2) - (kernTTY.width / 3)); // idk it looks centered to me
 	uint8_t bootY = ((kernTTY.height / 2) + (kernTTY.height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
-	boot.progressBar.create(bootX, bootY, kernTTY.width / 2);
+	BP_init(bootX, bootY, kernTTY.width / 2);
 
 	// Initialize the 8259 Programmable Interrupt Controller
 	PICInit();
-	boot.progressBar.update();
+	BP_Update();
 
 	// Initialize the Global Descriptor Table
 	GDTInit();
-	boot.progressBar.update();
+	BP_Update();
 
 	// Initialize the Interrupt Descriptor Table
 	IDTInit();
-	boot.progressBar.update();
+	BP_Update();
 
 	// Init the keyboard driver
 	keyboardInit();
 	keyboard.setIntState(0, false);
-	boot.progressBar.update();
+	BP_Update();
 
 	// Initialize some exception handlers
 	initExceptions();
-	boot.progressBar.update();
+	BP_Update();
 
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
-	boot.progressBar.update();
+	BP_Update();
 	
 	keyboard.setIntState(0, true);
 	
@@ -108,19 +108,19 @@ void kernelMain() {
 	log(MODNAME, "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
 	timerReady = true;
-	boot.progressBar.update();
+	BP_Update();
 
 	// we have the PIC, now lets unmask some interrupts
 	// IRQSetMask(3, false);
 	// IRQSetMask(4, false);
 	// Initialize the parallel port (we need interrupts for this, since it has a timeout)
 	parallel.init();
-	boot.progressBar.update();
+	BP_Update();
 
 	initSyscalls();
-	boot.progressBar.update();
+	BP_Update();
 	parseTar((void *)bootboot.initrd_ptr);
-	boot.progressBar.update();
+	BP_Update();
 	handleEnv();
 	
 	sleep(250);

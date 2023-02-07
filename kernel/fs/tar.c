@@ -36,8 +36,8 @@ uint64_t parseTar(void *address) {
 	numHeaders = i;
 	return i;
 }
-uint32_t oct2bin(unsigned char *str, uint32_t size) {
-	uint32_t i = 0;
+size_t oct2bin(unsigned char *str, size_t size) {
+	size_t i = 0;
 	unsigned char *ptr = str;
 	while (size-- > 0) {
 		i *= 8;
@@ -48,8 +48,9 @@ uint32_t oct2bin(unsigned char *str, uint32_t size) {
 }
 
 size_t readFile(unsigned char *archive, char *filename, unsigned char **out) {
+	size_t filesize = 0;
 	while (!memcmp(archive + 257, "ustar", 5)) {
-		int filesize = oct2bin(archive + 0x7c, 11);
+		filesize = oct2bin(archive + 0x7c, 11);
 		if (!memcmp(archive, filename, strlen(filename) + 1)) {
 			*out = archive + 512;
 			return filesize;

@@ -5,7 +5,7 @@
   This is a converted icon to embed into
             the kernel image.
  * Converted File: ../panic_screen_small.png
- * Converted Date: 01/24/2023
+ * Converted Date: 01/28/2023
  * Icon Last Mod: Jan/23/2023
 *****************************************/
 #include <stdint.h>

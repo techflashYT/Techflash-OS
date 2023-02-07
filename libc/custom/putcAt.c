@@ -1,4 +1,4 @@
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 #include <stdio.h>
 int putcAt(char c, int x, int y, int color) {
 	int ox = kernTTY.cursorX;

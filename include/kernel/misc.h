@@ -16,4 +16,5 @@ asm("movq %%rdi, %0\r\n" : "=r" (regsDump.rdi) : );\
 asm("movq %%rsi, %0\r\n" : "=r" (regsDump.rsi) : );\
 asm("movq %%rsp, %0\r\n" : "=r" (regsDump.userRsp) : );\
 asm("movq %%rbp, %0\r\n" : "=r" (regsDump.rbp) : );\
+asm("leaq 0x0(%%rip), %0\r\n" : "=r" (regsDump.rip) : );\
 registers_t *regs = &regsDump;

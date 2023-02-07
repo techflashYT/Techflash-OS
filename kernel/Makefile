@@ -5,9 +5,9 @@ CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
 FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
 OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
-# OPTIMIZE   = -O0 -g # DEBUG
+# OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
-CFLAGS     = $(WARNINGS) -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
+CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack

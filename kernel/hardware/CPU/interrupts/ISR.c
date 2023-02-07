@@ -6,7 +6,7 @@
 #include <string.h>
 #include <kernel/misc.h>
 #include <kernel/panic.h>
-#include <kernel/tty.h>
+#include <kernel/tty/tty.h>
 MODULE("X86INT");
 #define PIC1		 0x20		/* IO base address for master PIC */
 #define PIC2		 0xA0		/* IO base address for slave PIC */
