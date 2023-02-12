@@ -5,7 +5,7 @@
 #include <string.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/misc.h>

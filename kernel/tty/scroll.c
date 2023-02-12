@@ -5,7 +5,7 @@
 #include <kernel/environment.h>
 #include <kernel/font.h>
 #include <kernel/hardware/serial.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/panic.h>
 #include <kernel/misc.h>
 // Thanks to @quietfanatic on StackOverflow for this code, they helped make this actually optimized, check out their comment:

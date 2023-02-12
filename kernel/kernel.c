@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include <kernel/environment.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/parallel.h>
 #include <kernel/hardware/PIT.h>

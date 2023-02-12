@@ -53,7 +53,7 @@ int printf(const char* format, ...) {
 					break;
 				case 'l': 
 					switch (*(format + 1)) {
-						case 'l': {
+						case 'l':
 							switch (*(format + 2)) {
 								case 'd': // %lld / %lli
 									[[fallthrough]];
@@ -70,7 +70,7 @@ int printf(const char* format, ...) {
 								default:
 									
 							}
-						}
+							break;
 						case 'd':
 							[[fallthrough]];
 						case 'i':

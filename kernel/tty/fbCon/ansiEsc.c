@@ -1,24 +1,24 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #define STATE_READY 0
 #define STATE_BUILDING 1
 extern bool nextCharIsEsc;
 char builtUpEscCode[8] = { 0 };
-uint8_t fbConEscState = 0;
+uint8_t escState = 0;
 uint8_t escIndex = 0;
-bool fbConHandleEsc(char nextChar) {
-	switch (fbConEscState) {
+bool FB_HandleEsc(char nextChar) {
+	switch (escState) {
 		case STATE_READY: {
-			fbConEscState = STATE_BUILDING; // remember that we have begun building it
+			escState = STATE_BUILDING; // remember that we have begun building it
 			memset(builtUpEscCode, 0, 8); // clear out any old junk from previous attempts
 			escIndex = 0; // reset the index from any previous attempts
 			__attribute__((fallthrough)); // intentionally fall through
 		}
 		case STATE_BUILDING: {
 			if (escIndex == 8) {
-				fbConEscState = STATE_READY;
+				escState = STATE_READY;
 				return false; // we've been reading too long, give up
 			}
 			builtUpEscCode[escIndex] = nextChar;
@@ -54,7 +54,7 @@ validate:
 					TTY_CursorX = 0;
 					TTY_CursorAfterPromptX = 0;
 					TTY_CursorY = 0;
-					fbConEscState = STATE_READY;
+					escState = STATE_READY;
 					return true;
 				}
 			}

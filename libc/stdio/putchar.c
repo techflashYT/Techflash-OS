@@ -2,7 +2,7 @@
 #include <string.h>
 #include <kernel/font.h>
 #include <kernel/environment.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/panic.h>
 #include <kernel/misc.h>
 #include <kernel/hardware/IO.h>
@@ -41,6 +41,6 @@ int putchar(const int ch) {
 	if (TTY_CursorY >= TTY_Height) {
 		TTY_Scroll("1");
 	}
-	fbConDrawChar(ch, TTY_CursorX, TTY_CursorY);
+	FB_DrawChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }

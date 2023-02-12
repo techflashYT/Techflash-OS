@@ -18,3 +18,6 @@ extern void     TTY_PrintPrompt  ();
 extern void     TTY_Blink        ();
 extern void     TTY_Scroll       (const char *numLines);
 extern void     TTY_Init         ();
+
+extern bool 	FB_HandleEsc(char nextChar);
+extern void 	FB_DrawChar(const char ch, const uint16_t x, const uint16_t y);

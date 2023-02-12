@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <kernel/font.h>
 #include <kernel/bda.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 
 extern void elfInit();

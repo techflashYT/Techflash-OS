@@ -1,11 +1,10 @@
-#include <kernel/tty/tty.h>
-#include <kernel/tty/fbcon.h>
+#include <kernel/tty.h>
 #include <kernel/font.h>
 #include <kernel/environment.h>
 bool nextCharIsEsc = false;
-void fbConDrawChar(const char ch, const uint16_t x, const uint16_t y) {
+void FB_DrawChar(const char ch, const uint16_t x, const uint16_t y) {
 	if (nextCharIsEsc) {
-		fbConHandleEsc(ch);
+		FB_HandleEsc(ch);
 	}
 	if (ch == 0x1B) {
 		nextCharIsEsc = true;

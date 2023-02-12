@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <kernel/tty/tty.h>
+#include <kernel/tty.h>
 #include <kernel/font.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
