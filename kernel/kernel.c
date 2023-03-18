@@ -37,8 +37,28 @@ void initExceptions();
 void PICInit();
 void keyboardInit();
 extern bool timerReady;
+static uint8_t whatCoreAmI() {
+	uint64_t rbx = 0;
+	asm (
+		"mov $1, %%rax;"
+		"cpuid;"
+		"movq %%rbx, %0;"
+		: "=r" (rbx)
+		:
+	);
+	return (rbx >> 24);
+}
 // cppcheck-suppress unusedFunction
 void kernelMain() {
+	// before we do anything, if we're not the bootstrap processor, just hang.
+	// in future versions, they'll do things, for now, they won't
+	// FIXME: This fixes crashing on SMP systems, but not in a good way, we really shouldn't be running single threaded.
+	if (whatCoreAmI() != bootboot.bspid) {
+		// we are an non-bootstrap processor, halt
+		while (true) {
+			asm ("cli; hlt");
+		}
+	}
 	
 	/*** NOTE: this code runs on all cores in parallel ***/
 	// int s = bootboot.fb_scanline;

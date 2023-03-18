@@ -3,13 +3,13 @@
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
 FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-OPTIMIZE   = -Ofast # NORMAL
-# OPTIMIZE   = -O2 # STABLE
+# OPTIMIZE   = -Ofast # NORMAL
+OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
-CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
-LDFLAGS    = -fdiagnostics-color=always -nostdlib -lgcc -T linkerScript.ld -static -L../lib -e _start
-LIBS       = -lk
+CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
+LDFLAGS    = -fdiagnostics-color=always -nostdlib -T linkerScript.ld -static -L../lib -e _start
+LIBS       = -lgcc -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 INCLUDES   = $(shell find -O3 ../include/ -type f)
 SHELL=/bin/bash
@@ -17,15 +17,7 @@ vpath %.c ./
 vpath %.h ../include
 include compLnk.mk
 
-EXPECTED_CONFIG_KERN_VERSION_MAJOR=1
-EXPECTED_CONFIG_KERN_VERSION_MINOR=0
-EXPECTED_CONFIG_KERN_VERSION_PATCH=0
-
 include ../.config
-RET := $(shell ../util/testVersion.sh $(CONFIG_KERN_VERSION_MAJOR) $(CONFIG_KERN_VERSION_MINOR) $(CONFIG_KERN_VERSION_PATCH) $(EXPECTED_CONFIG_KERN_VERSION_MAJOR) $(EXPECTED_CONFIG_KERN_VERSION_MINOR) $(EXPECTED_CONFIG_KERN_VERSION_PATCH))
-ifneq ($(strip $(RET)),0)
-$(error Kernel Version Mismatch!  Expected: $(EXPECTED_CONFIG_KERN_VERSION_MAJOR).$(EXPECTED_CONFIG_KERN_VERSION_MINOR).$(EXPECTED_CONFIG_KERN_VERSION_PATCH)  Got: $(CONFIG_KERN_VERSION_MAJOR).$(CONFIG_KERN_VERSION_MINOR).$(CONFIG_KERN_VERSION_PATCH) Error code: $(RET))
-endif
 .SUFFIXES: .o .c .S
 
 all: ../bin/tfos_kernel.elf
@@ -37,7 +29,7 @@ all: ../bin/tfos_kernel.elf
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
 #@rm $(compile)
-	@make --no-print-directory -f ../util/Makefile sysroot
+	@../util/sysroot.sh doIt
 ../build/kernel/testELF.o: ../test
 	@cd ../ && mkdir -p build/kernel && $(LD) -r -b binary test -o build/kernel/testELF.o && cd kernel
 ../build/kernel/%.o: %.c $(INCLUDES)

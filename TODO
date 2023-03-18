@@ -1,0 +1,5 @@
+- Binary format for symbol table?
+	+ uint8_t magic[4] ('S', 'Y', 'M', 'T'?) # Magic number to identify that we're in the right place
+	? uint8_t flags // bit array of flags?  not sure what this could be used for, but useful nonetheless
+	+ uint16_t numSyms # the number of symbols stored in the table
+	+ struct {uint64_t addr, char name[]} symbl[numSyms] // a struct with the address, and null terminated symbol name.  This repeats for every symbol

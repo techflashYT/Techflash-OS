@@ -60,12 +60,12 @@ int printf(const char* format, ...) {
 								case 'i':
 									memset(itoaBuf, 0, 32);
 									ret += puts(itoa(va_arg(args, long long int), itoaBuf, 10));
-									format++;
+									format += 3;
 									break;
 								case 'u': // %llu
 									memset(itoaBuf, 0, 32);
 									ret += puts(utoa(va_arg(args, long long unsigned int), itoaBuf, 10));
-									format++;
+									format += 3;
 									break;
 								default:
 									

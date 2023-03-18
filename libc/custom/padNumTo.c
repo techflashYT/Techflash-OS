@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <string.h>
 char temp[300] = {'a'};
-void padNumTo(char *src, uint8_t padding) {
+void padTo(char *src, uint8_t padding) {
 	// Pad the number to the given length by adding zeros in front of it.
 
 	// Get the length of the number.

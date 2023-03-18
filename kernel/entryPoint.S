@@ -21,6 +21,9 @@ _start:
 	mov  $kernelStackTop, %rsp # Move our custom stack into the stack pointer
 	movw $0xDEAD, (kernelStackTop) # Move `0xDEAD` into the very end of the stack, if that gets overwritten, we're dead
 
+	# set RBP to NULL so that stack traces can just work
+	xor %rbp, %rbp
+	/*
 	# disable serial port interrupts since I know they cause issues
 	push %rax
 	push %rdx
@@ -29,6 +32,7 @@ _start:
 	outb %al, %dx
 	pop  %rdx
 	pop  %rax
+	*/
 
 	# call the main kernel function in C
 	call kernelMain

@@ -1,0 +1,10 @@
+-ffreestanding
+-Iinclude
+-imacros misc/defines.h
+-include kernel/kernel.h
+-include kernel/log.h
+-DCONFIG_KERN_VERSION_MAJOR=1
+-DCONFIG_KERN_VERSION_MINOR=0
+-DCONFIG_KERN_VERSION_PATCH=0
+-DCONFIG_KERN_MAXARGS=250
+

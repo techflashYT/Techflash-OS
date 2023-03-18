@@ -1,10 +1,11 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
-WARN     = -Wall -Wextra -Wstack-protector -Wformat=2 -Wformat-security
-FEATURE  = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
+CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
+FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
 # OPTIMIZE   = -Ofast # NORMAL
 OPTIMIZE   = -O2 # STABLE
-# OPTIMIZE   = -O0 -g # DEBUG
-CFLAGS   = $(WARN) $(FEATURE) $(OPTIMIZE) -nostdlib -I../include -g -static -s -std=gnu2x -mcmodel=kernel -march=core2 -mno-3dnow -mno-mmx
+# OPTIMIZE   = -O0 # DEBUG
+WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
+CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 INCLUDES = $(shell find -O3 ../include/ -type f)
 override compile_S   := $(shell find -O3 . -type f -name '*.S')
 override compile_c   := $(shell find -O3 . -type f -name '*.c')

@@ -9,6 +9,7 @@
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/misc.h>
+#include <kernel/stack.h>
 #include <kernel/fs/tar.h>
 static char *rax; static char *rbx; static char *rcx;
 static char *rdx; static char *rsi; static char *rdi;
@@ -25,17 +26,18 @@ static uint64_t r8val;  static uint64_t r9val;  static uint64_t r10val;
 static uint64_t r11val; static uint64_t r12val; static uint64_t r13val;
 static uint64_t r14val; static uint64_t r15val;
 
-extern void padNumTo(char *src, uint8_t padding);
+extern void padTo(char *src, uint8_t padding);
 
 static bool alreadyPanicing = false;
 static bool mentionDualPanic = false;
 
-void panic(const char* message, registers_t *regs) {
+#define pad(x) padTo(x, 16)
+
+__attribute__((noreturn)) void panic(const char* message, volatile registers_t *r) {
 	// if it's true: we panicked during a panic during a panic, the panic code is probably dead, just give up.
 	if (!mentionDualPanic) {
 		if (alreadyPanicing) {
 			asm("cli; hlt");
-			return;
 		}
 	}
 
@@ -81,45 +83,33 @@ void panic(const char* message, registers_t *regs) {
 	rbp = malloc(17); rsp = malloc(17); rip = malloc(17);
 
 	cr2 = malloc(17); intNo = malloc(17);
+
 	// cr2 isn't pushed already, handle it manually
 	cr2val = 0;	asm("movq %%cr2, %0\r\n" : "=r" (cr2val) : );
+
 	// grab r8-r15
-	r8val  = 0;	asm("movq %%r8, %0\r\n"  : "=r" (r8val) : );
-	r9val  = 0;	asm("movq %%r9, %0\r\n"  : "=r" (r9val) : );
+	r8val  = 0;	asm("movq %%r8, %0\r\n"  : "=r" (r8val)  : );
+	r9val  = 0;	asm("movq %%r9, %0\r\n"  : "=r" (r9val)  : );
 	r10val = 0;	asm("movq %%r10, %0\r\n" : "=r" (r10val) : );
 	r11val = 0;	asm("movq %%r11, %0\r\n" : "=r" (r11val) : );
 	r12val = 0;	asm("movq %%r12, %0\r\n" : "=r" (r12val) : );
 	r13val = 0;	asm("movq %%r13, %0\r\n" : "=r" (r13val) : );
 	r14val = 0;	asm("movq %%r14, %0\r\n" : "=r" (r14val) : );
 	r15val = 0;	asm("movq %%r15, %0\r\n" : "=r" (r15val) : );
-	utoa(regs->rax, rax, 16);     padNumTo(rax, 16);
-	utoa(regs->rbx, rbx, 16);     padNumTo(rbx, 16);
-	utoa(regs->rcx, rcx, 16);     padNumTo(rcx, 16);
 
-	utoa(regs->rdx, rdx, 16);     padNumTo(rdx, 16);
-	utoa(regs->rsi, rsi, 16);     padNumTo(rsi, 16);
-	utoa(regs->rdi, rdi, 16);     padNumTo(rdi, 16);
+	utoa(r->rax, rax, 16);pad(rax); utoa(r->rbx, rbx, 16);pad(rbx); utoa(r->rcx, rcx, 16);pad(rcx);
+	utoa(r->rdx, rdx, 16);pad(rdx); utoa(r->rsi, rsi, 16);pad(rsi); utoa(r->rdi, rdi, 16);pad(rdi);
 
-	utoa(r8val,  r8,  16);        padNumTo(r8,  16);
-	utoa(r9val,  r9,  16);        padNumTo(r9,  16);
-	utoa(r10val, r10, 16);        padNumTo(r10, 16);
+	utoa(r8val,  r8,  16);pad(r8);  utoa(r9val,  r9,  16);pad(r9);  utoa(r10val, r10, 16);pad(r10);
+	utoa(r11val, r11, 16);pad(r11); utoa(r12val, r12, 16);pad(r12); utoa(r13val, r13, 16);pad(r13);
+	utoa(r14val, r14, 16);pad(r14); utoa(r15val, r15, 16);pad(r15); 
 
-	utoa(r11val, r11, 16);        padNumTo(r11, 16);
-	utoa(r12val, r12, 16);        padNumTo(r12, 16);
-	utoa(r13val, r13, 16);        padNumTo(r13, 16);
+	utoa(r->rbp, rbp, 16);pad(rbp); utoa(r->userRsp, rsp, 16);pad(rsp); utoa(r->rip, rip, 16);pad(rip);
 
-
-	utoa(r14val, r14, 16);        padNumTo(r14, 16);
-	utoa(r15val, r15, 16);        padNumTo(r15, 16);
-
-	utoa(regs->rbp, rbp, 16);     padNumTo(rbp, 16);
-	utoa(regs->userRsp, rsp, 16); padNumTo(rsp, 16);
-	utoa(regs->rip, rip, 16);     padNumTo(rip, 16);
-
-	utoa(cr2val, cr2, 16);        padNumTo(cr2, 16);
+	utoa(cr2val, cr2, 16);pad(cr2);
 	intNo[0] = '\0';
 	if (intNo != 0) {
-		utoa(regs->intNo, intNo, 16); padNumTo(intNo, 16);
+		utoa(r->intNo, intNo, 16);pad(intNo);
 	}
 	
 	TTY_Color = colors.vga.white;
@@ -146,12 +136,31 @@ void panic(const char* message, registers_t *regs) {
 	puts("	Other regs:\r\n");
 	TTY_Color = colors.vga.white;
 	puts("		CR2: 0x"); puts(intNo);
-	if (regs->intNo != 0) {
+	if (r->intNo != 0) {
 		puts("		Interrupt Number: 0x"); puts(intNo); puts("\r\n");
 	}
 	if (mentionDualPanic) {
 		puts("Additionally, an error has occurred during the printing of this message.\r\n");
 	}
+
+	puts("\r\n============ STACK TRACE ============\r\n");
+	serial.writeString(SERIAL_PORT_COM1, "\r\n============ STACK TRACE ============\r\n");
+	printf("NOTE: Starting from most recently called function, ending at entry point.\r\n");
+	serial.writeString(SERIAL_PORT_COM1, "NOTE: Starting from most recently called function, ending at entry point.\r\n");
+	// stack trace
+	uint64_t *trace = stackTrace(20);
+	char *addr = malloc(17);
+	if (trace[0] > 20) {
+		trace[0] = 20;
+	}
+	for (uint64_t i = 0; i != trace[0]; i++) {
+		memset(addr, 0, 16);
+		utoa(trace[i], addr, 16);
+		padTo(addr, 16);
+		printf("%i: 0x%s\r\n", i, addr);
+	}
+
+
 	// write panic_screen.sys to the fb
 	serial.writeString(SERIAL_PORT_COM1, "dumping img to fb... ");
 
