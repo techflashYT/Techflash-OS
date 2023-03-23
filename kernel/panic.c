@@ -148,7 +148,8 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	printf("NOTE: Starting from most recently called function, ending at entry point.\r\n");
 	serial.writeString(SERIAL_PORT_COM1, "NOTE: Starting from most recently called function, ending at entry point.\r\n");
 	// stack trace
-	uint64_t *trace = stackTrace(20);
+	// removed it because the stackTrace function has no implementation
+	/*uint64_t *trace = stackTrace(20);
 	char *addr = malloc(17);
 	if (trace[0] > 20) {
 		trace[0] = 20;
@@ -158,7 +159,7 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
 		printf("%i: 0x%s\r\n", i, addr);
-	}
+	}*/
 
 
 	// write panic_screen.sys to the fb

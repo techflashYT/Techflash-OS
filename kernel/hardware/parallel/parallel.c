@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 MODULE("PARALLEL");
 parallel_t parallel;
 bool structInit = false;

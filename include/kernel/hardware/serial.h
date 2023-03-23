@@ -1,3 +1,4 @@
+#include <stdbool.h>
 extern uint16_t SERIAL_PORT_COM1;
 extern uint16_t SERIAL_PORT_COM2;
 extern uint16_t SERIAL_PORT_COM3;

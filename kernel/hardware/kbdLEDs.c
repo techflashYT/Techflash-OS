@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 uint8_t valueToSet;
 void keyboardStartSetLED();
