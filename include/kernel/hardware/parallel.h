@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 extern uint16_t LPT1; // LPT1 can be either 0x378 or 0x3BC depending on the BIOS.
 extern uint16_t LPT2;
 extern uint16_t LPT3;

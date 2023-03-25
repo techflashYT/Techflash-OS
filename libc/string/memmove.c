@@ -3,29 +3,14 @@
 #include <string.h>
 
 void *memmove(void *dest, const void *src, size_t n) {
-	uint8_t* from = (uint8_t*) src;
-	uint8_t* to = (uint8_t*) dest;
-
-	if (from == to || n == 0) {
-		return dest;
+	unsigned char* dst = (unsigned char*) dest;
+	const unsigned char* srcTemp = (const unsigned char*) src;
+	if (dst < srcTemp) {
+		for (size_t i = 0; i < n; i++)
+			dst[i] = srcTemp[i];
+	} else {
+		for (size_t i = n; i != 0; i--)
+			dst[i-1] = srcTemp[i-1];
 	}
-
-	if (to > from && to - from < (int)n) {
-		// "to" overlaps "from", copy in reverse
-		int i;
-		for (i = (n - 1); i >= 0; i--) {
-			to[i] = from[i];
-		}
-		return dest;
-	}
-	if (from > to && from - to < (int)n) {
-		// "to" overlaps "from", copy forwards
-		size_t i;
-		for (i = 0; i < n; i++) {
-			to[i] = from[i];
-		}
-		return dest;
-	}
-	memcpy(dest, src, n);
 	return dest;
 }

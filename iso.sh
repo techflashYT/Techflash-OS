@@ -10,8 +10,10 @@ if [ ! -f bootboot/bootboot.bin ]; then
 	cd ..
 fi
 cp -r sysroot isodir
-mkdir isodir/BOOTBOOT
+mkdir -p isodir/BOOTBOOT
+if [ ! -f isodir/boot/install ]; then
 mv isodir/boot/tfos.elf isodir/boot/install
+fi
 cp bootboot/bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
 
 # Make initrd
