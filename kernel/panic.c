@@ -157,7 +157,7 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
 		printf("%i: 0x%s\r\n", i, addr);
-	}*/
+	}
 
 
 	// write panic_screen.sys to the fb
