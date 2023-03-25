@@ -27,7 +27,6 @@
 
 #include <kernel/custom.h>
 
-#include <kernel/misc.h>
 MODULE("KERNEL");
 kernel_t kernel;
 
@@ -108,7 +107,6 @@ void kernelMain() {
 
 	// Init the keyboard driver
 	keyboardInit();
-	keyboard.setIntState(0, false);
 	BP_Update();
 
 	// Initialize some exception handlers
@@ -127,9 +125,6 @@ void kernelMain() {
 	timerReady = true;
 	BP_Update();
 
-	// we have the PIC, now lets unmask some interrupts
-	// IRQSetMask(3, false);
-	// IRQSetMask(4, false);
 	// Initialize the parallel port (we need interrupts for this, since it has a timeout)
 	parallel.init();
 	BP_Update();
@@ -143,57 +138,6 @@ void kernelMain() {
 	sleep(250);
 	
 	BP_FadeOut();
-	/* FIXME: avoid reading the file because it's super busted for some reason
-	uint8_t *outPtr = 0;
-	size_t size = readFile((uint8_t *)bootboot.initrd_ptr, "test", &outPtr);
-	*/
-	// FIXME: Once the elf parser works, remove the if 0
-	#if 0
-	extern uint8_t _binary_test_size;
-	extern uint8_t _binary_test_start;
-	extern uint8_t _binary_test_end;
-	size_t size = (&_binary_test_end - &_binary_test_start);
-	
-	uint8_t *outPtr = &_binary_test_start;
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Warray-bounds"
-	// asm("cli; hlt");
-	printf("outptr: %p\r\n", outPtr);
-	printf("size: %llu\r\n", size);
-	printf("first 4 bytes: 0x%x, 0x", outPtr[0]);
-	printf("%x, 0x", outPtr[1]);
-	printf("%x, 0x", outPtr[2]);
-	printf("%x\r\n", outPtr[3]);
-	#pragma GCC diagnostic pop
-	log(MODNAME, "Loading `test` binary!", LOGLEVEL_DEBUG);
-	uint8_t elfValid = elfLoader.isValid(outPtr, ARCH_X86_64);
-	DUMPREGS
-	if (elfValid == 1) {
-		panic("Init binary is not a valid ELF!", regs);
-	}
-	else if (elfValid == 2 || elfValid == 3) {
-		panic("Init binary is a valid ELF, but not for this CPU!", regs);
-	}
-	elfStruct_t *address = elfLoader.load(outPtr);
-	if (address->err) {
-		panic("Error loading init.  The serial log may have more info.", regs);
-	}
-	char *logBuffer = malloc(32);
-	strcpy(logBuffer, "address of elf: 0x");
-	utoa((uint64_t)address->startOfData, logBuffer + strlen(logBuffer), 16);
-	log(MODNAME, logBuffer, LOGLEVEL_DEBUG);
-	free(logBuffer);
-
-	int (*addrToCall)() = (void *)(address->startOfData + address->entryPointOffset);
-	logBuffer = malloc(32);
-	strcpy(logBuffer, "address of entryPoint: 0x");
-	utoa((uint64_t)addrToCall, logBuffer + strlen(logBuffer), 16);
-	log(MODNAME, logBuffer, LOGLEVEL_DEBUG);
-	free(logBuffer);
-	log(MODNAME, "ELF Loaded, attempting to launch.", LOGLEVEL_DEBUG);
-	addrToCall();
-	log(MODNAME, "HOLY CRAP THAT WORKED?!?!?!", LOGLEVEL_DEBUG);
-	#endif
 	TTY_PrintPrompt();
 	TTY_BlinkingCursor = true;
 	TTY_CursorAfterPromptX = 0;
@@ -217,10 +161,6 @@ void kernelMain() {
 				}
 				memset(command, 0, commandStrIndex); // zero out the string
 
-				if (strcmp(TTY_PromptStr, "") == 0) {
-					DUMPREGS
-					panic("DEBUG: Prompt was overwritten!  Malloc is trashed!", regs);
-				}
 				commandStrIndex = 0;
 				TTY_PrintPrompt();
 			}

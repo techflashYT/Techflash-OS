@@ -1,5 +1,4 @@
 #include <kernel/custom.h>
-#include <kernel/misc.h>
 #include <kernel/panic.h>
 #include <kernel/graphics.h>
 #include <kernel/environment.h>

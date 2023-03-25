@@ -3,7 +3,6 @@
 #include <kernel/hardware/IO.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <kernel/misc.h>
 #include <kernel/tty.h>
 #include <kernel/custom.h>
 #include <kernel/graphics.h>

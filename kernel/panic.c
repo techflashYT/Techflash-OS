@@ -8,7 +8,6 @@
 #include <kernel/tty.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/serial.h>
-#include <kernel/misc.h>
 #include <kernel/stack.h>
 #include <kernel/fs/tar.h>
 static char *rax; static char *rbx; static char *rcx;

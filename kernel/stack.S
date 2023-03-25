@@ -4,6 +4,7 @@ smashedStr:
 .asciz "Stack smashing detected (this stack trace might be bogus!)"
 .global __stack_chk_guard
 .global __stack_chk_fail
+.global stackTrace
 __stack_chk_guard:
 #if defined(__X86_64__) || defined(_M_X64) || defined (__aarch64__) || defined(_M_ARM64)
 .quad 0x595e9fbd94fda766
@@ -41,4 +42,67 @@ __stack_chk_fail:
 		mov smashedStr, %rdi
 		mov regsDump, %rsi
 		jmp panic
+stackTrace:
+		# Manual ASM stack trace, since everything I was finding online was i386 only
 
+		# ==================== LAYOUT ====================
+		# |	0x00: Pointer to previous stack frame (%RBP) |
+		# | 0x08: Return address (%RIP)                  |
+		# ================================================
+
+		# Registers in use: 
+		#	- %rax: Pointer to allocated memory
+		#	- %rbx: Current unwound level
+		#	- %rcx: offset into memory
+		#	- %rdx: Backup %rbp
+		#	- %r8 : temp register for the address to move %rip into
+		#	- %rbp: Current level of stack unwound
+		#	- %rdi: Parameter: Maximum level to unwind to
+		
+		# Save %rdi, we're going to need it later
+		push %rdi
+
+		# Calculate how much memory we need for the data to return
+		#! malloc((max + 1) * 8)
+
+		inc %rdi # Save some space for the size at the beginning
+
+		# Clobbers RDX:RAX!
+		mov $0x08, %rax # Multiply by 8
+		mul %rdi        # %rdx:%rax = %rdi * 8
+		mov %rax, %rdi  # Put it in the first arg
+
+		# We now have the number of bytes of memory that we need to allocate.
+		call malloc # Allocate
+
+		mov %rbp, %rdx # Save %rbp in %rdx
+
+		pop %rdi # Retrieve %rdi
+
+		# Zero out %rcx before we start using it
+		xor %rcx, %rcx
+
+.loop:	cmp %rbx, %rdi
+		je .done # have we hit the max?  If so, we're done
+		
+		cmpq $0x00, (%rbp) # if we hit a null entry, we're done
+		je .done
+
+		addq $0x8, %rcx
+
+		# compute the address to move the saved %rip into
+		mov %rdx, %r8
+		add %rcx, %r8
+		# %r8 is now the address of the next free place in the struct
+
+		# copy %rip into the memory
+		movq (%rbp), %r9
+		movq %r9, (%r8)
+
+		inc %rbx
+		jmp .loop # repeat loop
+
+.done:	mov %rdx, %rbp   # restore %rbp
+		mov %rbx, (%rdx) # size
+		ret
+		

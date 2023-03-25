@@ -4,7 +4,6 @@
 #include <kernel/environment.h>
 #include <kernel/tty.h>
 #include <kernel/panic.h>
-#include <kernel/misc.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/PIT.h>
 #include <kernel/hardware/serial.h>

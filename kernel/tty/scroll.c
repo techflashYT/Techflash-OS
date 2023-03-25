@@ -7,7 +7,6 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/tty.h>
 #include <kernel/panic.h>
-#include <kernel/misc.h>
 // Thanks to @quietfanatic on StackOverflow for this code, they helped make this actually optimized, check out their comment:
 // https://stackoverflow.com/a/74765904/16387557
 // along with my original question of how to optimize it:

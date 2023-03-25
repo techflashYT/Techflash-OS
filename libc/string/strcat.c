@@ -1,4 +1,3 @@
-#include <kernel/misc.h>
 #include <string.h>
 char *strcat(char* restrict destination, const char* restrict source) {
 	// ptr to end of dest

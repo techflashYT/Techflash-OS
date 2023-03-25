@@ -7,7 +7,6 @@
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/panic.h>
-#include <kernel/misc.h>
 keyboard_t keyboard;
 char lastKey;
 

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <kernel/environment.h>
-#include <kernel/misc.h>
 MODULE("KERN_ENV");
 static void parse(uint16_t size);
 

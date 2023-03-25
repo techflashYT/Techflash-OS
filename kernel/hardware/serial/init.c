@@ -5,7 +5,6 @@
 #include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/CPU/x86Setup.h>
-#include <kernel/misc.h>
 #include <kernel/panic.h>
 MODULE("SERIAL");
 serial_t serial;

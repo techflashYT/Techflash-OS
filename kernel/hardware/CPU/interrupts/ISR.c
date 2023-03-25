@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <kernel/misc.h>
 #include <kernel/panic.h>
 #include <kernel/tty.h>
 MODULE("X86INT");

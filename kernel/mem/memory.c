@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/memory.h>
-#include <kernel/misc.h>
 #include <kernel/panic.h>
 #include <stdlib.h>
 #if 0
