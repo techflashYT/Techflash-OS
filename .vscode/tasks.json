@@ -8,7 +8,7 @@
             "type": "shell",
             // execute it with sh to prevent wacky stuff
             // also use && to make sure that we only run qemu if the build actually succeeded
-            "command": "sh -c './clean.sh; PATH=\"$PATH:/opt/TechflashSoftware/crossCompiler/bin\" ./all.sh --no-pull'"
+            "command": "sh -c 'clear; ./clean.sh; PATH=\"$PATH:/opt/TechflashSoftware/crossCompiler/bin\" ./all.sh --no-pull'"
         }
     ]
 }
