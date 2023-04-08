@@ -19,8 +19,11 @@ void invalidOpcodeHandler(registers_t *regs) {panic("(#UD) Invalid Opcode (likel
 // 8
 void doubleFaultHandler(registers_t *regs) {panic("(#DF) Double Fault", regs);}
 /*
-	9 (0xA) is "Coprocessor Segment Overrun", this is when the FPU would perform segment checking and it detected an overrun.
+	9 is "Coprocessor Segment Overrun", this is when the FPU would perform segment checking and it detected an overrun.
 	This is no longer in effect as the modern internal FPU just raises a #GP for segment overruns.
+*/
+/*
+	10 is "Invalid TSS", since we don't use TSS yet, this is unimplemented.
 */
 // 11 (0xB)
 void segmentNotPresetHandler(registers_t *regs) {panic("(#NP) Segment Not Present", regs);}
@@ -31,7 +34,7 @@ void generalProtectionFaultHandler(registers_t *regs) {panic("(#GP) General Prot
 // 14 (0xE)
 void pageFaultHandler(registers_t *regs) {panic("(#PF) Page Fault", regs);}
 // 15 (0xF), 22-27 (0x16-0x1B), 31 (0x1F)
-void reservedHandler(registers_t *regs) {panic("Reserved Exception.... what????????", regs);}
+void reservedHandler(registers_t *regs) {panic("Reserved Exception.... wtf????????", regs);}
 // 16 (0x10)
 void FPUExceptionHandler(registers_t *regs) {panic("(#MF) Floating Point Exception", regs);}
 // 17 (0x11)
@@ -48,7 +51,7 @@ void controlProtectionExceptionHandler(registers_t *regs) {panic("(#CP) Control 
 void hypervisorInjectionExceptionHandler(registers_t *regs) {panic("(#HV) Hypervisor Injection Exception", regs);}
 // 29 (0x1D)
 void VMMCommunicationExceptionHandler(registers_t *regs) {panic("(#VC) VMM Communication Exception", regs);}
-// 30 (0xFf)
+// 30 (0x1E)
 void securityExceptionHandler(registers_t *regs) {panic("(#SX) Security Exception", regs);}
 
 void randomGoofyInterruptsHandler(registers_t *regs) {/* use this to handle random stupid interrupts that we don't want to deal with. */(void)regs; return;}

@@ -8,14 +8,14 @@
 	by Lukás Chmela.
 	http://www.strudel.org.uk/itoa/
 */
-char* itoa(long value, char* result, int base) {
+char *itoa(uint_fast64_t value, char* result, uint_fast8_t base) {
 	// FIXME: (stupid workaround for a bug that I can't figure out, find real fix) if 0 just put zero and return
 	if (value == 0) {
 		*result = '0';
 		*(result + 1) = '\0';
 		return result;
 	}
-	// check that the base if valid
+	// check that the base is valid
 	if (base < 2 || base > 36) {
 		*result = '\0';
 		return result;

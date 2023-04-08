@@ -6,8 +6,8 @@
 #define STATE_BUILDING 1
 extern bool nextCharIsEsc;
 char builtUpEscCode[8] = { 0 };
-uint8_t escState = 0;
-uint8_t escIndex = 0;
+uint_fast8_t escState = 0;
+uint_fast8_t escIndex = 0;
 bool FB_HandleEsc(char nextChar) {
 	switch (escState) {
 		case STATE_READY: {
@@ -30,7 +30,7 @@ validate:
 	bool isTFOSEsc = false;
 	(void)isTFOSEsc;
 	bool escStarted = false;
-	for (uint8_t i = 0; i != escIndex; i++) {
+	for (uint_fast8_t i = 0; i != escIndex; i++) {
 		char nextByte = builtUpEscCode[i];
 		switch (nextByte) {
 			case ' ': {

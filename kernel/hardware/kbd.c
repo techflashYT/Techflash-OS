@@ -112,7 +112,7 @@ char keyboardGetLastKey() {
 	lastKey = 0;
 	return ret;
 }
-void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
+void setKeyboardInterruptState(uint_fast8_t PS2Port, bool state) {
 	if (PS2Port == 0) {
 		outb(0x64, (uint8_t)(0xA7 + state));
 	}
@@ -121,8 +121,8 @@ void setKeyboardInterruptState(uint8_t PS2Port, bool state) {
 		panic("setKeyboardInterruptState(): Called with invalid PS2 Port number\r\n       or with port 2 which is unsupported", regs);
 	}
 }
-void keyboardSetLED(uint8_t led, bool value);
-bool keyboardGetStatusOfLED(uint8_t led);
+void keyboardSetLED(uint_fast8_t led, bool value);
+bool keyboardGetStatusOfLED(uint_fast8_t led);
 // false = init struct on keyboardInit
 // true  = init IRQ on keyboardInit
 bool initStruct = false;

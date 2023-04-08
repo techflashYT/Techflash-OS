@@ -13,10 +13,10 @@
 // https://stackoverflow.com/questions/74765778/c-osdev-how-could-i-shift-the-contents-of-a-32-bit-framebuffer-upwards-effic
 void TTY_Scroll(const char *numLines) {
 	// Convert string to integer
-	uint32_t numLinesInt = atoi(numLines);
+	uint_fast16_t numLinesInt = atoi(numLines);
 
 	// Test if we'll be scrolling to outside of the framebuffer
-	int32_t testForBounds = TTY_CursorY;
+	int_fast16_t testForBounds = TTY_CursorY;
 	testForBounds -= numLinesInt;
 	// Would this place it before the framebuffer?
 	if (testForBounds < 0) {
@@ -25,7 +25,7 @@ void TTY_Scroll(const char *numLines) {
 		panic("TTY: Attempted to scroll to an invalid line!", regs);
 	}
 	// Figure out how many pixels we need to move in order to move 1 line
-	uint32_t numPixels = numLinesInt * font->height;
+	uint_fast32_t numPixels = numLinesInt * font->height;
 
 	// The destination of the move is just the top of the framebuffer
 	uint32_t* destination = (uint32_t*)&fb;
@@ -36,10 +36,10 @@ void TTY_Scroll(const char *numLines) {
 
 	// The total number of pixels to move is the size of the
 	// framebuffer minus the amount of lines we want to scroll.
-	uint32_t pixelSize = (bootboot.fb_height - numPixels) * bootboot.fb_width;
+	uint_fast32_t pixelSize = (bootboot.fb_height - numPixels) * bootboot.fb_width;
 
 	// The total number of bytes is that times the size of one pixel.
-	uint32_t byteSize = pixelSize * sizeof(uint32_t);
+	uint_fast32_t byteSize = pixelSize * sizeof(uint32_t);
 
 	// Save the original value for whether the cursor should blink
 	bool blinkingCursorOrig = TTY_BlinkingCursor;

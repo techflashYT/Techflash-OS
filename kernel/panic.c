@@ -171,11 +171,11 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 		goto doneImg;
 	}
 
-	uint16_t width  = filePtr[0];
-	uint16_t height = filePtr[1];
+	uint_fast16_t width  = filePtr[0];
+	uint_fast16_t height = filePtr[1];
 	printf("width: %u\r\nheight: %u\r\n", width, height);
-	for (uint16_t x = 0; x != width; x++) {
-		for (uint16_t y = 0; y != height; y++) {
+	for (uint_fast16_t x = 0; x != width; x++) {
+		for (uint_fast16_t y = 0; y != height; y++) {
 			size_t fbOff = (((y + ((bootboot.fb_height / 2) - (height / 2))) * bootboot.fb_width) +  (x + ((bootboot.fb_width / 2) - (width / 2))));
 			#pragma GCC diagnostic push
 			#pragma GCC diagnostic ignored "-Warray-bounds"

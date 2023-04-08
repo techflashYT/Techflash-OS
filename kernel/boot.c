@@ -6,17 +6,17 @@
 #include <kernel/hardware/PIT.h>
 #include <stdlib.h>
 #include <kernel/boot.h>
-uint8_t BP_MaxTasks     = 10;
-double  BP_currentTasks = 0.0f;
-double  BP_Percent      = 0;
-uint8_t BP_x, BP_Y, BP_Width = 0;
+uint_fast8_t BP_MaxTasks          = 10;
+double       BP_currentTasks      = 0.0f;
+double       BP_Percent           = 0;
+uint_fast8_t BP_x, BP_Y, BP_Width = 0;
 
-void BP_Init(const uint8_t x, const uint8_t y, const uint8_t width) {
+void BP_Init(const uint_fast8_t x, const uint_fast8_t y, const uint_fast8_t width) {
 	// Set global vars so that we know these properties in other functions
 	BP_Percent = 0;
-	BP_x     = x;
-	BP_Y     = y;
-	BP_Width = width;
+	BP_x       = x;
+	BP_Y       = y;
+	BP_Width   = width;
 	
 	// Create the progress bar.
 	putcAt('[', x, y, colors.vga.lgray);
@@ -82,7 +82,7 @@ void BP_FadeOut() {
 		}
 	}
 }
-static uint8_t BP_Percent2coords(const uint8_t percent) {
+static uint_fast8_t BP_Percent2coords(const uint_fast8_t percent) {
 	// Calculate the x coords for the progress bar.
 	return (BP_Width - 1) * percent / 100;
 }
@@ -90,13 +90,13 @@ static uint8_t BP_Percent2coords(const uint8_t percent) {
 void BP_Update() {
 	DUMPREGS;
 	BP_currentTasks += 1.0f;
-	uint8_t percent = (uint8_t)( (float)( BP_currentTasks / BP_MaxTasks ) * 100 );
+	uint_fast8_t percent = (uint_fast8_t)( (float)( BP_currentTasks / BP_MaxTasks ) * 100 );
 	// Verify that the percent is valid.
 	if (percent == 0 || percent > 100) {
 		panic("BP_update(): Percent not within range 1-100", regs);
 	}
 	// Update the progress bar.
-	uint8_t i = 0;
+	uint_fast8_t i = 0;
 	for (; i < BP_Percent2coords(percent); i++) {
 		putcAt('#', BP_x + 1 + i, BP_Y, colors.vga.white);
 	}

@@ -8,13 +8,14 @@
 #include <kernel/panic.h>
 MODULE("SERIAL");
 serial_t serial;
-void serialHandler(registers_t *regs);
-uint8_t serialReadNext(const uint16_t port);
-void serialWrite(const uint16_t port, const uint8_t value);
-void serialWriteString(const uint16_t port, const char* value);
-int serialReadBufEmpty(const uint16_t port);
-int serialWriteBufEmpty(const uint16_t port);
-extern void padTo(char *src, uint8_t padding);
+void         serialHandler      (registers_t *regs);
+uint_fast8_t serialReadNext     (const uint_fast16_t port);
+void         serialWrite        (const uint_fast16_t port, const uint_fast8_t value);
+void         serialWriteString  (const uint_fast16_t port, const char* value);
+int          serialReadBufEmpty (const uint_fast16_t port);
+int          serialWriteBufEmpty(const uint_fast16_t port);
+
+extern void padTo(char *src, uint_fast8_t padding);
 uint16_t SERIAL_PORT_COM1;
 uint16_t SERIAL_PORT_COM2;
 uint16_t SERIAL_PORT_COM3;
@@ -22,7 +23,7 @@ uint16_t SERIAL_PORT_COM4;
 // false = set up the struct and return
 // true  = set up the serial port and return
 bool structReady = false;
-bool serialInit(const uint64_t speed) {
+bool serialInit(const uint_fast64_t speed) {
 	// is the struct ready yet?  if not, this is the first time calling serialInit,
 	// we're still in `initThings` initializing globals, so let's initialize the struct.
 	if (!structReady) {
@@ -42,10 +43,10 @@ bool serialInit(const uint64_t speed) {
 		return false;
 	}
 	// it's true, lets enable serial
-	uint8_t offset1 = 53;
-	uint8_t offset2 = 68;
-	uint8_t offset3 = 83;
-	uint8_t offset4 = 98;
+	uint_fast8_t offset1 = 53;
+	uint_fast8_t offset2 = 68;
+	uint_fast8_t offset3 = 83;
+	uint_fast8_t offset4 = 98;
 	char *str = "I/O Ports according to the BIOS Data Area: Port 1: 0xAAA; Port 2: 0xAAA; Port 3: 0xAAA; Port 4: 0xAAA";
 	char *buffer = malloc(8);
 	padTo(utoa(SERIAL_PORT_COM1, buffer, 16), 3);

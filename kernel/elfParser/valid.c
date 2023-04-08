@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <kernel/elf.h>
 const char elfMagic[] = {EIMAG0, EIMAG1, EIMAG2, EIMAG3};
-const uint8_t archConvert[] = {
+const uint_fast8_t archConvert[] = {
 	elfArch_x86_64,
 	elfArch_i386,
 	elfArch_arm32,
@@ -16,7 +16,7 @@ const char *archConvertStr[] = {
 	"ARM64"
 };
 // please see elfLoader.isValid() for docs (elf.h)
-uint8_t elfCheckIsValid(uint8_t *file, uint8_t arch) {
+uint_fast8_t elfCheckIsValid(uint8_t *file, uint_fast8_t arch) {
 	if (memcmp(file, elfMagic, 4) != 0) {
 		// wtf?  This isn't an elf...
 		log("ELFLOAD", "File does not have ELF magic (0x7F, 'E', 'L', 'F').", LOGLEVEL_ERROR);

@@ -15,7 +15,7 @@ typedef struct {
 } helpDBentry_t;
 typedef struct {
 	helpDBentry_t entries[100];
-	uint8_t maxCMDNameLen;
+	uint_fast8_t maxCMDNameLen;
 } helpDB_t;
 helpDB_t helpDB = {{
 	{"help",        "You're reading it right now!"},
@@ -31,11 +31,11 @@ void help() {
 	if (arguments[0] == '\0') {
 		puts("Commands:\r\n");
 		// list the entire helpDB
-		for (uint8_t i = 0; helpDB.entries[i].command[0] != 0; i++) {
+		for (uint_fast8_t i = 0; helpDB.entries[i].command[0] != 0; i++) {
 			puts("\t- `");
 			puts(helpDB.entries[i].command);
 			puts("`: ");
-			for (uint8_t j = 0; j != (helpDB.maxCMDNameLen - strlen(helpDB.entries[i].command)); j++) {
+			for (uint_fast8_t j = 0; j != (helpDB.maxCMDNameLen - strlen(helpDB.entries[i].command)); j++) {
 				putchar(' ');
 			}
 			puts(helpDB.entries[i].description);
@@ -45,14 +45,14 @@ void help() {
 	}
 	// get the first arg
 	char *firstArg = malloc(64);
-	uint8_t i = 0;
+	uint_fast8_t i = 0;
 	while (arguments[i] != '\0' && arguments[i] != ' ') {
 		firstArg[i] = arguments[i];
 		i++;
 	}
 	// iterate through the helpDB until we find the command from the argument
 	bool found = false;
-	for (uint8_t i = 0; helpDB.entries[i].command[0] != 0; i++) {
+	for (uint_fast8_t i = 0; helpDB.entries[i].command[0] != 0; i++) {
 		if (strcmp(firstArg, helpDB.entries[i].command) == 0) {
 			// we found a match, print it's description
 			found = true;
@@ -72,7 +72,7 @@ void help() {
 	return;
 }
 bool checkInput(const char* str1, const char* str2) {
-	for (uint16_t i = 0; i < (uint16_t)-1; i++) {
+	for (uint_fast16_t i = 0; i < (uint_fast16_t)-1; i++) {
 		if (str1[i] == str2[i]) {
 			if (str1[i] == '\0' && str2[i] == '\0') {
 				return true;
@@ -93,7 +93,7 @@ bool checkInput(const char* str1, const char* str2) {
 	// unreachable
 	return false;
 }
-uint8_t handleCommands(const char* input) {
+uint_fast8_t handleCommands(const char* input) {
 	memset(arguments, '\0', 128);
 	if (input[0] == '\0') {
 		return 0;
@@ -131,8 +131,8 @@ uint8_t handleCommands(const char* input) {
 		firstArg[0] = '\0';
 		char *secondArg = malloc(256);
 		secondArg[0] = '\0';
-		uint8_t i = 0;
-		uint8_t j = 0;
+		uint_fast8_t i = 0;
+		uint_fast8_t j = 0;
 		while (arguments[i] != '\0') {
 			if (arguments[i] == ' ') {
 				i++;
@@ -166,7 +166,7 @@ uint8_t handleCommands(const char* input) {
 			SERIAL_PORT_COM7,
 			SERIAL_PORT_COM8
 		};
-		uint16_t port = atoi(firstArg);
+		uint_fast16_t port = atoi(firstArg);
 		if (port == 0) {
 			puts("ERROR: Port cannot be < 1");
 			goto end;

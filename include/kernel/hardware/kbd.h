@@ -9,10 +9,10 @@
 #define KEYBOARD_LED_ALL 7
 
 typedef struct {
-	bool  (*getStatusLED)(uint8_t led);
-	void  (*setLED)(uint8_t led, bool value);
-	void  (*setIntState)(uint8_t PS2Port, bool state);
-	char  (*getLastKey)();
+	bool  (*getStatusLED)     (uint_fast8_t led);
+	void  (*setLED)           (uint_fast8_t led, bool value);
+	void  (*setIntState)      (uint_fast8_t PS2Port, bool state);
+	char  (*getLastKey)       ();
 	char *(*getLastSpecialKey)();
 } keyboard_t;
 extern keyboard_t keyboard;

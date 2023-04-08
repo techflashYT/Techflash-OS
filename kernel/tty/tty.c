@@ -7,18 +7,18 @@
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
 // static bool     TTY_NextBlinkShouldBeOn;
-uint32_t TTY_Index;
-uint32_t TTY_Height;
-uint32_t TTY_Width;
-uint32_t TTY_TextBackground;
-uint32_t TTY_Color;
-uint16_t TTY_CursorAfterPromptX;
-uint16_t TTY_CursorY;
-uint16_t TTY_CursorX;	
-bool     TTY_BlinkingCursor;
-bool     TTY_Ready;
+uint_fast32_t TTY_Index;
+uint_fast32_t TTY_Height;
+uint_fast32_t TTY_Width;
+uint_fast32_t TTY_TextBackground;
+uint_fast32_t TTY_Color;
+uint_fast16_t TTY_CursorAfterPromptX;
+uint_fast16_t TTY_CursorY;
+uint_fast16_t TTY_CursorX;	
+bool          TTY_BlinkingCursor;
+bool          TTY_Ready;
 
-char    *TTY_PromptStr;
+char         *TTY_PromptStr;
 void TTY_Init() {
 	TTY_Ready     = false;
 	TTY_CursorX   = 0;

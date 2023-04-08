@@ -6,9 +6,9 @@ typedef struct {
 	size_t size;
 } memControlBlock;
 
-void mallocInit(unsigned char* addr);
+void mallocInit(uint8_t *addr);
 
 extern bool heapSetUp;
 extern bool haveAllocated;
-extern unsigned char *lastValidHeapAddress;
-extern unsigned char *heapSpace;
+extern uint8_t *lastValidHeapAddress;
+extern uint8_t *heapSpace;

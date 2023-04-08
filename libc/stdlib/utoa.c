@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 // Thanks to https://github.com/Mathewnd for this code!
-char* utoa(unsigned long value, volatile char* result, int base) {
-	char buff[sizeof(long) * 8 / 4];
+char *utoa(uint_fast64_t value, volatile char* result, uint_fast8_t base) {
+	char buff[sizeof(uint_fast64_t) * 8 / 4];
 
 	if (base < 2 || base > 36) {
 		*result = '\0';
@@ -12,16 +12,14 @@ char* utoa(unsigned long value, volatile char* result, int base) {
 
 	size_t charc = 0;
 
-	do {
+	while (value) {
 		uintmax_t offset = value % base;
 		value /= base;
 		buff[charc++] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[offset];
 	}
-	while (value);
 	
 	for (uintmax_t i = 0; i < charc; ++i) {
 		result[i] = buff[charc - i - 1];
-
 	}
 
 	result[charc] = '\0';

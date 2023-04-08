@@ -9,12 +9,12 @@
 MODULE("PARALLEL");
 parallel_t parallel;
 bool structInit = false;
-uint16_t LPT1 = 0;
-uint16_t LPT2 = 0;
-uint16_t LPT3 = 0;
-extern void padTo(char *src, uint8_t padding);
+uint_fast16_t LPT1 = 0;
+uint_fast16_t LPT2 = 0;
+uint_fast16_t LPT3 = 0;
+extern void padTo(char *src, uint_fast8_t padding);
 // NOTE: This will always take a minimum of 20ms, since we wait for the device to read.
-bool parallelWrite(const uint16_t port, const uint8_t data) {
+bool parallelWrite(const uint_fast16_t port, const uint_fast8_t data) {
 	if (port == 0) {
 		return false;
 	}
@@ -38,7 +38,7 @@ bool parallelWrite(const uint16_t port, const uint8_t data) {
 
 	return true;
 }
-uint8_t parallelRead(const uint16_t port) {
+uint_fast8_t parallelRead(const uint_fast16_t port) {
 	if (port == 0) {
 		return 0;
 	}
@@ -58,9 +58,9 @@ void parallelInit() {
 		return;
 	}
 	outl(LPT1 + 2, 0); // reset control port with null
-	uint8_t offset1 = 53;
-	uint8_t offset2 = 68;
-	uint8_t offset3 = 83;
+	uint_fast8_t offset1 = 53;
+	uint_fast8_t offset2 = 68;
+	uint_fast8_t offset3 = 83;
 	char *str = "I/O Ports according to the BIOS Data Area: Port 1: 0xAAA; Port 2: 0xAAA; Port 3: 0xAAA";
 	char *buffer = malloc(8);
 	padTo(utoa(LPT1, buffer, 16), 3);

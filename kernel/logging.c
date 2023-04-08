@@ -22,7 +22,7 @@ uint32_t logLevelColorsFrameBuf[] = {
 	errorColor    // err
 };
 colorChar_t *logBuffer;
-void log(const char *module, const char* message, uint8_t logLevel) {
+void log(const char *module, const char* message, uint_fast8_t logLevel) {
 	if (logLevel < kernel.logLevel) {
 		return;
 	}
@@ -72,7 +72,7 @@ void log(const char *module, const char* message, uint8_t logLevel) {
 		TTY_Color = colors.vga.yellow;
 		putchar('[');
 		TTY_Color = colors.vga.lcyan;
-		for (uint8_t i = 1; i != 9; i++) {
+		for (uint_fast8_t i = 1; i != 9; i++) {
 			putchar(buffer[i]);
 		}
 		TTY_Color = colors.vga.yellow;

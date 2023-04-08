@@ -3,7 +3,7 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/IO.h>
 // MODULE("SERIAL");
-void serialWriteString(const uint16_t port, const char* value) {
+void serialWriteString(const uint_fast16_t port, const char* value) {
 	if (!serial.working) {
 		return;
 	}
@@ -13,14 +13,14 @@ void serialWriteString(const uint16_t port, const char* value) {
 	}
 }
 
-int serialReadBufEmpty(const uint16_t port) {
+uint_fast8_t serialReadBufEmpty(const uint_fast16_t port) {
 	return inb(port + 5) & 1;
 }
 
-int serialWriteBufEmpty(const uint16_t port) {
+uint_fast8_t serialWriteBufEmpty(const uint_fast16_t port) {
 	return inb(port + 5) & 0x20;
 }
-uint8_t serialReadNext(const uint16_t port) {
+uint_fast8_t serialReadNext(const uint_fast16_t port) {
 	if (!serial.working) {
 		return 0;
 	}
@@ -29,7 +29,7 @@ uint8_t serialReadNext(const uint16_t port) {
 	return inb(port);
 }
  
-void serialWrite(const uint16_t port, const uint8_t value) {
+void serialWrite(const uint_fast16_t port, const uint_fast8_t value) {
 	if (!serial.working) {
 		return;
 	}

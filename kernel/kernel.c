@@ -58,11 +58,6 @@ void kernelMain() {
 			asm ("cli; hlt");
 		}
 	}
-	
-	/*** NOTE: this code runs on all cores in parallel ***/
-	// int s = bootboot.fb_scanline;
-	// int w = bootboot.fb_width;
-	// int h = bootboot.fb_height;
 	SSEInit();
 	// This is safe here because all it does it set a variable.
 	mallocInit((void*)0x0000000001000000);
@@ -89,8 +84,8 @@ void kernelMain() {
 	serial.writeString(SERIAL_PORT_COM1, " Loading...\r\n");
 
 	// if (env.experimental.progressBarBoot) {
-	uint8_t bootX = ((TTY_Width / 2) - (TTY_Width / 3)); // idk it looks centered to me
-	uint8_t bootY = ((TTY_Height / 2) + (TTY_Height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
+	uint_fast8_t bootX = ((TTY_Width / 2) - (TTY_Width / 3)); // idk it looks centered to me
+	uint_fast8_t bootY = ((TTY_Height / 2) + (TTY_Height / 4)); // don't forget, the Y goes up the farther down the screen you are.  this means 3/4 down the screen
 	BP_Init(bootX, bootY, TTY_Width / 2);
 
 	// Initialize the 8259 Programmable Interrupt Controller
@@ -147,15 +142,15 @@ void kernelMain() {
 	panic("a", regs);
 	while (true) {
 		// Main kernel loop
-		char userInput = keyboard.getLastKey();
-		if ((uint8_t)userInput == 0xFF) {
+		uint_fast8_t userInput = keyboard.getLastKey();
+		if ((uint_fast8_t)userInput == 0xFF) {
 			// Special key
 			char *specialKey = keyboard.getLastSpecialKey();
 			if (specialKey[0] == '\r' && specialKey[1] == '\n') {
 				// Enter
 				puts("\r\n");
 				command[commandStrIndex] = '\0';
-				uint8_t val = handleCommands(command);
+				uint_fast8_t val = handleCommands(command);
 				if (val == 1) {
 					printf("Unknown command: \'%s\'\r\n", command);
 				}
@@ -174,7 +169,7 @@ void kernelMain() {
 				}
 			}
 		}
-		if (userInput != (char)'\0' && (uint8_t)userInput != 0xFF) {
+		if (userInput != (char)'\0' && ((uint_fast8_t)userInput) != ((uint_fast8_t)0xFF)) {
 			putchar(userInput);
 			command[commandStrIndex] = userInput;
 			commandStrIndex++;

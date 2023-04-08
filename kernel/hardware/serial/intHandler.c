@@ -10,7 +10,7 @@ void serialHandler(registers_t *regs) {
 	// 	return;
 	// }
 	(void)regs;
-	uint8_t byte = serial.readNext(SERIAL_PORT_COM1);
+	uint_fast8_t byte = serial.readNext(SERIAL_PORT_COM1);
 	if (serial.echo) {
 		if (byte == '\r') {
 			serial.write(SERIAL_PORT_COM1, '\n');

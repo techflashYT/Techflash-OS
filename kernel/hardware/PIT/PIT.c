@@ -8,13 +8,13 @@
 #include <kernel/graphics.h>
 
 
-uint64_t PITTick = 0;
+uint_fast64_t PITTick = 0;
 void timerCallback(__attribute__ ((unused)) registers_t *regs) {
 	PITTick++;
 	
 }
 // FIXME: Sometimes takes twice as long as it should and I have no idea why
-void sleep(uint64_t ms) {
+void sleep(uint_fast64_t ms) {
 	uint32_t oldTick = 0;
 	while (true) {
 		if (oldTick != PITTick) {
@@ -27,7 +27,7 @@ void sleep(uint64_t ms) {
 		asm("hlt");
 	}
 }
-void initPIT(uint32_t frequency) {
+void initPIT(uint_fast32_t frequency) {
 	registerInterruptHandler(0x20, &timerCallback); // Register timerCallback on IRQ0
 
 	uint32_t divisor = 1193180 / frequency; // Divide clock to get frequency

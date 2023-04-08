@@ -11,5 +11,5 @@ int strcmp(const char *str1, const char *str2) {
 	}
  
 	// return the ASCII difference after converting `char*` to `unsigned char*`
-	return *(const unsigned char*)str1 - *(const unsigned char*)str2;
+	return *(const uint8_t *)str1 - *(const uint8_t *)str2;
 }

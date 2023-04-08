@@ -1,11 +1,12 @@
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
-char temp[300] = {'a'};
-void padTo(char *src, uint8_t padding) {
-	// Pad the number to the given length by adding zeros in front of it.
-
+// Pad the number to the given length by adding zeros in front of it.
+void padTo(char *src, uint_fast8_t padding) {
 	// Get the length of the number.
 	size_t len = strlen(src);
+
+	char *temp = malloc(len + padding);
 	if (len >= padding) {
 		return;
 	}
@@ -18,5 +19,6 @@ void padTo(char *src, uint8_t padding) {
 	// Null terminate
 	temp[padding] = '\0';
 	strcpy(src, temp);
+	free(temp);
 	return;
 }

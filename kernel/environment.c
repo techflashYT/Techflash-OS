@@ -4,10 +4,10 @@
 #include <stdbool.h>
 #include <kernel/environment.h>
 MODULE("KERN_ENV");
-static void parse(uint16_t size);
+static void parse(uint_fast16_t size);
 
 void handleEnv() {
-	uint16_t i = 0;
+	uint_fast16_t i = 0;
 	log(MODNAME, "Printing entire env!", LOGLEVEL_VERBOSE);
 	
 	while (environment[i] != '\0') {
@@ -28,9 +28,9 @@ void handleEnv() {
 	parse(i);
 	return;
 }
-static void parse(uint16_t size) {
+static void parse(uint_fast16_t size) {
 	log(MODNAME, "Started parsing the environment variables.", LOGLEVEL_VERBOSE);
-	uint16_t i = 0;
+	uint_fast16_t i = 0;
 	bool workingOn;
 	char *currentKey = malloc(51);
 	char *currentVal = malloc(51);
