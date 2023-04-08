@@ -5,7 +5,7 @@
             "includePath": [
                 "include",
                 "apps/installer/include",
-                "/opt/TechflashSoftware/crossCompiler/lib/gcc/x86_64-elf/13.0.0/include"
+                "/opt/TechflashSoftware/crossCompiler/lib/gcc/x86_64-elf/**"
             ],
             "defines": [
                 "CONFIG_KERN_VERSION_MAJOR=0",
