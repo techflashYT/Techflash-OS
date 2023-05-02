@@ -27,43 +27,9 @@ static uint64_t r14val; static uint64_t r15val;
 
 extern void padTo(char *src, uint8_t padding);
 
-static bool alreadyPanicing = false;
-static bool mentionDualPanic = false;
-
 #define pad(x) padTo(x, 16)
 
-__attribute__((noreturn)) void panic(const char* message, volatile registers_t *r) {
-	// if it's true: we panicked during a panic during a panic, the panic code is probably dead, just give up.
-	if (!mentionDualPanic) {
-		if (alreadyPanicing) {
-			asm("cli; hlt");
-		}
-	}
-
-	alreadyPanicing = true;
-	TTY_CursorX = 0;
-	TTY_CursorY = 0;
-	TTY_SetBackground(0x0062A8); // light blue
-	TTY_Color = colors.vga.white;
-
-	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
-	serial.writeString(SERIAL_PORT_COM1, message);
-	serial.writeString(SERIAL_PORT_COM1, "\r\nPlease see framebuffer for debugging info.\r\n");
-
-	// Puts is slightly faster here since there's no need to check for format specifiers
-	puts(
-		"Techflash OS has run into a problem it couldn't handle and needs to restart.\r\n"
-		"Please report this to Techflash at https://github.com/techflashYT/Techflash-OS\r\n"
-		"Please give the following information "
-	);
-	TTY_Color = colors.error;
-	puts("EXACTLY AS SHOWN BELOW");
-	TTY_Color = colors.vga.white;
-	puts(" in the bug report:\r\n");
-	TTY_Color = colors.error;
-	puts("Error: ");
-	TTY_Color = colors.vga.yellow;
-	puts(message);
+static void regs(volatile registers_t *r) {
 	TTY_Color = colors.vga.lcyan;
 	puts("\r\nCPU Registers ");
 	TTY_Color = colors.error;
@@ -73,15 +39,6 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	TTY_Color = colors.warn;
 	puts("\r\n	General Purpose Regs:\r\n");
 
-	rax = malloc(17); rbx = malloc(17); rcx = malloc(17);
-	rdx = malloc(17); rsi = malloc(17); rdi = malloc(17);
-	r8  = malloc(17); r9  = malloc(17); r10 = malloc(17);
-	r11 = malloc(17); r12 = malloc(17); r13 = malloc(17);
-	r14 = malloc(17); r15 = malloc(17);
-
-	rbp = malloc(17); rsp = malloc(17); rip = malloc(17);
-
-	cr2 = malloc(17); intNo = malloc(17);
 
 	// cr2 isn't pushed already, handle it manually
 	cr2val = 0;	asm("movq %%cr2, %0\r\n" : "=r" (cr2val) : );
@@ -136,10 +93,65 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	TTY_Color = colors.vga.white;
 	puts("		CR2: 0x"); puts(intNo);
 	if (r->intNo != 0) {
-		puts("		Interrupt Number: 0x"); puts(intNo); puts("\r\n");
+		puts("	Interrupt Number: 0x"); puts(intNo); puts("\r\n");
 	}
-	if (mentionDualPanic) {
-		puts("Additionally, an error has occurred during the printing of this message.\r\n");
+}
+uint8_t panicNum = 0;
+__attribute__((noreturn)) void panic(const char* message, volatile registers_t *r) {
+	if (panicNum == 2) {
+		while (true) {asm("cli;hlt");}
+	}
+	else if (panicNum == 1) {
+		goto panic2;
+	}
+
+	TTY_CursorX = 0;
+	TTY_CursorY = 0;
+	TTY_SetBackground(0x0062A8); // light blue
+	TTY_Color = colors.vga.white;
+
+	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
+	serial.writeString(SERIAL_PORT_COM1, message);
+	serial.writeString(SERIAL_PORT_COM1, "\r\nPlease see framebuffer for debugging info.\r\n");
+
+	rax = malloc(17); rbx = malloc(17); rcx = malloc(17);
+	rdx = malloc(17); rsi = malloc(17); rdi = malloc(17);
+	r8  = malloc(17); r9  = malloc(17); r10 = malloc(17);
+	r11 = malloc(17); r12 = malloc(17); r13 = malloc(17);
+	r14 = malloc(17); r15 = malloc(17);
+
+	rbp = malloc(17); rsp = malloc(17); rip = malloc(17);
+
+	cr2 = malloc(17); intNo = malloc(17);
+	// Puts is slightly faster here since there's no need to check for format specifiers
+	puts(
+		"Techflash OS has run into a problem it couldn't handle and needs to restart.\r\n"
+		"Please report this to Techflash at https://github.com/techflashYT/Techflash-OS\r\n"
+		"Please give the following information "
+	);
+	TTY_Color = colors.error;
+	puts("EXACTLY AS SHOWN BELOW");
+	TTY_Color = colors.vga.white;
+	puts(" in the bug report:\r\n");
+	
+	TTY_Color = colors.error;
+	puts("Error: ");
+	TTY_Color = colors.vga.yellow;
+	puts(message);
+
+	regs(r);
+panic2:
+	panicNum++;
+
+	if (panicNum == 2) {
+		puts("\r\n\nAdditionally, an error has occurred during the printing of this message.\r\n");
+		puts("Error: ");
+		TTY_Color = colors.vga.yellow;
+		puts(message);
+
+		regs(r);
+		puts("Halting just in case to prevent an infinite loop");
+		asm("cli;hlt");
 	}
 
 	puts("\r\n============ STACK TRACE ============\r\n");
@@ -149,19 +161,15 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	// stack trace
 	uint64_t *trace = stackTrace(20);
 	char *addr = malloc(17);
-	if (trace[0] > 20) {
-		trace[0] = 20;
-	}
-	for (uint64_t i = 0; i != trace[0]; i++) {
+	for (uint64_t i = 0; trace[i] != 0; i++) {
 		memset(addr, 0, 16);
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
 		printf("%i: 0x%s\r\n", i, addr);
 	}
 
-
 	// write panic_screen.sys to the fb
-	serial.writeString(SERIAL_PORT_COM1, "dumping img to fb... ");
+	serial.writeString(SERIAL_PORT_COM1, "dumping img to fb...");
 
 	uint8_t *filePtr = 0;
 	size_t fileSize = readFile(((uint8_t *)bootboot.initrd_ptr), "panic_screen.sys", &filePtr);

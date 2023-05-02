@@ -5,13 +5,14 @@ FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstac
 OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
-CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
+CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 INCLUDES = $(shell find -O3 ../include/ -type f)
 override compile_S   := $(shell find -O3 . -type f -name '*.S')
 override compile_c   := $(shell find -O3 . -type f -name '*.c')
 compile=$(addprefix ../build/libc/,$(subst ./,,$(subst .c,.o,$(subst .S,.o,$(compile_S) $(compile_c)))))
 
 vpath %.c ./
+vpath %.S ./
 vpath %.h ../include
 outFileName=libk.a # libk.a for kernel library static library.  Not ready for hosted libc yet.
 
@@ -30,8 +31,12 @@ all: ../lib/$(outFileName)
 ../build/libc/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/libc/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
+	@x86_64-elf-gcc $(CFLAGS) -include kernel/kernel.h -include kernel/log.h -mno-red-zone -c $< -o $@
 
+../build/libc/%.o: %.S $(INCLUDES)
+	@mkdir -p $(@D)
+	@echo "CC    $< => $(subst ../build/libc/,,$@)"
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
 
 clean:
 	@rm -f $(compile) ../build/libc/*.a || true

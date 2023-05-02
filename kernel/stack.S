@@ -1,18 +1,9 @@
-overflowStr:
-.asciz "Kernel Stack Overflow (this stack trace trace might be bogus!)"
-smashedStr:
-.asciz "Stack smashing detected (this stack trace might be bogus!)"
-.global __stack_chk_guard
 .global __stack_chk_fail
 .global stackTrace
-__stack_chk_guard:
-#if defined(__X86_64__) || defined(_M_X64) || defined (__aarch64__) || defined(_M_ARM64)
-.quad 0x595e9fbd94fda766
-#else
-.long 0xe2dee396
-#endif
-backupRAX:
-.quad 0
+.section .bss
+backupRAX: .quad 0
+
+.section .text
 __stack_chk_fail:
 	movq %rax, backupRAX
 	movq regsDump, %rax
@@ -42,6 +33,88 @@ __stack_chk_fail:
 		mov smashedStr, %rdi
 		mov regsDump, %rsi
 		jmp panic
+
+# NOTE: old, broken, asm stack trace iterations here just for historical record, not actually used
+/*
+stackTrace:
+	# Manual ASM stack trace, since everything I was finding online was i386 only
+
+	# ==================== LAYOUT ====================
+	# |	0x00: Pointer to previous stack frame (%RBP) |
+	# | 0x08: Return address (%RIP)                  |
+	# ================================================
+
+	# Registers in use: 
+	# - Can't be trashed by other functions (including us!  We need to save them):
+	#	- %rbx: Pointer to allocated memory
+	#	- %r12: Current unwound level
+	#	- %r13: Backup %rbp
+	#	- %r14: Backup %rdi
+	#	- %rbp: Current level of stack unwound
+	# - We can do whatever, but these will be overwritten by other functions
+	#	- %rax: Scratch register for multiplication, also return value
+	#	- %r8 : temp register for the address to move %rip into
+	#	- %rdi: Parameter: Maximum level to unwind to
+	
+	# Save all important registers
+	push %rbx
+	push %r12
+	push %r13
+	push %r14
+
+	# Save %rdi, we're going to need it later
+	mov %rdi, %r14
+
+	# entering stack trace, print debug output
+	mov enterStr, %rdi
+	call puts
+
+	# Save %rbp
+	mov %rbp, %r13
+
+	# save space for final null entry
+	inc %rdi
+	# multiply by 8 to get size in bytes
+	mov $0x08, %rax
+	mul %rdi
+	mov %rax, %rdi
+	call malloc
+
+	# pointer is now in %rbx
+	mov %rax, %rbx
+
+.loop:
+	cmp %r12, %r14 # if we've hit the max, stop
+	je .done
+
+	test %rbp, %rbp # is 0?  if so, stop
+	je .done
+
+	addq $0x8, %rbp
+
+
+	inc %r12
+	jmp .loop
+
+
+.done:
+	# null terminate and return
+
+	# restore %rbp
+	mov %r13, %rbp
+
+	# pop everything back off the stack, but first, save %rbx as the return value
+	mov %rbx, %rax
+	pop %r14
+	pop %r13
+	pop %r12
+	pop %rbx
+	
+	# lets get out of here
+	ret
+	
+*/
+/*
 stackTrace:
 		# Manual ASM stack trace, since everything I was finding online was i386 only
 
@@ -62,6 +135,12 @@ stackTrace:
 		# Save %rdi, we're going to need it later
 		push %rdi
 
+
+		# If we're in debug mode, print that we're entering the stack trace
+		mov enterStr, %rdi
+		call puts
+		pop %rdi
+		push %rdi
 		# Calculate how much memory we need for the data to return
 		#! malloc((max + 1) * 8)
 
@@ -79,10 +158,12 @@ stackTrace:
 
 		pop %rdi # Retrieve %rdi
 
-		# Zero out %rcx before we start using it
+		# Zero out %rbx and %rcx before we start using them
+		xor %rbx, %rbx
 		xor %rcx, %rcx
 
-.loop:	cmp %rbx, %rdi
+.loop:	
+		cmp %rbx, %rdi
 		je .done # have we hit the max?  If so, we're done
 		
 		cmpq $0x00, (%rbp) # if we hit a null entry, we're done
@@ -106,3 +187,4 @@ stackTrace:
 		mov %rbx, (%rdx) # size
 		ret
 		
+*/
