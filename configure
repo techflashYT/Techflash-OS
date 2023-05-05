@@ -1,5 +1,5 @@
 #!/bin/sh
 rm configure.bin
-gcc -pipe -Ofast -march=core2 -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -std=gnu2x configure.c -o configure.bin
+gcc -pipe -Ofast -march=native -mtune=native -Wall -Wextra -Wno-uninitialized -fdiagnostics-color=always -std=gnu2x configure.c -o bin/configure
 chmod +x configure.bin
-./configure.bin
+./bin/configure
