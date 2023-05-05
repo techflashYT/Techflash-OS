@@ -1,3 +1,3 @@
-kernel=sys/core
+kernel=boot/install
 screen=1024x768
 experimental.progressBarBoot=true

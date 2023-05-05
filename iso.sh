@@ -1,27 +1,27 @@
 #!/bin/bash
 set -e
-if [ ! -f sysroot/boot/tfos.elf ]; then
+if [ ! -f sysroot/boot/install ]; then
 	printf "ERROR: Kernel not found!  Please run ./build.sh first.\r\n"
 	exit 1
 fi
-if [ ! -f bootboot/bootboot.bin ]; then
-	cd bootboot
+cd bootboot
+if [ ! -f bootboot.bin ]; then
 	wget https://gitlab.com/bztsrc/bootboot/-/raw/master/dist/bootboot.bin -q --progress=bar --show-progress
-	cd ..
 fi
+if [ ! -f bootboot.efi ]; then
+	wget https://gitlab.com/bztsrc/bootboot/-/raw/master/dist/bootboot.efi -q --progress=bar --show-progress
+fi
+cd ..
 cp -r sysroot isodir
 mkdir -p isodir/BOOTBOOT
-if [ ! -f isodir/boot/install ]; then
-mv isodir/boot/tfos.elf isodir/boot/install
-fi
 cp bootboot/bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
+cp bootboot/bootboot.efi isodir/BOOTBOOT/BOOTBOOT.EFI
 
 # Make initrd
 mkdir -p tmp/initrd/sys
 cp -r sysroot/* tmp/initrd/
 cp "test" tmp/initrd/
 cp misc/converted/panic_screen.bin tmp/initrd/panic_screen.sys
-mv tmp/initrd/boot/tfos.elf tmp/initrd/sys/core
 
 prevDir=$(pwd)
 
