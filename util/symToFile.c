@@ -9,7 +9,7 @@
 int main() {
 	// Run `nm bin/tfos_kernel.elf` and get output into array of strings
 	char (*nmOutput)[MAX_LINE_LENGTH] = malloc(sizeof(char[MAX_NUM_SYMS][MAX_LINE_LENGTH]));
-	FILE *nmFp = popen("nm build/tfos_kernel_nosyms.elf", "r");
+	FILE *nmFp = popen("nm -n build/tfos_kernel_nosyms.elf", "r");
 	if (!nmFp) {
 		perror("Failed to run nm command");
 		exit(1);
