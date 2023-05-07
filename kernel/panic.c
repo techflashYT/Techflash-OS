@@ -10,6 +10,7 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/stack.h>
 #include <kernel/fs/tar.h>
+#include <kernel/symTable.h>
 static char *rax; static char *rbx; static char *rcx;
 static char *rdx; static char *rsi; static char *rdi;
 static char *r8;  static char *r9;  static char *r10;
@@ -161,11 +162,16 @@ panic2:
 	// stack trace
 	uint64_t *trace = stackTrace(20);
 	char *addr = malloc(17);
+	symbolConvInfo_t *info = malloc(sizeof(symbolConvInfo_t) * symTable.numSyms);
+	info->name = "nonsense";
+	info->offset = 0;
 	for (uint64_t i = 0; trace[i] != 0; i++) {
+		getSymbolByAddress(trace[i], info);
 		memset(addr, 0, 16);
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
-		printf("%i: 0x%s\r\n", i, addr);
+		
+		printf("%i: 0x%s [%s+%i]\r\n", i, addr, info->name, info->offset);
 	}
 
 	// write panic_screen.sys to the fb

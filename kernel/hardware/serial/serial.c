@@ -33,8 +33,9 @@ void serialWrite(const uint_fast16_t port, const uint_fast8_t value) {
 	if (!serial.working) {
 		return;
 	}
-	// just append it to the buffer, it's fine as long as we don't run out (in which case oh crap we need to slow down)
-	// while (serialWriteBufEmpty(port) == 0);
+	// we actually need this here, it slows everything dow, but there's actually no way to tell
+	// when we've filled the buffer, or how close we are.
+	while (serialWriteBufEmpty(port) == 0);
 
 	outb(port, value);
 }

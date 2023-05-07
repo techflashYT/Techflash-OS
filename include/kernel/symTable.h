@@ -1,20 +1,21 @@
 #include <stdint.h>
 // S, Y, M, T
 extern char symTableMagic[4];
-typedef struct {
+typedef struct __attribute__((packed)) {
 	char magic[4];
 	// reserved
 	uint8_t flags;
 	uint16_t numSyms;
-	struct {
+	struct __attribute__((packed)) {
 		uint64_t address;
-		uint8_t nameLen;
-		// NOT null terminated!!!  Use nameLen.
+		// null terminated
 		char name[];
-	} symbolEntries[];
-} symTable_t;
+	} __attribute__((packed)) symbolEntries[];
+} __attribute__((packed)) symTable_t;
+extern symTable_t symTable;
 
 typedef struct {
 	char *name;
 	uint16_t offset;
 } symbolConvInfo_t;
+symbolConvInfo_t *getSymbolByAddress(uint64_t address, symbolConvInfo_t *info);

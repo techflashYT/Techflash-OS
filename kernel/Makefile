@@ -23,8 +23,8 @@ include ../.config
 all: ../bin/tfos_kernel.elf
 ../bin/tfos_kernel.elf: ../build/tfos_kernel_nosyms.elf ../build/symbols.o
 	@mkdir -p ../bin
-	@echo "CCLD  tfos_kernel_nosyms.elf symbols.o => tfos_kernel.elf"
-	@$(CC) $(LDFLAGS) ../build/tfos_kernel_nosyms.elf ../build/symbols.o -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
+	@echo "CCLD  $(subst ../build/kernel/,,$(compile)) symbols.o => tfos_kernel.elf"
+	@$(CC) $(LDFLAGS) $(compile) ../build/kernel/testELF.o ../build/symbols.o $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
 		
 #@echo "Stripping Debug Symbols..."
 #@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf

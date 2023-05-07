@@ -53,8 +53,9 @@ int main() {
 
 			// For every global function/variable, write it to the file
 			fwrite(&addr, 8, 1, symtabFp);
-			fwrite(&nameLen, sizeof(nameLen), 1, symtabFp);
 			fwrite(nameStart, nameLen, 1, symtabFp);
+			uint8_t zero = 0;
+			fwrite(&zero, 1, 1, symtabFp);
 		}
 	}
 
