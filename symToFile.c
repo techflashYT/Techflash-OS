@@ -9,7 +9,7 @@
 int main() {
 	// Run `nm bin/tfos_kernel.elf` and get output into array of strings
 	char (*nmOutput)[MAX_LINE_LENGTH] = malloc(sizeof(char[MAX_NUM_SYMS][MAX_LINE_LENGTH]));
-	FILE *nmFp = popen("nm bin/tfos_kernel.elf", "r");
+	FILE *nmFp = popen("nm build/tfos_kernel_nosyms.elf", "r");
 	if (!nmFp) {
 		perror("Failed to run nm command");
 		exit(1);
@@ -51,17 +51,10 @@ int main() {
 			// Calculate the length of the symbol name
 			size_t nameLen = nameEnd - nameStart;
 
-			// Allocate memory for the symbol name and copy it over
-			char *nameStr = malloc(nameLen + 1);
-			memcpy(nameStr, nameStart, nameLen);
-			nameStr[nameLen] = '\0';
-
 			// For every global function/variable, write it to the file
 			fwrite(&addr, 8, 1, symtabFp);
-			fwrite(nameStr, nameLen, 1, symtabFp);
-
-			// Free memory allocated for symbol name
-			free(nameStr);
+			fwrite(&nameLen, sizeof(nameLen), 1, symtabFp);
+			fwrite(nameStart, nameLen, 1, symtabFp);
 		}
 	}
 
