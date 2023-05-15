@@ -8,6 +8,49 @@ typedef struct {
 
 void mallocInit(uint8_t *addr);
 
+
+/*
+ * Function:  PMM_Init 
+ * --------------------
+ * Initializes the physical memory manager.
+ * 
+ * Parameters:
+ *      void
+ *
+ * Returns:
+ *      void
+ * 
+ */
+void PMM_Init(void);
+
+/*
+ * Function:  PMM_AllocatePage 
+ * ---------------------------
+ * Allocates a page of physical memory.
+ * 
+ * Parameters:
+ *      void
+ *
+ * Returns:
+ *      pointer to the allocated page, or NULL if no free pages are available.
+ *
+ */
+void *PMM_AllocatePage(void);
+
+/*
+ * Function:  PMM_FreePage 
+ * -----------------------
+ * Frees a page of physical memory.
+ * 
+ * Parameters:
+ *      page: pointer to the page to be freed.
+ *
+ * Returns:
+ *      void
+ *
+ */
+void PMM_FreePage(void *page);
+
 extern bool heapSetUp;
 extern bool haveAllocated;
 extern uint8_t *lastValidHeapAddress;

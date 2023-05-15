@@ -1,7 +1,6 @@
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <stdlib.h>
 #include <stdio.h>
-char *overflowStr = "Kernel Stack Overflow (this stack trace trace might be bogus!)";
 char *smashedStr  = "Stack smashing detected (this stack trace might be bogus!)";
 
 

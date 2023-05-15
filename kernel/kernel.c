@@ -59,6 +59,8 @@ void kernelMain() {
 		}
 	}
 	SSEInit();
+
+
 	// This is safe here because all it does it set a variable.
 	mallocInit((void*)0x0000000001000000);
 	initThings();
@@ -100,12 +102,16 @@ void kernelMain() {
 	IDTInit();
 	BP_Update();
 
+	// Initialize some exception handlers
+	initExceptions();
+	BP_Update();
+
 	// Init the keyboard driver
 	keyboardInit();
 	BP_Update();
 
-	// Initialize some exception handlers
-	initExceptions();
+	// Initialize the physical memory manager
+	PMM_Init();
 	BP_Update();
 
 	// Initialize the PIT to once every 1ms

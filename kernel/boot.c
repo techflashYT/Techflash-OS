@@ -6,7 +6,7 @@
 #include <kernel/hardware/PIT.h>
 #include <stdlib.h>
 #include <kernel/boot.h>
-uint_fast8_t BP_MaxTasks          = 10;
+uint_fast8_t BP_MaxTasks          = 11;
 double       BP_currentTasks      = 0.0f;
 double       BP_Percent           = 0;
 uint_fast8_t BP_x, BP_Y, BP_Width = 0;

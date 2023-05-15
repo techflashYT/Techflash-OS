@@ -26,7 +26,7 @@ bool timerReady;
 void initThings() {
 	font = (psf2_t*)&_binary_font_psf_start;
 	bda = (void *)0x400;
-	elfInit();
+	// elfInit();
 	timerReady = false;
 
 	// Start setting up the serial struct.

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kernel/panic.h>
+#include <kernel/custom.h>
 #include <kernel/tty.h>
 MODULE("X86INT");
 #define PIC1		 0x20		/* IO base address for master PIC */
@@ -24,7 +25,6 @@ void sendEOI() {
  
 	outb(PIC1_COMMAND, PIC_EOI);
 }
-extern void padTo(char *src, uint8_t padding);
 void ISRHandler(registers_t* regs) {
 	regs->intNo += 128;
 	lastInterruptNumber = regs->intNo;

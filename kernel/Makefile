@@ -9,9 +9,9 @@ OPTIMIZE   = -O2 # STABLE
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
 CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -T linkerScript.ld -static -L../lib -e _start
-LIBS       = -lgcc -lk
+LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
-INCLUDES   = $(shell find -O3 ../include/ -type f)
+INCLUDES   = $(shell find -O3 ../include/ -type f")
 SHELL=/bin/bash
 vpath %.c ./
 vpath %.h ../include

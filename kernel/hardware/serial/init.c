@@ -6,6 +6,7 @@
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/panic.h>
+#include <kernel/custom.h>
 MODULE("SERIAL");
 serial_t serial;
 void         serialHandler      (registers_t *regs);
@@ -15,7 +16,6 @@ void         serialWriteString  (const uint_fast16_t port, const char* value);
 int          serialReadBufEmpty (const uint_fast16_t port);
 int          serialWriteBufEmpty(const uint_fast16_t port);
 
-extern void padTo(char *src, uint_fast8_t padding);
 uint16_t SERIAL_PORT_COM1;
 uint16_t SERIAL_PORT_COM2;
 uint16_t SERIAL_PORT_COM3;

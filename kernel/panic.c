@@ -11,6 +11,7 @@
 #include <kernel/stack.h>
 #include <kernel/fs/tar.h>
 #include <kernel/symTable.h>
+#include <kernel/custom.h>
 static char *rax; static char *rbx; static char *rcx;
 static char *rdx; static char *rsi; static char *rdi;
 static char *r8;  static char *r9;  static char *r10;
@@ -25,8 +26,6 @@ static uint64_t cr2val;
 static uint64_t r8val;  static uint64_t r9val;  static uint64_t r10val;
 static uint64_t r11val; static uint64_t r12val; static uint64_t r13val;
 static uint64_t r14val; static uint64_t r15val;
-
-extern void padTo(char *src, uint8_t padding);
 
 #define pad(x) padTo(x, 16)
 
@@ -162,7 +161,7 @@ panic2:
 	// stack trace
 	uint64_t *trace = stackTrace(20);
 	char *addr = malloc(17);
-	symbolConvInfo_t *info = malloc(sizeof(symbolConvInfo_t) * symTable.numSyms);
+	volatile symbolConvInfo_t *info = malloc(sizeof(symbolConvInfo_t) * symTable.numSyms);
 	info->name = "nonsense";
 	info->offset = 0;
 	for (uint64_t i = 0; trace[i] != 0; i++) {

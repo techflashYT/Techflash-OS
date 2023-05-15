@@ -1,6 +1,6 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
-FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
+FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -fno-lto -ffreestanding -fstack-protector-all
 # OPTIMIZE   = -Ofast # NORMAL
 OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 # DEBUG

@@ -2,17 +2,18 @@
 #include <kernel/bda.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/hardware/PIT.h>
+#include <kernel/custom.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
 MODULE("PARALLEL");
 parallel_t parallel;
 bool structInit = false;
 uint_fast16_t LPT1 = 0;
 uint_fast16_t LPT2 = 0;
 uint_fast16_t LPT3 = 0;
-extern void padTo(char *src, uint_fast8_t padding);
 // NOTE: This will always take a minimum of 20ms, since we wait for the device to read.
 bool parallelWrite(const uint_fast16_t port, const uint_fast8_t data) {
 	if (port == 0) {

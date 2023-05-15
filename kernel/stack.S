@@ -18,21 +18,9 @@ __stack_chk_fail:
 	leaq 0x0(%rip),        %rbx
 	mov  %rbx,		   128(%rax)
 
-	mov kernelStackTop, %rax
-	cmpb $0xAD, 1(%rax)
-	jne .stackOverflow
-	cmpb $0xDE, 0(%rax)
-	jne .stackOverflow
-	jmp .bye
-	.stackOverflow:
-		mov (emergencyStack), %rsp
-		mov overflowStr, %rdi
-		mov regsDump, %rsi
-		jmp panic
-	.bye: // didn't overflow, but corrupted anyways
-		mov smashedStr, %rdi
-		mov regsDump, %rsi
-		jmp panic
+	mov smashedStr, %rdi
+	mov regsDump, %rsi
+	jmp panic
 
 # NOTE: old, broken, asm stack trace iterations here just for historical record, not actually used
 /*
