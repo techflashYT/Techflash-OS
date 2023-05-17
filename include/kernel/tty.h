@@ -2,8 +2,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 extern bool          TTY_Ready;
+extern volatile bool TTY_Bold;
 extern bool          TTY_BlinkingCursor;
-extern uint_fast16_t TTY_CursorX;	
+extern uint_fast16_t TTY_CursorX;
 extern uint_fast16_t TTY_CursorY;
 extern uint_fast16_t TTY_CursorAfterPromptX;
 extern uint32_t      TTY_Color;

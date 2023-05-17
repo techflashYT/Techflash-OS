@@ -17,6 +17,7 @@ uint_fast16_t TTY_CursorY;
 uint_fast16_t TTY_CursorX;	
 bool          TTY_BlinkingCursor;
 bool          TTY_Ready;
+volatile bool TTY_Bold;
 
 char         *TTY_PromptStr;
 void TTY_Init() {
