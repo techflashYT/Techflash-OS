@@ -9,4 +9,4 @@ void *memcpy(void* destination, const void* source, size_t num);
 int memcmp(const void *s1, const void *s2, int_fast64_t len);
 int strcmp(const char *str1, const char *str2);
 void *memmove(void *dest, const void *src, size_t n);
-const char* strstr(const char* haystack, const char* needle);
+char* strstr(const char* haystack, const char* needle);
