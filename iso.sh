@@ -48,4 +48,19 @@ fi
 if ( command -v grub2-mkrescue > /dev/null ); then
 	grub=grub2
 fi
-$grub-mkrescue --stdio_sync off -o bin/TFOS_ISO.iso isodir
+mkdir -p isodir/EFI/TechflashOS
+${grub}-mkstandalone -O x86_64-efi \
+	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+	--themes="" \
+	--disable-shim-lock \
+	-o "isodir/EFI/TechflashOS/BOOTx64.EFI" "isodir/boot/grub/grub.cfg"
+	
+${grub}-mkstandalone -O i386-efi \
+	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+	--themes="" \
+	--disable-shim-lock \
+	-o "isodir/EFI/TechflashOS/BOOTIA32.EFI" "isodir/boot/grub/grub.cfg"
+
+
+${grub}-mkrescue -o bin/TFOS_ISO.iso isodir
+
