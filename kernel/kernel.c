@@ -144,8 +144,7 @@ void kernelMain() {
 	TTY_CursorAfterPromptX = 0;
 	char *command = malloc(512);
 	uint16_t commandStrIndex = 0;
-	DUMPREGS;
-	panic("a", regs);
+
 	while (true) {
 		// Main kernel loop
 		uint_fast8_t userInput = keyboard.getLastKey();
