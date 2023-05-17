@@ -1,20 +1,16 @@
 {
-    "name": "(gdb) Attach",
-    "type": "cppdbg",
-    "request": "attach",
-    "miDebuggerServerAddress": "localhost:1234",
-    "program": "${workspaceFolder}/bin/tfos_kernel.elf",
-    "MIMode": "gdb",
-    "setupCommands": [
+    "configurations": [
         {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-        },
-        {
-            "description": "Set Disassembly Flavor to AT&T",
-            "text": "-gdb-set disassembly-flavor att",
-            "ignoreFailures": true
+            "type": "gdb",
+            "request": "attach",
+            "name": "Attach to QEMU",
+            "gdbpath": "/usr/bin/gdb",
+            "executable": "bin/tfos_kernel.elf",
+            "target": "localhost:1234",
+            "remote": true,
+            "printCalls": true,
+            "cwd": "${workspaceRoot}",
+            "valuesFormatting": "parseText"
         }
     ]
 }
