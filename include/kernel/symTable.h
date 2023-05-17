@@ -10,7 +10,7 @@ typedef struct __attribute__((packed)) {
 } __attribute__((packed)) symTable_t;
 extern symTable_t symTable;
 typedef struct __attribute__((packed)) {
-	uint64_t address;
+	void *address;
 	// null terminated
 	char name[];
 } __attribute__((packed)) symTableEntry_t;

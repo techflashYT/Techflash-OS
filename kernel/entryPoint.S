@@ -22,6 +22,9 @@ _start:
 	# call the main kernel function in C
 	call kernelMain
 	
+	nop
+	# nop here to add one extra byte so that the stack trace gets the right symbols
+
 	# just in case kernelMain somehow returns
 	.loop:
 		cli

@@ -22,18 +22,17 @@ volatile symbolConvInfo_t *getSymbolByAddress(uint64_t address, volatile symbolC
 			utoa((uint_fast64_t)nextPtr, str + 9, 16);
 			padTo(str + 9, 16);
 			log(MODNAME, str, LOGLEVEL_WARN);*/
-			if (address < nextPtr->address) {
+			if (address < (uint64_t)nextPtr->address) {
 				// the last symbol we hit was correct
 				nextPtr = lastAddr;
-				uint16_t offset = address - nextPtr->address;
+				uint16_t offset = address - (uint64_t)nextPtr->address;
 				info->offset = offset;
 				info->name = nextPtr->name;
 				break;
 			}
 			lastAddr = nextPtr;
 			// pointer stuff is weird, this might help
-			void *newPtr = nextPtr + sizeof(uint64_t) + strlen(nextPtr->name) + 1;
-			nextPtr = newPtr;
+			void *newPtr = (symTableEntry_t *)(((uint8_t *)nextPtr) + sizeof(uint64_t) + strlen(nextPtr->name) + 1);
 			nextPtr = newPtr;
 		}
 		return info;
