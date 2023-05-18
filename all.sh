@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 # I use this to speed up build times, since I know that there won't be any commits.  this isn't recommended to be used for anyone other than Techflash.
 if [ "$1" != "--no-pull" ]; then
 	git pull
