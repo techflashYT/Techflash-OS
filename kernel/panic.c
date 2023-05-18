@@ -31,9 +31,11 @@ static uint64_t r14val; static uint64_t r15val;
 
 static void regs(volatile registers_t *r) {
 	puts("\r\n\x1b[1m\x1b[36mCPU Registers ");
+	TTY_Bold = false;
 	TTY_Color = colors.error;
 	puts("(include these in the bug report!!!!)");
 	TTY_Color = colors.vga.lcyan;
+	TTY_Bold = true;
 	putchar(':');
 	TTY_Bold = false;
 	TTY_Color = colors.warn;
@@ -74,26 +76,26 @@ static void regs(volatile registers_t *r) {
 		"		\x1b[36mRDX: \x1b[37m0x%s	\x1b[36mRSI: \x1b[37m0x%s	\x1b[36mRDI: \x1b[37m0x%s\r\n"
 		"		\x1b[36mR8:  \x1b[37m0x%s	\x1b[36mR9:  \x1b[37m0x%s	\x1b[36mR10: \x1b[37m0x%s\r\n"
 		"		\x1b[36mR11: \x1b[37m0x%s	\x1b[36mR12: \x1b[37m0x%s	\x1b[36mR13: \x1b[37m0x%s\r\n"
-		"		\x1b[36mR14: \x1b[37m0x%s	\x1b[36mR15: \x1b[37m0x%s\x1b[0m\r\n",
+		"		\x1b[36mR14: \x1b[37m0x%s	\x1b[36mR15: \x1b[37m0x%s\r\n",
 		rax, rbx, rcx,
 		rdx, rsi, rdi,
 		r8,  r9,  r10,
 		r11, r12, r13,
 		r14, r15
 	);
+	TTY_Bold = false;
 	TTY_Color = colors.warn;
 	puts("	Pointer regs:\r\n");
-	TTY_Color = colors.vga.white;
 	printf(
-		"		RBP: 0x%s	RSP: 0x%s	RIP: 0x%s\r\n",
+		"		\x1b[1m\x1b[36mRBP: \x1b[37m0x%s	\x1b[36mRSP: \x1b[37m0x%s	\x1b[36mRIP: \x1b[37m0x%s\r\n",
 		rbp, rsp, rip
 	);
+	TTY_Bold = false;
 	TTY_Color = colors.warn;
 	puts("	Other regs:\r\n");
-	TTY_Color = colors.vga.white;
-	puts("		CR2: 0x"); puts(intNo);
+	printf("		\x1b[1m\x1b[36mCR2: \x1b[37m0x%s", intNo);
 	if (r->intNo != 0) {
-		puts("	Interrupt Number: 0x"); puts(intNo); puts("\r\n");
+		printf("	\x1b[36mInterrupt Number: \x1b[37m0x%s\r\n", intNo);
 	}
 }
 uint8_t panicNum = 0;
@@ -159,18 +161,26 @@ panic2:
 	printf("NOTE: Starting from most recently called function, ending at entry point.\r\n");
 	serial.writeString(SERIAL_PORT_COM1, "NOTE: Starting from most recently called function, ending at entry point.\r\n");
 	// stack trace
-	uint64_t *trace = stackTrace(20);
+	uint64_t *trace = stackTrace(9);
 	char *addr = malloc(17);
 	volatile symbolConvInfo_t *info = malloc(sizeof(symbolConvInfo_t) * symTable.numSyms);
 	info->name = "nonsense";
 	info->offset = 0;
+
+
 	for (uint64_t i = 0; trace[i] != 0; i++) {
 		getSymbolByAddress(trace[i], info);
 		memset(addr, 0, 16);
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
-		
-		printf("%i: 0x%s [%s+%i]\r\n", i, addr, info->name, info->offset);
+
+		// basically prints `2: 0xDEADBEEF12345678 [someFunc+69420]` with very fancy colors
+		TTY_Bold = false;
+		TTY_Color = colors.warn;
+		putchar(i + 0x30);
+		puts(": ");
+
+		printf("\x1b[1m\x1b[37m0x%s \x1b[36m[\x1b[33m%s\x1b[37m+\x1b[31m%i\x1b[36m]\x1b[37m\r\n", addr, info->name, info->offset);
 	}
 
 	// write panic_screen.sys to the fb
