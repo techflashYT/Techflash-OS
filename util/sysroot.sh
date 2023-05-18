@@ -11,4 +11,4 @@ cd sysroot
 mkdir -p bin usr/include/TechflashOS usr/src/TechflashOS boot installContents
 cp ../bin/tfos_kernel.elf boot/install
 pwd
-rsync -ah ../ usr/src/TechflashOS --exclude build --exclude .git --exclude sysroot --exclude isodir --exclude build
+rsync -ah ../ usr/src/TechflashOS --exclude build --exclude .git --exclude sysroot --exclude isodir --exclude build --exclude tmp
