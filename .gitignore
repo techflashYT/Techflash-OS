@@ -9,3 +9,4 @@ util/fasm
 bootboot/bootboot.*
 log
 bx_enh_dbg.ini
+tmp
