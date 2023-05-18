@@ -34,13 +34,13 @@ void log(const char *module, const char* message, uint_fast8_t logLevel) {
 		serial.writeString(SERIAL_PORT_COM1, buffer);
 		serial.writeString(SERIAL_PORT_COM1, logLevelColorsEscCode[logLevel]);
 		serial.writeString(SERIAL_PORT_COM1, message);
-		serial.writeString(SERIAL_PORT_COM1, "\x1b[0m");
+		serial.writeString(SERIAL_PORT_COM1, "\x1b[0m\r\n");
 	#endif
 	uint32_t origColor = TTY_Color;
 	puts(buffer);
 	TTY_Color = logLevelColorsFrameBuf[logLevel];
 	puts(message);
-	puts("\r\n");
+	puts("\x1b[0m\r\n");
+	memcpy(buffer + 19, "        ", 8);
 	TTY_Color = origColor;
-	free(buffer);
 }
