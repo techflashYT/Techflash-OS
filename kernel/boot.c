@@ -31,10 +31,10 @@ void BP_FadeOut() {
 	DUMPREGS;
 	double percent = (double)( (double)( BP_currentTasks / BP_MaxTasks ) * 100 );
 	if (percent < 99.5f) {
-		panic("bootProgressBarFadeOut(): percent less than 100!  Did you forget to add more tasks before updating maxTasks?", regs);
+		panic("BP_FadeOut(): percent less than 100!  Did you forget to add more tasks before updating maxTasks?", regs);
 	}
 	if (percent > 100.5f) {
-		panic("bootProgressBarFadeOut(): percent greater than 100!  Did you forget to update maxTasks before adding more?", regs);
+		panic("BP_FadeOut(): percent greater than 100!  Did you forget to update maxTasks before adding more?", regs);
 	}
 	
 	uint32_t bracketColor = colors.vga.lgray;
