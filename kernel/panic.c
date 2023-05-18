@@ -30,12 +30,12 @@ static uint64_t r14val; static uint64_t r15val;
 #define pad(x) padTo(x, 16)
 
 static void regs(volatile registers_t *r) {
-	TTY_Color = colors.vga.lcyan;
-	puts("\r\nCPU Registers ");
+	puts("\r\n\x1b[1m\x1b[36mCPU Registers ");
 	TTY_Color = colors.error;
 	puts("(include these in the bug report!!!!)");
 	TTY_Color = colors.vga.lcyan;
 	putchar(':');
+	TTY_Bold = false;
 	TTY_Color = colors.warn;
 	puts("\r\n	General Purpose Regs:\r\n");
 
@@ -68,13 +68,13 @@ static void regs(volatile registers_t *r) {
 		utoa(r->intNo, intNo, 16);pad(intNo);
 	}
 	
-	TTY_Color = colors.vga.white;
 	printf (
-		"		RAX: 0x%s	RBX: 0x%s	RCX: 0x%s\r\n"
-		"		RDX: 0x%s	RSI: 0x%s	RDI: 0x%s\r\n"
-		"		R8:  0x%s	R9:  0x%s	R10: 0x%s\r\n"
-		"		R11: 0x%s	R12: 0x%s	R13: 0x%s\r\n"
-		"		R14: 0x%s	R15: 0x%s\r\n",
+		"\x1b[1m"
+		"		\x1b[36mRAX: \x1b[37m0x%s	\x1b[36mRBX: \x1b[37m0x%s	\x1b[36mRCX: \x1b[37m0x%s\r\n"
+		"		\x1b[36mRDX: \x1b[37m0x%s	\x1b[36mRSI: \x1b[37m0x%s	\x1b[36mRDI: \x1b[37m0x%s\r\n"
+		"		\x1b[36mR8:  \x1b[37m0x%s	\x1b[36mR9:  \x1b[37m0x%s	\x1b[36mR10: \x1b[37m0x%s\r\n"
+		"		\x1b[36mR11: \x1b[37m0x%s	\x1b[36mR12: \x1b[37m0x%s	\x1b[36mR13: \x1b[37m0x%s\r\n"
+		"		\x1b[36mR14: \x1b[37m0x%s	\x1b[36mR15: \x1b[37m0x%s\x1b[0m\r\n",
 		rax, rbx, rcx,
 		rdx, rsi, rdi,
 		r8,  r9,  r10,
