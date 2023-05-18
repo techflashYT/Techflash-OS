@@ -47,16 +47,15 @@ static uint8_t whatCoreAmI() {
 	);
 	return (rbx >> 24);
 }
+uint8_t numCPUs = 1;
 // cppcheck-suppress unusedFunction
 void kernelMain() {
 	// before we do anything, if we're not the bootstrap processor, just hang.
 	// in future versions, they'll do things, for now, they won't
-	// FIXME: This fixes crashing on SMP systems, but not in a good way, we really shouldn't be running single threaded.
 	if (whatCoreAmI() != bootboot.bspid) {
-		// we are an non-bootstrap processor, halt
-		while (true) {
-			asm ("cli; hlt");
-		}
+		// non bootstrap processor
+		numCPUs++;
+		asm ("cli;hlt");
 	}
 	SSEInit();
 
@@ -102,6 +101,8 @@ void kernelMain() {
 	IDTInit();
 	BP_Update();
 
+
+	// TODO: Distribute these               vvv !
 	// Initialize some exception handlers
 	initExceptions();
 	BP_Update();
@@ -110,13 +111,15 @@ void kernelMain() {
 	keyboardInit();
 	BP_Update();
 
+	// Initialize the PIT to once every 1ms
+	initPIT(1000);
+	BP_Update();
+
+
 	// Initialize the physical memory manager
 	PMM_Init();
 	BP_Update();
 
-	// Initialize the PIT to once every 1ms
-	initPIT(1000);
-	BP_Update();
 	
 	keyboard.setIntState(0, true);
 	
@@ -135,6 +138,16 @@ void kernelMain() {
 	parseTar((void *)bootboot.initrd_ptr);
 	BP_Update();
 	handleEnv();
+
+	char *str = malloc(32);
+	strcpy(str, "Found \x1b[1m\x1b[36m");
+	char *buffer = malloc(4);
+	utoa(numCPUs, buffer, 10);
+	strcat(str, buffer);
+	strcat(str, "\x1b[0m CPUs!");
+	puts(str);
+	free(str);
+	free(buffer);
 	
 	sleep(250);
 	
