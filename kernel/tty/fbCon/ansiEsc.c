@@ -45,9 +45,9 @@ bool FB_HandleEsc(char ch) {
                         // Set text style to bold
                         TTY_Bold = true;
                         break;
-                    case 4:
-                        // Set text underline
-                        // TODO: TTY_Underline = true;
+                    case 22:
+                        // Disable bold
+                        TTY_Bold = false;
                         break;
                     case 30:
                         // Set text color to black
