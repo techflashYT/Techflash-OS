@@ -62,6 +62,10 @@ void kernelMain() {
 
 	// This is safe here because all it does it set a variable.
 	mallocInit((void*)0x0000000001000000);
+
+	// Initialize the physical memory manager
+	PMM_Init();
+
 	initThings();
 	// initialize serial logging.
 	serial.init(115200);
@@ -116,9 +120,6 @@ void kernelMain() {
 	BP_Update();
 
 
-	// Initialize the physical memory manager
-	PMM_Init();
-	BP_Update();
 
 	
 	keyboard.setIntState(0, true);
