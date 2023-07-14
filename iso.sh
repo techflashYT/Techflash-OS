@@ -31,10 +31,7 @@ unset prevDir
 popd > /dev/null 2>&1
 
 cat bootboot/config > isodir/BOOTBOOT/CONFIG
-mkdir -p isodir/boot/grub
-cd isodir/boot/grub
-mkdir fonts themes locale
-cd ../../..
+mkdir -p isodir/boot/grub/fonts
 
 cd grub
 cat ISO_GRUB_CFG.cfg > ../isodir/boot/grub/grub.cfg
@@ -48,19 +45,17 @@ fi
 if ( command -v grub2-mkrescue > /dev/null ); then
 	grub=grub2
 fi
-mkdir -p isodir/EFI/TechflashOS
-${grub}-mkstandalone -O x86_64-efi \
-	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
-	--themes="" \
-	--disable-shim-lock \
-	-o "isodir/EFI/TechflashOS/BOOTx64.EFI" "isodir/boot/grub/grub.cfg"
+# ${grub}-mkstandalone -O x86_64-efi \
+# 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+# 	--themes="" \
+# 	--disable-shim-lock \
+# 	-o "isodir/EFI/TechflashOS/BOOTx64.EFI" "isodir/boot/grub/grub.cfg"
 	
-${grub}-mkstandalone -O i386-efi \
-	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
-	--themes="" \
-	--disable-shim-lock \
-	-o "isodir/EFI/TechflashOS/BOOTIA32.EFI" "isodir/boot/grub/grub.cfg"
+# ${grub}-mkstandalone -O i386-efi \
+# 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+# 	--themes="" \
+# 	--disable-shim-lock \
+# 	-o "isodir/EFI/TechflashOS/BOOTIA32.EFI" "isodir/boot/grub/grub.cfg"
 
-
-${grub}-mkrescue -o bin/TFOS_ISO.iso isodir
+${grub}-mkrescue -o bin/TFOS_ISO.iso isodir --themes=""
 
