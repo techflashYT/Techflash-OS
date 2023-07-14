@@ -166,7 +166,7 @@ void kernelMain() {
 			free = "yes";
 			usable += (endptr - ptr);
 		}
-		printf("Entry %d: 0x%p - %p; Type: %d; Free?: %s\r\n", i, ptr, endptr, type, free);
+		printf("Entry %d: %p - %p; Type: %d; Free?: %s\r\n", i, ptr, endptr, type, free);
 	}
 	printf("%ldKB usable memory.\r\n", usable / 1024);
 
