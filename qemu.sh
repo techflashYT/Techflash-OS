@@ -1,5 +1,5 @@
 #!/bin/bash
-# KVM="--enable-kvm "
+KVM="--enable-kvm "
 CPU="${CPU:-default}"
 CORES="2"
 if [ "$1" = "--no-kvm" ]; then
