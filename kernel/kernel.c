@@ -142,7 +142,7 @@ void kernelMain() {
 	char *buffer = malloc(4);
 	utoa(numCPUs, buffer, 10);
 	strcat(str, buffer);
-	strcat(str, "\x1b[0m CPUs!");
+	strcat(str, "\x1b[0m CPUs!\r\n");
 	puts(str);
 	free(str);
 	free(buffer);
@@ -151,6 +151,24 @@ void kernelMain() {
 	
 	BP_FadeOut();
 	TTY_BlinkingCursor = true;
+
+	uint_fast8_t entries = (bootboot.size - 128) / 16;
+	MMapEnt *mmap = &bootboot.mmap;
+	uint_fast64_t usable = 0;
+	puts("====== MEMORY MAP ======\r\n");
+	for (uint_fast8_t i = 0; i != entries; i++) {
+		uint64_t ptr = MMapEnt_Ptr(&mmap[i]);
+		uint64_t endptr = MMapEnt_Size(&mmap[i]) + ptr;
+		uint_fast8_t type = MMapEnt_Type(&mmap[i]);
+
+		char *free = "no";
+		if (MMapEnt_IsFree(&mmap[i])) {
+			free = "yes";
+			usable += (endptr - ptr);
+		}
+		printf("Entry %d: 0x%p - %p; Type: %d; Free?: %s\r\n", i, ptr, endptr, type, free);
+	}
+	printf("%dKB usable memory.\r\n", usable / 1024);
 
 	while (true) {
 		// TODO: Literally anything
