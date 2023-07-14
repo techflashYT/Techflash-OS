@@ -1,10 +1,13 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <kernel/panic.h>
+#include <kernel/environment.h>
+#include <kernel/hardware/serial.h>
 
-#pragma GCC optimize("O1")
+// #pragma GCC optimize("O1")
 
 #define PAGE_SIZE ((uint64_t)4096)
 #define PHYS_MEM_SIZE ((uint64_t)1 << 30)  // 1 GB of physical memory
@@ -26,10 +29,64 @@ static PageHeader **PMM_Headers = NULL;
 // Declare a free page list for each block size
 static PageHeader *PMM_FreePagesList[11] = { NULL };
 
-// extern void panic(const char* message);
+typedef struct {
+    void *addr;
+    uint64_t size;
+} usableMemEntry;
+usableMemEntry entries[16];
 
 // Initialize the physical memory manager
 void PMM_Init(void) {
+    uint_fast8_t bootbootEntries = (bootboot.size - 128) / 16;
+	MMapEnt *mmap = &bootboot.mmap;
+    uint_fast64_t totalUsableMem = 0;
+    uint_fast8_t memEntryIndex = 0;
+	puts("====== MEMORY MAP ======\r\n");
+
+	for (uint_fast8_t i = 0; i != bootbootEntries; i++) {
+		void *ptr = (void *)MMapEnt_Ptr(&mmap[i]);
+        uint_fast64_t size = MMapEnt_Size(&mmap[i]);
+		void *endptr = size + ptr;
+		uint_fast8_t type = MMapEnt_Type(&mmap[i]);
+
+		char *free = "no";
+		if (MMapEnt_IsFree(&mmap[i])) {
+			free = "yes";
+            entries[memEntryIndex].addr = ptr;
+            entries[memEntryIndex].size = size;
+            totalUsableMem += size;
+            memEntryIndex++;
+		}
+        char *typeStr;
+        if (type == MMAP_USED) {typeStr = "Used";}
+        if (type == MMAP_FREE) {typeStr = "Free";}
+        if (type == MMAP_ACPI) {typeStr = "ACPI";}
+        if (type == MMAP_MMIO) {typeStr = "MMIO";}
+
+        char sizeStr[12];
+        double sizeFlt = size;
+        for (uint_fast8_t i = 0; i != 5; i++) {
+            serial.writeString(SERIAL_PORT_COM1, "iter\r\n");
+            if ((sizeFlt / 1024) > 100) {
+                sizeFlt /= 1024;
+                continue;
+            }
+            // not greater than 100*unit*, let's convert it
+            char unit = '?';
+            if (i == 0) {unit = 'B';}
+            if (i == 1) {unit = 'K';}
+            if (i == 2) {unit = 'M';}
+            if (i == 3) {unit = 'G';}
+            if (i == 4) {unit = 'T';}
+            sprintf(sizeStr, "%.2f%c", sizeFlt, unit);
+            break;
+        }
+        serial.writeString(SERIAL_PORT_COM1, "done\r\n\r\n");
+
+		printf("Entry %d: %p - %p; Size: %s; Type: %s (%d); Free?: %s\r\n", i, ptr, endptr, sizeStr, typeStr, type, free);
+	}
+	printf("%ldKB usable memory.\r\n", totalUsableMem / 1024);
+    /*
     // Dynamically allocate the array of pointers to page headers
     PMM_Headers = malloc(11 * sizeof(PageHeader *));
     if (PMM_Headers == NULL) {
@@ -65,7 +122,7 @@ void PMM_Init(void) {
     }
     for (uint64_t i = 0; i < NUM_PAGES / (sizeof(uint64_t) * 8); i++) {
         PMM_FreePagesBitmap[i] = 0;
-    }
+    }*/
 }
 
 // Allocate a page of physical memory

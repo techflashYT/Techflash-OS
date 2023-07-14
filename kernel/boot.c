@@ -5,6 +5,7 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/PIT.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <kernel/boot.h>
 uint_fast8_t BP_MaxTasks          = 10;
 double       BP_currentTasks      = 0.0f;
@@ -12,6 +13,16 @@ double       BP_Percent           = 0;
 uint_fast8_t BP_x, BP_Y, BP_Width = 0;
 
 void BP_Init(const uint_fast8_t x, const uint_fast8_t y, const uint_fast8_t width) {
+	// FIXME: weird hack putting this here
+	/* prevent losing 64 bytes of stack for kernel runtime */ {
+		// int maj = CONFIG_KERN_VERSION_MAJOR;
+		// int min = CONFIG_KERN_VERSION_MINOR;
+		// int pat = CONFIG_KERN_VERSION_PATCH;
+		char str[64];
+		sprintf(str, "Techflash OS \e[1m\e[36mv%d.%d.%d\e[0m Loading...\r\n", 1, 0, 0);
+		puts(str);
+		serial.writeString(SERIAL_PORT_COM1, str);
+	}
 	// Set global vars so that we know these properties in other functions
 	BP_Percent = 0;
 	BP_x       = x;

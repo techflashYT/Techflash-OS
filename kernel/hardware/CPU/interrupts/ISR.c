@@ -48,7 +48,7 @@ void registerInterruptHandler(uint8_t n, isr_t handler) {
 	uint8_t offset1 = 23;
 	uint8_t offset2 = 68;
 
-	char *buffer = malloc(17);
+	char buffer[17];
 	utoa((uint64_t)handler, buffer, 16);
 	memcpy(str + offset1, buffer, 16);
 	

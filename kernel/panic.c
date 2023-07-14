@@ -109,13 +109,14 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
-	TTY_SetBackground(0x0062A8); // light blue
+	// TTY_SetBackground(0x0062A8); // light blue
 	TTY_Color = colors.vga.white;
 
 	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
 	serial.writeString(SERIAL_PORT_COM1, message);
 	serial.writeString(SERIAL_PORT_COM1, "\r\nPlease see framebuffer for debugging info.\r\n");
 
+	while(true) {};
 	rax = malloc(17); rbx = malloc(17); rcx = malloc(17);
 	rdx = malloc(17); rsi = malloc(17); rdi = malloc(17);
 	r8  = malloc(17); r9  = malloc(17); r10 = malloc(17);

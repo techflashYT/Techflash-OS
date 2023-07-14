@@ -25,6 +25,7 @@ void TTY_Init() {
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
 	TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
 	TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
+	TTY_SetBackground(0x00000000);
 }
 
 #pragma GCC diagnostic push

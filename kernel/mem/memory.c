@@ -123,6 +123,5 @@ void free(void* ptr) {
 	mcb->free = true;
 }
 
-void mallocInit(uint8_t* addr) {
-	heapSpace = addr;
+void mallocInit() {
 }

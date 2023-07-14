@@ -27,8 +27,8 @@ void initThings() {
 	// elfInit();
 	timerReady = false;
 
-	// Start setting up the serial struct.
-	serialInit(0);
+	// Init serial logging
+	serialInit(115200);
 
 	// initialize the parallel struct.
 	parallelInit();
