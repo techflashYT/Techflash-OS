@@ -157,8 +157,8 @@ void kernelMain() {
 	uint_fast64_t usable = 0;
 	puts("====== MEMORY MAP ======\r\n");
 	for (uint_fast8_t i = 0; i != entries; i++) {
-		uint64_t ptr = MMapEnt_Ptr(&mmap[i]);
-		uint64_t endptr = MMapEnt_Size(&mmap[i]) + ptr;
+		void *ptr = (void *)MMapEnt_Ptr(&mmap[i]);
+		void *endptr = MMapEnt_Size(&mmap[i]) + ptr;
 		uint_fast8_t type = MMapEnt_Type(&mmap[i]);
 
 		char *free = "no";
@@ -168,7 +168,7 @@ void kernelMain() {
 		}
 		printf("Entry %d: 0x%p - %p; Type: %d; Free?: %s\r\n", i, ptr, endptr, type, free);
 	}
-	printf("%dKB usable memory.\r\n", usable / 1024);
+	printf("%ldKB usable memory.\r\n", usable / 1024);
 
 	while (true) {
 		// TODO: Literally anything

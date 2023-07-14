@@ -180,7 +180,7 @@ panic2:
 		putchar(i + 0x30);
 		puts(": ");
 
-		printf("\x1b[1m\x1b[37m0x%s \x1b[36m[\x1b[33m%s\x1b[37m+\x1b[31m%i\x1b[36m]\x1b[37m\r\n", addr, info->name, info->offset);
+		printf("\x1b[1m\x1b[37m0x%s \x1b[36m[\x1b[33m%s\x1b[37m+\x1b[31m%ld\x1b[36m]\x1b[37m\r\n", addr, info->name, info->offset);
 	}
 
 	// write panic_screen.sys to the fb
@@ -188,7 +188,7 @@ panic2:
 
 	uint8_t *filePtr = 0;
 	size_t fileSize = readFile(((uint8_t *)bootboot.initrd_ptr), "panic_screen.sys", &filePtr);
-	printf("\r\npanic_screen.sys filesize: %llu\r\nptr: %p\r\n", fileSize, filePtr);
+	printf("\r\npanic_screen.sys filesize: %lu\r\nptr: %p\r\n", fileSize, filePtr);
 	if (fileSize == 0) {
 		puts("\r\nFailed to read panic_screen.sys, not drawing panic img...\r\n");
 		goto doneImg;
