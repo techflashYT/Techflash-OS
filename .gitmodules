@@ -1,0 +1,3 @@
+[submodule "kernel/tty/flanterm"]
+	path = kernel/tty/flanterm
+	url = https://github.com/mintsuki/flanterm/
