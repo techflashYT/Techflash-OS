@@ -283,7 +283,7 @@ static void printInt(outputGadget_t* output, printfUnsignedValue_t value, bool n
 	else {
 		while (value && (len < PRINTF_INTEGER_BUFFER_SIZE)) {
 			const char digit = (char)(value % base);
-			buf[len++] = (char)(digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10);
+			buf[len++] = (char)(digit < 10 ? '0' + digit : 'A' + digit - 10);
 			value /= base;
 		}
 	}
