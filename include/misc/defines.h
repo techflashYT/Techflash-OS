@@ -24,13 +24,21 @@
 
 #define DUMPREGS \
 extern registers_t regsDump;\
-asm("movq %%rax, %0\r\n" : "=r" (regsDump.rax) : );\
-asm("movq %%rbx, %0\r\n" : "=r" (regsDump.rbx) : );\
-asm("movq %%rcx, %0\r\n" : "=r" (regsDump.rcx) : );\
-asm("movq %%rdx, %0\r\n" : "=r" (regsDump.rdx) : );\
-asm("movq %%rdi, %0\r\n" : "=r" (regsDump.rdi) : );\
-asm("movq %%rsi, %0\r\n" : "=r" (regsDump.rsi) : );\
-asm("movq %%rsp, %0\r\n" : "=r" (regsDump.userRsp) : );\
-asm("movq %%rbp, %0\r\n" : "=r" (regsDump.rbp) : );\
-asm("leaq 0x0(%%rip), %0\r\n" : "=r" (regsDump.rip) : );\
+asm("movq %%rax, %0\r\n"      : "=r" (regsDump.rax)     : );\
+asm("movq %%rbx, %0\r\n"      : "=r" (regsDump.rbx)     : );\
+asm("movq %%rcx, %0\r\n"      : "=r" (regsDump.rcx)     : );\
+asm("movq %%rdx, %0\r\n"      : "=r" (regsDump.rdx)     : );\
+asm("movq %%rdi, %0\r\n"      : "=r" (regsDump.rdi)     : );\
+asm("movq %%rsi, %0\r\n"      : "=r" (regsDump.rsi)     : );\
+asm("movq %%r8,  %0\r\n"      : "=r" (regsDump.r8)      : );\
+asm("movq %%r9,  %0\r\n"      : "=r" (regsDump.r9)      : );\
+asm("movq %%r10, %0\r\n"      : "=r" (regsDump.r10)     : );\
+asm("movq %%r11, %0\r\n"      : "=r" (regsDump.r11)     : );\
+asm("movq %%r12, %0\r\n"      : "=r" (regsDump.r12)     : );\
+asm("movq %%r13, %0\r\n"      : "=r" (regsDump.r13)     : );\
+asm("movq %%r14, %0\r\n"      : "=r" (regsDump.r14)     : );\
+asm("movq %%r15, %0\r\n"      : "=r" (regsDump.r15)     : );\
+asm("movq %%rsp, %0\r\n"      : "=r" (regsDump.userRsp) : );\
+asm("movq %%rbp, %0\r\n"      : "=r" (regsDump.rbp)     : );\
+asm("leaq 0x0(%%rip), %0\r\n" : "=r" (regsDump.rip)     : );\
 registers_t *regs = &regsDump;

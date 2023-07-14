@@ -71,7 +71,8 @@ void PMM_Init(void) {
 		char sizeStr[12];
 		double sizeFlt = size;
 		for (uint_fast8_t i = 0; i != 5; i++) {
-			if ((sizeFlt / 1024) > 100) {
+			if ((sizeFlt / 1024) > 100 || (size % 1024) == 0) {
+				size /= 1024;
 				sizeFlt /= 1024;
 				continue;
 			}
@@ -83,6 +84,11 @@ void PMM_Init(void) {
 			if (i == 3) {unit = 'G';}
 			if (i == 4) {unit = 'T';}
 			sprintf(sizeStr, "%.2f%c", sizeFlt, unit);
+			int off = strlen(sizeStr);
+			if (sizeStr[off - 2] == '0' && sizeStr[off - 3] == '0') {
+				sizeStr[off - 4] = sizeStr[off - 1];
+				sizeStr[off - 3] ='\0';
+			}
 			break;
 		}
 
@@ -91,7 +97,7 @@ void PMM_Init(void) {
 	printf("%ldKB usable memory.\r\n", totalUsableMem / 1024);
 	puts("====== USABLE ======\r\n");
 	
-	int biggest = 15;
+	volatile int biggest = 15;
 	for (uint_fast8_t i = 0; entries[i].addr != (void *)0xDEADBEEF; i++) {
 		char sizeStr[12];
         double sizeFlt = entries[i].size;
@@ -108,6 +114,11 @@ void PMM_Init(void) {
             if (i == 3) {unit = 'G';}
             if (i == 4) {unit = 'T';}
             sprintf(sizeStr, "%.2f%c", sizeFlt, unit);
+			int off = strlen(sizeStr);
+			if (sizeStr[off - 2] == '0' && sizeStr[off - 3] == '0') {
+				sizeStr[off - 4] = sizeStr[off - 1];
+				sizeStr[off - 3] ='\0';
+			}
             break;
         }
 		printf("Entry %d: %p - %p; Size: %s\r\n", i, entries[i].addr, entries[i].addr + entries[i].size, sizeStr);
@@ -115,8 +126,11 @@ void PMM_Init(void) {
 			biggest = i;
 		}
 	}
-	printf("biggest entry: %d\r\nInitializing allocator on it\r\n", biggest);
+	printf("biggest entry: %d\r\naddr: %p\r\nInitializing allocator on it\r\n", biggest, entries[biggest].addr);
 	mallocInit(entries[biggest].addr);
+	void *a = malloc(65535);
+	printf("ptr: %p\r\n", a);
+	free(a);
 	/*
 	// Dynamically allocate the array of pointers to page headers
 	PMM_Headers = malloc(11 * sizeof(PageHeader *));

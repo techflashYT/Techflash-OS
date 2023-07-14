@@ -6,7 +6,7 @@ void padTo(char *src, uint_fast8_t padding) {
 	// Get the length of the number.
 	size_t len = strlen(src);
 
-	char *temp = malloc(len + padding);
+	char temp[len + padding];
 	if (len >= padding) {
 		return;
 	}
@@ -19,6 +19,5 @@ void padTo(char *src, uint_fast8_t padding) {
 	// Null terminate
 	temp[padding] = '\0';
 	strcpy(src, temp);
-	free(temp);
 	return;
 }

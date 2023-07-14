@@ -60,12 +60,6 @@ void kernelMain() {
 
 
 	initThings();
-	// Initialize the physical memory manager
-	PMM_Init();
-	testMalloc();
-
-	KBD_SetLED(KEYBOARD_LED_NUMLOCK, true);
-
 	// Say that the kernel is loading and to please wait.
 	// if (env.experimental.progressBarBoot) {
 	uint_fast8_t bootX = ((TTY_Width / 2) - (TTY_Width / 3)); // idk it looks centered to me
@@ -89,6 +83,12 @@ void kernelMain() {
 	// Initialize some exception handlers
 	initExceptions();
 	BP_Update();
+	// Initialize the physical memory manager
+	PMM_Init();
+	testMalloc();
+
+	KBD_SetLED(KEYBOARD_LED_NUMLOCK, true);
+
 
 	// Init the keyboard driver
 	KBD_Init();

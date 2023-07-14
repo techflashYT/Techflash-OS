@@ -63,6 +63,7 @@ void testMalloc() {
 }
 // #endif
 
+
 void *alignedPtr(void *ptr) {
 	while ((uintptr_t) ptr % sizeof(int) != 0) {
 		ptr++;

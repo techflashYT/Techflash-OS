@@ -28,7 +28,7 @@ void initThings() {
 	timerReady = false;
 
 	// Init serial logging
-	serialInit(9600);
+	serialInit(19200);
 
 	// initialize the parallel struct.
 	parallelInit();

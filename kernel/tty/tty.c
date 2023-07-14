@@ -25,7 +25,6 @@ void TTY_Init() {
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
 	TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
 	TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
-	TTY_SetBackground(0x00000000);
 }
 
 #pragma GCC diagnostic push
@@ -36,7 +35,7 @@ void TTY_SetBackground(const uint32_t color) {
 	int s = bootboot.fb_scanline;
 	for (uint32_t y = 0; y < bootboot.fb_height; y++) {
 		for (uint32_t x = 0; x < bootboot.fb_width; x++) {
-			*((uint32_t *)(&fb + s * y + x * 4)) = color;
+			*((uint32_t *)(bootboot.fb_ptr + s * y + x * 4)) = color;
 		}
 	}
 }

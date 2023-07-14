@@ -244,3 +244,5 @@ typedef struct {
 } outputGadget_t;
 
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>

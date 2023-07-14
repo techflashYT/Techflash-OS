@@ -12,25 +12,11 @@
 #include <kernel/fs/tar.h>
 #include <kernel/symTable.h>
 #include <kernel/custom.h>
-static char *rax; static char *rbx; static char *rcx;
-static char *rdx; static char *rsi; static char *rdi;
-static char *r8;  static char *r9;  static char *r10;
-static char *r11; static char *r12; static char *r13;
-static char *r14; static char *r15;
+static uint64_t cr2;
 
-static char *rbp; static char *rsp; static char *rip;
-
-static char *cr2; static char *intNo;
-
-static uint64_t cr2val;
-static uint64_t r8val;  static uint64_t r9val;  static uint64_t r10val;
-static uint64_t r11val; static uint64_t r12val; static uint64_t r13val;
-static uint64_t r14val; static uint64_t r15val;
-
-#define pad(x) padTo(x, 16)
 
 static void regs(volatile registers_t *r) {
-	puts("\r\n\x1b[1m\x1b[36mCPU Registers ");
+	puts("\r\n\e[1m\e[36mCPU Registers ");
 	TTY_Bold = false;
 	TTY_Color = colors.error;
 	puts("(include these in the bug report!!!!)");
@@ -39,63 +25,37 @@ static void regs(volatile registers_t *r) {
 	putchar(':');
 	TTY_Bold = false;
 	TTY_Color = colors.warn;
-	puts("\r\n	General Purpose Regs:\r\n");
-
-
 	// cr2 isn't pushed already, handle it manually
-	cr2val = 0;	asm("movq %%cr2, %0\r\n" : "=r" (cr2val) : );
-
-	// grab r8-r15
-	r8val  = 0;	asm("movq %%r8, %0\r\n"  : "=r" (r8val)  : );
-	r9val  = 0;	asm("movq %%r9, %0\r\n"  : "=r" (r9val)  : );
-	r10val = 0;	asm("movq %%r10, %0\r\n" : "=r" (r10val) : );
-	r11val = 0;	asm("movq %%r11, %0\r\n" : "=r" (r11val) : );
-	r12val = 0;	asm("movq %%r12, %0\r\n" : "=r" (r12val) : );
-	r13val = 0;	asm("movq %%r13, %0\r\n" : "=r" (r13val) : );
-	r14val = 0;	asm("movq %%r14, %0\r\n" : "=r" (r14val) : );
-	r15val = 0;	asm("movq %%r15, %0\r\n" : "=r" (r15val) : );
-
-	utoa(r->rax, rax, 16);pad(rax); utoa(r->rbx, rbx, 16);pad(rbx); utoa(r->rcx, rcx, 16);pad(rcx);
-	utoa(r->rdx, rdx, 16);pad(rdx); utoa(r->rsi, rsi, 16);pad(rsi); utoa(r->rdi, rdi, 16);pad(rdi);
-
-	utoa(r8val,  r8,  16);pad(r8);  utoa(r9val,  r9,  16);pad(r9);  utoa(r10val, r10, 16);pad(r10);
-	utoa(r11val, r11, 16);pad(r11); utoa(r12val, r12, 16);pad(r12); utoa(r13val, r13, 16);pad(r13);
-	utoa(r14val, r14, 16);pad(r14); utoa(r15val, r15, 16);pad(r15); 
-
-	utoa(r->rbp, rbp, 16);pad(rbp); utoa(r->userRsp, rsp, 16);pad(rsp); utoa(r->rip, rip, 16);pad(rip);
-
-	utoa(cr2val, cr2, 16);pad(cr2);
-	intNo[0] = '\0';
-	if (intNo != 0) {
-		utoa(r->intNo, intNo, 16);pad(intNo);
-	}
-	
+	asm("movq %%cr2, %0\r\n" : "=r" (cr2) : );
 	printf (
-		"\x1b[1m"
-		"		\x1b[36mRAX: \x1b[37m0x%s	\x1b[36mRBX: \x1b[37m0x%s	\x1b[36mRCX: \x1b[37m0x%s\r\n"
-		"		\x1b[36mRDX: \x1b[37m0x%s	\x1b[36mRSI: \x1b[37m0x%s	\x1b[36mRDI: \x1b[37m0x%s\r\n"
-		"		\x1b[36mR8:  \x1b[37m0x%s	\x1b[36mR9:  \x1b[37m0x%s	\x1b[36mR10: \x1b[37m0x%s\r\n"
-		"		\x1b[36mR11: \x1b[37m0x%s	\x1b[36mR12: \x1b[37m0x%s	\x1b[36mR13: \x1b[37m0x%s\r\n"
-		"		\x1b[36mR14: \x1b[37m0x%s	\x1b[36mR15: \x1b[37m0x%s\r\n",
-		rax, rbx, rcx,
-		rdx, rsi, rdi,
-		r8,  r9,  r10,
-		r11, r12, r13,
-		r14, r15
+		"\r\n	General Purpose Regs:\r\n"
+		"\e[1m"
+		"		\e[36mRAX: \e[37m%p	\e[36mRBX: \e[37m%p	\e[36mRCX: \e[37m%p\r\n"
+		"		\e[36mRDX: \e[37m%p	\e[36mRSI: \e[37m%p	\e[36mRDI: \e[37m%p\r\n"
+		"		\e[36mR8:  \e[37m%p	\e[36mR9:  \e[37m%p	\e[36mR10: \e[37m%p\r\n"
+		"		\e[36mR11: \e[37m%p	\e[36mR12: \e[37m%p	\e[36mR13: \e[37m%p\r\n"
+		"		\e[36mR14: \e[37m%p	\e[36mR15: \e[37m%p\r\n",
+		(void *)r->rax, (void *)r->rbx, (void *)r->rcx,
+		(void *)r->rdx, (void *)r->rsi, (void *)r->rdi,
+		(void *)r->r8,  (void *)r->r9,  (void *)r->r10,
+		(void *)r->r11, (void *)r->r12, (void *)r->r13,
+		(void *)r->r14, (void *)r->r15
 	);
 	TTY_Bold = false;
 	TTY_Color = colors.warn;
-	puts("	Pointer regs:\r\n");
+	printf (
+		"	Pointer regs:\r\n"
+		"		\e[1m\e[36mRBP: \e[37m%p	\e[36mRSP: \e[37m%p	\e[36mRIP: \e[37m%p\r\n",
+		(void *)r->rbp, (void *)r->userRsp, (void *)r->rip
+	);
+	TTY_Bold = false;
+	TTY_Color = colors.warn;
 	printf(
-		"		\x1b[1m\x1b[36mRBP: \x1b[37m0x%s	\x1b[36mRSP: \x1b[37m0x%s	\x1b[36mRIP: \x1b[37m0x%s\r\n",
-		rbp, rsp, rip
+		"	Other regs:\r\n"
+		"		\e[1m\e[36mCR2: \e[37m%p", (void *)r->intNo
 	);
-	TTY_Bold = false;
-	TTY_Color = colors.warn;
-	puts("	Other regs:\r\n");
-	printf("		\x1b[1m\x1b[36mCR2: \x1b[37m0x%s", intNo);
 	if (r->intNo != 0) {
-		printf("	\x1b[36mInterrupt Number: \x1b[37m0x%s\r\n", intNo);
+		printf("	\e[36mInterrupt Number: \e[37m%p\r\n", (void *)r->intNo);
 	}
 }
 uint8_t panicNum = 0;
@@ -109,23 +69,12 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
-	// TTY_SetBackground(0x0062A8); // light blue
+	TTY_SetBackground(0x0062A8); // light blue
 	TTY_Color = colors.vga.white;
 
 	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
 	serial.writeString(SERIAL_PORT_COM1, message);
 	serial.writeString(SERIAL_PORT_COM1, "\r\nPlease see framebuffer for debugging info.\r\n");
-
-	while(true) {};
-	rax = malloc(17); rbx = malloc(17); rcx = malloc(17);
-	rdx = malloc(17); rsi = malloc(17); rdi = malloc(17);
-	r8  = malloc(17); r9  = malloc(17); r10 = malloc(17);
-	r11 = malloc(17); r12 = malloc(17); r13 = malloc(17);
-	r14 = malloc(17); r15 = malloc(17);
-
-	rbp = malloc(17); rsp = malloc(17); rip = malloc(17);
-
-	cr2 = malloc(17); intNo = malloc(17);
 	// Puts is slightly faster here since there's no need to check for format specifiers
 	puts(
 		"Techflash OS has run into a problem it couldn't handle and needs to restart.\r\n"
@@ -138,39 +87,42 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	puts(" in the bug report:\r\n");
 	
 	TTY_Color = colors.error;
-	puts("Error: ");
-	TTY_Color = colors.vga.yellow;
-	puts(message);
+	printf("Error: \e[1;33m%s", message);
 
 	regs(r);
 panic2:
 	panicNum++;
 
 	if (panicNum == 2) {
-		puts("\r\n\nAdditionally, an error has occurred during the printing of this message.\r\n");
-		puts("Error: ");
-		TTY_Color = colors.vga.yellow;
-		puts(message);
-
+		printf(
+			"\r\n\nAdditionally, an error has occurred during the printing of this message.\r\n"
+			"Error: \e[1;33m%s\e[0m\r\n",
+			message
+		);
 		regs(r);
 		puts("Halting just in case to prevent an infinite loop");
 		asm("cli;hlt");
 	}
+	/* deallocate the str after */ {
+		char str[76];
+		sprintf(str, "\r\n============ STACK TRACE ============\r\n");
+		puts(str);
+		serial.writeString(SERIAL_PORT_COM1, str);
 
-	puts("\r\n============ STACK TRACE ============\r\n");
-	serial.writeString(SERIAL_PORT_COM1, "\r\n============ STACK TRACE ============\r\n");
-	printf("NOTE: Starting from most recently called function, ending at entry point.\r\n");
-	serial.writeString(SERIAL_PORT_COM1, "NOTE: Starting from most recently called function, ending at entry point.\r\n");
+		sprintf(str, "NOTE: Starting from most recently called function, ending at entry point.\r\n");
+		puts(str);
+		serial.writeString(SERIAL_PORT_COM1, str);
+	}
 	// stack trace
 	uint64_t *trace = stackTrace(9);
-	char *addr = malloc(17);
-	volatile symbolConvInfo_t *info = malloc(sizeof(symbolConvInfo_t) * symTable.numSyms);
-	info->name = "nonsense";
-	info->offset = 0;
+	char addr[17];
+	symbolConvInfo_t info;
+	info.name = "nonsense";
+	info.offset = 0;
 
 
 	for (uint64_t i = 0; trace[i] != 0; i++) {
-		getSymbolByAddress(trace[i], info);
+		getSymbolByAddress(trace[i], &info);
 		memset(addr, 0, 16);
 		utoa(trace[i], addr, 16);
 		padTo(addr, 16);
@@ -181,7 +133,7 @@ panic2:
 		putchar(i + 0x30);
 		puts(": ");
 
-		printf("\x1b[1m\x1b[37m0x%s \x1b[36m[\x1b[33m%s\x1b[37m+\x1b[31m%ld\x1b[36m]\x1b[37m\r\n", addr, info->name, info->offset);
+		printf("\e[1m\e[37m0x%s \e[36m[\e[33m%s\e[37m+\e[31m%ld\e[36m]\e[37m\r\n", addr, info.name, info.offset);
 	}
 
 	// write panic_screen.sys to the fb
@@ -201,10 +153,7 @@ panic2:
 	for (uint_fast16_t x = 0; x != width; x++) {
 		for (uint_fast16_t y = 0; y != height; y++) {
 			size_t fbOff = (((y + ((bootboot.fb_height / 2) - (height / 2))) * bootboot.fb_width) +  (x + ((bootboot.fb_width / 2) - (width / 2))));
-			#pragma GCC diagnostic push
-			#pragma GCC diagnostic ignored "-Warray-bounds"
-			((uint32_t *)&fb)[fbOff] = filePtr[(y * filePtr[0]) + x];
-			#pragma GCC diagnostic pop
+			((uint32_t *)bootboot.fb_ptr)[fbOff] = filePtr[(y * filePtr[0]) + x];
 		}
 	}
 doneImg:

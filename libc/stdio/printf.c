@@ -119,9 +119,9 @@ static inline outputGadget_t discardingGadget(void) {
 	return gadget;
 }
 
-static inline outputGadget_t buffer_gadget(char* buffer, size_t buffer_size) {
-	printfSize_t usable_buffer_size = (buffer_size > PRINTF_MAX_POSSIBLE_BUFFER_SIZE) ?
-		PRINTF_MAX_POSSIBLE_BUFFER_SIZE : (printfSize_t) buffer_size;
+static inline outputGadget_t bufferGadget(char* buffer, size_t size) {
+	printfSize_t usable_buffer_size = (size > PRINTF_MAX_POSSIBLE_BUFFER_SIZE) ?
+		PRINTF_MAX_POSSIBLE_BUFFER_SIZE : (printfSize_t) size;
 	outputGadget_t result = discardingGadget();
 	if (buffer != NULL) {
 		result.buffer = buffer;
@@ -142,28 +142,11 @@ static inline outputGadget_t externPutcharGadget(void) {
 	return functionGadget(putcharWrapper, NULL);
 }
 
-// internal secure strlen
-// @return The length of the string (excluding the terminating 0) limited by 'maxsize'
-// @note strlen uses size_t, but wes only use this function with printfSize_t
-// variables - hence the signature.
-static inline printfSize_t strnlen_s_(const char* str, printfSize_t maxsize) {
-	const char* s;
-	for (s = str; *s && maxsize--; ++s);
-	return (printfSize_t)(s - str);
-}
-
-
-// internal test if char is a digit (0-9)
-// @return true if char is a digit
-static inline bool isDigit_(char ch) {
-	return (ch >= '0') && (ch <= '9');
-}
-
 
 // internal ASCII string to printfSize_t conversion
 static printfSize_t atou_(const char** str) {
 	printfSize_t i = 0U;
-	while (isDigit_(**str)) {
+	while (isdigit(**str)) {
 		i = i * 10U + (printfSize_t)(*((*str)++) - '0');
 	}
 	return i;
@@ -776,7 +759,7 @@ static inline void formatStringLoop(outputGadget_t* output, const char* format, 
 
 		// evaluate width field
 		printfSize_t width = 0U;
-		if (isDigit_(*format)) {
+		if (isdigit(*format)) {
 			width = (printfSize_t) atou_(&format);
 		}
 		else if (*format == '*') {
@@ -796,7 +779,7 @@ static inline void formatStringLoop(outputGadget_t* output, const char* format, 
 		if (*format == '.') {
 			flags |= FLAGS_PRECISION;
 			ADVANCE_IN_FORMAT_STRING(format);
-			if (isDigit_(*format)) {
+			if (isdigit(*format)) {
 				precision = (printfSize_t) atou_(&format);
 			}
 			else if (*format == '*') {
@@ -997,7 +980,7 @@ static inline void formatStringLoop(outputGadget_t* output, const char* format, 
 					outRev_(output, ")llun(", 6, width, flags);
 				}
 				else {
-					printfSize_t l = strnlen_s_(p, precision ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
+					printfSize_t l = strnlen_s(p, precision ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
 					// pre padding
 					if (flags & FLAGS_PRECISION) {
 						l = (l < precision ? l : precision);
@@ -1085,7 +1068,7 @@ int vprintf(const char* format, va_list arg) {
 }
 
 int vsnprintf(char* s, size_t n, const char* format, va_list arg) {
-	outputGadget_t gadget = buffer_gadget(s, n);
+	outputGadget_t gadget = bufferGadget(s, n);
 	return vsnprintf_impl(&gadget, format, arg);
 }
 
