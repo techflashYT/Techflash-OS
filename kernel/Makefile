@@ -2,16 +2,16 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
-FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all
-# OPTIMIZE   = -Ofast # NORMAL
-OPTIMIZE   = -O2 # STABLE
+FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -flto
+OPTIMIZE   = -Ofast # NORMAL
+# OPTIMIZE   = -O2 # STABLE
 # OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
 CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
 STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
-INCLUDES   = $(shell find -O3 ../include/ -type f")
+INCLUDES   = $(shell find -O3 ../include/ -type f)
 SHELL=/bin/bash
 vpath %.c ./
 vpath %.h ../include
