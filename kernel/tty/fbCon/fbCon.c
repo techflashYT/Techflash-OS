@@ -36,7 +36,6 @@ void FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 	int_fast32_t kx = x;
 	int_fast32_t offsY = (font->height * (((y * bootboot.fb_width) * 4) == 0 ? 0 : (((y * bootboot.fb_width) * 4))));
 	TTY_CursorX++;
-	TTY_CursorAfterPromptX++;
 	
 	offs = ((kx * (font->width + 1) * 4) + offsY);
 	

@@ -9,7 +9,6 @@
 extern void elfInit();
 registers_t regsDump;
 
-extern void keyboardInit();
 extern bool serialInit(uint64_t speed);
 extern void colorsInit();
 extern void parallelInit();
@@ -20,7 +19,6 @@ unsigned char *lastValidHeapAddress;
 unsigned char *heapSpace;
 
 psf2_t *font;
-extern char *arguments;
 bool timerReady;
 // calls the init functions to initialize the function pointers for all of the structs
 void initThings() {
@@ -40,9 +38,4 @@ void initThings() {
 	
 	// Start initializing a TTY.
 	TTY_Init();
-
-	// Start setting up the keyboard struct.
-	keyboardInit();
-
-	arguments = malloc(128);
 }

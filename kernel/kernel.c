@@ -34,7 +34,6 @@ uint8_t SSEFeaturesBits = 0;
 void initThings();
 void initExceptions();
 void PICInit();
-void keyboardInit();
 extern bool timerReady;
 static uint8_t whatCoreAmI() {
 	uint64_t rbx = 0;
@@ -70,7 +69,7 @@ void kernelMain() {
 	// initialize serial logging.
 	serial.init(115200);
 
-	keyboard.setLED(KEYBOARD_LED_NUMLOCK, true);
+	KBD_SetLED(KEYBOARD_LED_NUMLOCK, true);
 
 	// Say that the kernel is loading and to please wait.
 	puts("Techflash OS v");
@@ -112,17 +111,15 @@ void kernelMain() {
 	BP_Update();
 
 	// Init the keyboard driver
-	keyboardInit();
+	KBD_Init();
 	BP_Update();
 
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
 	BP_Update();
 
-
-
 	
-	keyboard.setIntState(0, true);
+	KBD_SetIntState(0, true);
 	
 	// Now the interrupts are ready, enable them
 	log(MODNAME, "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
@@ -153,46 +150,10 @@ void kernelMain() {
 	sleep(250);
 	
 	BP_FadeOut();
-	TTY_PrintPrompt();
 	TTY_BlinkingCursor = true;
-	TTY_CursorAfterPromptX = 0;
-	char *command = malloc(512);
-	uint16_t commandStrIndex = 0;
 
 	while (true) {
-		// Main kernel loop
-		uint_fast8_t userInput = keyboard.getLastKey();
-		if ((uint_fast8_t)userInput == 0xFF) {
-			// Special key
-			char *specialKey = keyboard.getLastSpecialKey();
-			if (specialKey[0] == '\r' && specialKey[1] == '\n') {
-				// Enter
-				puts("\r\n");
-				command[commandStrIndex] = '\0';
-				uint_fast8_t val = handleCommands(command);
-				if (val == 1) {
-					printf("Unknown command: \'%s\'\r\n", command);
-				}
-				memset(command, 0, commandStrIndex); // zero out the string
-
-				commandStrIndex = 0;
-				TTY_PrintPrompt();
-			}
-			else if (specialKey[0] == '\b') {
-				// Backspace
-				if (TTY_CursorAfterPromptX != 0) {
-					putcAt(' ', TTY_CursorX - 1, TTY_CursorY, TTY_Color);
-					TTY_CursorX--;
-					TTY_CursorAfterPromptX--;
-					commandStrIndex--;
-				}
-			}
-		}
-		if (userInput != (char)'\0' && ((uint_fast8_t)userInput) != ((uint_fast8_t)0xFF)) {
-			putchar(userInput);
-			command[commandStrIndex] = userInput;
-			commandStrIndex++;
-		}
+		// TODO: Literally anything
 	}
 	asm volatile (
 		"cli\n"

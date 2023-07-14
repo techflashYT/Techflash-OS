@@ -12,14 +12,12 @@ uint_fast32_t TTY_Height;
 uint_fast32_t TTY_Width;
 uint_fast32_t TTY_TextBackground;
 uint_fast32_t TTY_Color;
-uint_fast16_t TTY_CursorAfterPromptX;
 uint_fast16_t TTY_CursorY;
 uint_fast16_t TTY_CursorX;	
 bool          TTY_BlinkingCursor;
 bool          TTY_Ready;
 volatile bool TTY_Bold;
 
-char         *TTY_PromptStr;
 void TTY_Init() {
 	TTY_Ready     = false;
 	TTY_CursorX   = 0;
@@ -27,9 +25,8 @@ void TTY_Init() {
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
 	TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
 	TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
-	TTY_PromptStr = malloc(256);
-	strcpy(TTY_PromptStr, "> ");
 }
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
@@ -42,6 +39,7 @@ void TTY_SetBackground(const uint32_t color) {
 		}
 	}
 }
+
 void TTY_Clear() {
 	int s = bootboot.fb_scanline;
 	// Set cursor to top left corner.
@@ -55,11 +53,3 @@ void TTY_Clear() {
 	}
 }
 #pragma GCC diagnostic pop
-
-void TTY_PrintPrompt() {
-	if (TTY_CursorAfterPromptX != 0) {
-		puts("\r\n");
-	}
-	puts(TTY_PromptStr);
-	TTY_CursorAfterPromptX = 0;
-}
