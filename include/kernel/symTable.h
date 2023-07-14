@@ -19,4 +19,4 @@ typedef struct {
     char *name;
     uint64_t offset;
 } symbolConvInfo_t;
-volatile symbolConvInfo_t *getSymbolByAddress(uint64_t address, volatile symbolConvInfo_t *info);
+extern volatile symbolConvInfo_t *getSymbolByAddress(uint64_t address, volatile symbolConvInfo_t *info);

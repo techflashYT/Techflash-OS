@@ -17,7 +17,7 @@ typedef struct {
 	uint64_t base;               // The address of the first gdt_entry_t struct.
 } __attribute__((packed)) gdtPtr_t;
 
-void GDTInit();
+extern void GDTInit();
 
 /*
 * ====== IDT Stuff ======
@@ -41,12 +41,12 @@ typedef struct {
 	uint64_t base;                // The address of the first element in our idt_entry_t array.
 } __attribute__((packed)) idtPtr_t;
 
-void IDTInit();
+extern void IDTInit();
 
 /*
 * ====== IRQ Stuff ======
 */
-void IRQSetMask(uint8_t IRQline, bool status);
+extern void IRQSetMask(uint8_t IRQline, bool status);
 
 /*
 * ====== ISR Stuff ======
@@ -59,12 +59,12 @@ typedef struct {
 	uint64_t rip, cs, rflags, userRsp, ss;
 } registers_t;
 typedef void (*isr_t)(registers_t*);
-void registerInterruptHandler(uint8_t n, isr_t handler);
+extern void registerInterruptHandler(uint8_t n, isr_t handler);
 
 /*
 * ====== SSE Stuff ======
 */
-uint8_t SSEInit();
+extern uint8_t SSEInit();
 
 /*
 * ====== A bunch of function declarations ======

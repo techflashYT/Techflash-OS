@@ -9,4 +9,4 @@ typedef struct {
 	const char value[50];
 } __attribute__((packed)) environment_t; // we need this to be packed because it would take up way too much memory otherwise.  we're allocating 250 of them!
 extern environment_t env[CONFIG_KERN_MAXARGS];
-void handleEnv();
+extern void handleEnv();

@@ -1,6 +1,6 @@
 #include <stdint.h>
-uint32_t readPixel(const uint_fast16_t x, const uint_fast16_t y);
-void putPixel(const uint_fast16_t x, const uint_fast16_t y, const uint32_t value);
+extern uint32_t readPixel(const uint_fast16_t x, const uint_fast16_t y);
+extern void putPixel(const uint_fast16_t x, const uint_fast16_t y, const uint32_t value);
 typedef struct {
 	char character;
 	uint32_t color;

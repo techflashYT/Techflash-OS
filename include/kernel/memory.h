@@ -6,7 +6,7 @@ typedef struct {
 	size_t size;
 } memControlBlock;
 
-void mallocInit(uint8_t *addr);
+extern void mallocInit(uint8_t *addr);
 
 
 /*
@@ -21,7 +21,7 @@ void mallocInit(uint8_t *addr);
  *      void
  * 
  */
-void PMM_Init(void);
+extern void PMM_Init(void);
 
 /*
  * Function:  PMM_AllocatePage 
@@ -35,7 +35,7 @@ void PMM_Init(void);
  *      pointer to the allocated page, or NULL if no free pages are available.
  *
  */
-void *PMM_AllocatePage(void);
+extern void *PMM_AllocatePage(void);
 
 /*
  * Function:  PMM_FreePage 
@@ -49,7 +49,7 @@ void *PMM_AllocatePage(void);
  *      void
  *
  */
-void PMM_FreePage(void *page);
+extern void PMM_FreePage(void *page);
 
 extern bool heapSetUp;
 extern bool haveAllocated;
