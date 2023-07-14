@@ -1,43 +1,45 @@
-.global keyboardStartSetLED
-.type keyboardStartSetLED, @function
-.global keyboardGetAll
-.type keyboardGetAll, @function
-.global keyboardGetStatusOfLED
-.type keyboardGetStatusOfLED, @function
-.global keyboardWaitForACK
-.type keyboardWaitForACK, @function
+#.global KBD_StartSetLED
+#.type KBD_StartSetLED, @function
+.global KBD_GetAll
+.type KBD_GetAll, @function
+#.global KBD_GetStatusOfLED
+#.type KBD_GetStatusOfLED, @function
+.global KBD_WaitForACK
+.type KBD_WaitForACK, @function
+.global KBD_GetLED
+.type KBD_GetLED, @function
 
 
-keyboardStartSetLED:
+KBD_StartSetLED:
 	mov $0x60, %dx
 	mov $0xED, %al
 	out %al, %dx
-	call keyboardWaitForACK
+	call KBD_WaitForACK
 	xor %rax, %rax
 	ret
 
-keyboardGetAll:
-	call keyboardStartSetLED
+KBD_GetAll:
+	call KBD_StartSetLED
 	mov $0x60, %dx
 	inb %dx, %al
-	call keyboardWaitForACK
+	call KBD_WaitForACK
 	ret
 
-keyboardGetStatusOfLED:
+KBD_GetLED:
 	xor %rax, %rax
 	xor %rcx, %rcx
 	xor %rdx, %rdx
-	call keyboardGetAll
+	call KBD_GetAll
 	xchgq %rdi, %rcx
 	shr %rcx, %al
 	and $0x01, %al
 	ret
 
-keyboardWaitForACK:
+KBD_WaitForACK:
 	mov $0x60, %dx
-	.kbdACKLoop:
+	1:
 		inb %dx, %al
 		cmp $0xFA, %al
-		jne .kbdACKLoop
+		jne 1b
 	mov $0x00, %rax
 	ret

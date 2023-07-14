@@ -7,15 +7,14 @@
 #include <kernel/hardware/CPU/x86Setup.h>
 #include <kernel/hardware/IO.h>
 #include <kernel/panic.h>
-keyboard_t keyboard;
-char lastKey;
+static char lastKey;
 
-bool isShifted = false;
+static bool isShifted = false;
 
-char *nextKey;
-char *lastNextKey;
+static char *nextKey;
+static char *lastNextKey;
 
-char shiftedScancodes[] = {0xFF,
+static char shiftedScancodes[] = {0xFF,
 	0xFF, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0xFF,
 	0xFF, 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', 0xFF,
 	0xFF, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':','\"', '~', 0xFF,
@@ -23,24 +22,24 @@ char shiftedScancodes[] = {0xFF,
 	' ', 0xFF, 
 };
 
-char scancodes[] = {0xFF,
+static char scancodes[] = {0xFF,
 	0xFF, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0xFF,
 	0xFF, 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', 0xFF,
 	0xFF, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';','\'', '`', 0xFF,
 	'\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',0xFF, '*', 0xFF,
 	' ', 0xFF,
 };
-uint8_t convertArr[] = {
-	[0x00] = 0x00,
-	[0x01] = 0x01,
-	[0x0E] = 0x02,
-	[0x0F] = 0x03,
-	[0x1C] = 0x04,
-	[0x1D] = 0x05,
-	[0x36] = 0x06,
+static uint8_t convertArr[] = {
+	[0x00] = 0,
+	[0x01] = 1,
+	[0x0E] = 2,
+	[0x0F] = 3,
+	[0x1C] = 4,
+	[0x1D] = 5,
+	[0x36] = 6,
 	0, // fill everything not set with 0
 };
-char *keyStrs[] = {
+static char *keyStrs[] = {
 	0,
 	"ESC",
 	"\b",
@@ -48,7 +47,7 @@ char *keyStrs[] = {
 	"\r\n",
 	"LCtrl"
 };
-char kbdScancodeToASCII(uint8_t scancode) {
+static char KBD_ScancodeToASCII(uint8_t scancode) {
 	char key;
 	if (scancode > 0x3A) {
 		return 0x00;
@@ -74,21 +73,21 @@ char kbdScancodeToASCII(uint8_t scancode) {
 			return 0x00;
 		}
 		else if (scancode == 0x3A) {
-			keyboard.setLED(KEYBOARD_LED_CAPSLOCK, !keyboard.getStatusLED(KEYBOARD_LED_CAPSLOCK));
+			KBD_SetLED(KEYBOARD_LED_CAPSLOCK, !KBD_GetLED(KEYBOARD_LED_CAPSLOCK));
 			isShifted = true;
 		}
 	}
 	return key;
 }
 
-char *keyboardGetLastSpecialKey() {
+char *KBD_GetLastSpecialKey() {
 	lastNextKey = nextKey;
 	nextKey = "\0\0\0";
 	return lastNextKey;
 }
 
 
-void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
+static void KBD_IRQ(__attribute__ ((unused)) registers_t *regs) {
 	// TTY_Blink();
 	int scancode = 0;
 	int key = 0;
@@ -104,39 +103,25 @@ void keyboardIRQ(__attribute__ ((unused)) registers_t *regs) {
         break;
     }
 	
-	key = kbdScancodeToASCII(scancode);
+	key = KBD_ScancodeToASCII(scancode);
 	lastKey = key;
 }
-char keyboardGetLastKey() {
+char KBD_GetLastKey() {
 	char ret = lastKey;
 	lastKey = 0;
 	return ret;
 }
-void setKeyboardInterruptState(uint_fast8_t PS2Port, bool state) {
+void KBD_SetIntState(uint_fast8_t PS2Port, bool state) {
 	if (PS2Port == 0) {
 		outb(0x64, (uint8_t)(0xA7 + state));
 	}
 	else {
 		DUMPREGS
-		panic("setKeyboardInterruptState(): Called with invalid PS2 Port number\r\n       or with port 2 which is unsupported", regs);
+		panic("KBD_SetIntState(): Called with invalid PS2 Port number\r\n       or with port 2 which is unsupported", regs);
 	}
 }
-void keyboardSetLED(uint_fast8_t led, bool value);
-bool keyboardGetStatusOfLED(uint_fast8_t led);
-// false = init struct on keyboardInit
-// true  = init IRQ on keyboardInit
-bool initStruct = false;
-void keyboardInit() {
-	if (!initStruct) {
-		initStruct = true;
-		keyboard.getStatusLED      = keyboardGetStatusOfLED;
-		keyboard.setLED            = keyboardSetLED;
-		keyboard.setIntState       = setKeyboardInterruptState;
-		keyboard.getLastKey        = keyboardGetLastKey;
-		keyboard.getLastSpecialKey = keyboardGetLastSpecialKey;
-		return;
-	}
+void KBD_Init() {
 	nextKey = malloc(8);
-	registerInterruptHandler(0x21, &keyboardIRQ); // register PS2 keyboard handler on IRQ1
+	registerInterruptHandler(0x21, &KBD_IRQ); // register PS2 keyboard handler on IRQ1
 }
 
