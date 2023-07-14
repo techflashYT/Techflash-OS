@@ -6,7 +6,7 @@ typedef struct {
 	size_t size;
 } memControlBlock;
 
-extern void mallocInit();
+extern void mallocInit(uint8_t* addr);
 
 
 /*

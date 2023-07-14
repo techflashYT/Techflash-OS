@@ -30,9 +30,9 @@ MODULE("KERNEL");
 kernel_t kernel;
 
 uint8_t SSEFeaturesBits = 0;
-void initThings();
-void initExceptions();
-void PICInit();
+extern void initThings();
+extern void initExceptions();
+extern void PICInit();
 extern bool timerReady;
 static uint8_t whatCoreAmI() {
 	uint64_t rbx = 0;
@@ -46,6 +46,7 @@ static uint8_t whatCoreAmI() {
 	return (rbx >> 24);
 }
 uint8_t numCPUs = 1;
+extern void testMalloc();
 // cppcheck-suppress unusedFunction
 void kernelMain() {
 	// before we do anything, if we're not the bootstrap processor, just hang.
@@ -61,6 +62,7 @@ void kernelMain() {
 	initThings();
 	// Initialize the physical memory manager
 	PMM_Init();
+	testMalloc();
 
 	KBD_SetLED(KEYBOARD_LED_NUMLOCK, true);
 

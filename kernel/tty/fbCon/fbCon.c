@@ -3,6 +3,7 @@
 #include <kernel/environment.h>
 bool nextCharIsEsc = false;
 #pragma GCC optimize "O0"
+
 void FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 	if (nextCharIsEsc) {
 		if (FB_HandleEsc(ch)) {
