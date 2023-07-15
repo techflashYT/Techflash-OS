@@ -166,7 +166,9 @@ void free(void* ptr) {
 	}
 
 	volatile memControlBlock *mcb = (memControlBlock *)((char*)ptr - sizeof(memControlBlock));
-	if (*((size_t *)(&mcb + 8)) == 0) {
+	int test = !(mcb->size);
+	if (test) {
+		serial.writeString(SERIAL_PORT_COM1, "test true\r\n");
 		return;
 	}
 
