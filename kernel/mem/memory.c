@@ -166,7 +166,7 @@ void free(void* ptr) {
 	}
 
 	volatile memControlBlock *mcb = (memControlBlock *)((char*)ptr - sizeof(memControlBlock));
-	if ((size_t)(&mcb + 8)) {
+	if (*((size_t *)(&mcb + 8)) == 0) {
 		return;
 	}
 
