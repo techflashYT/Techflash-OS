@@ -20,10 +20,8 @@ void systemCallHandler(registers_t *regs) {
 		regs->r8
 	};
 	if (syscallHandlers[systemCallNumber] == 0) {
-		char *buffer = malloc(16);
-		itoa(systemCallNumber, buffer, 10);
-		char *str = "Unknown syscall: AAAAAAAAAAAAAAA";
-		strcpy(str + 17, buffer);
+		char str[32];
+		sprintf(str, "Unknown syscall: %ld", systemCallNumber);
 		panic(str, regs);
 	}
 	syscallHandlers[systemCallNumber](args[0], args[1], args[2]);

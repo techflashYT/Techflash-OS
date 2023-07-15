@@ -35,7 +35,7 @@ void ISRHandler(registers_t* regs) {
 	}
 	// panic("Unhandled Interrupt", regs);
 	// log it, pray that it isn't necessary, and continue
-	char *tempBuffer = malloc(8);
+	char tempBuffer[8];
 	utoa(regs->intNo, tempBuffer, 16);
 	padTo(tempBuffer, 2);
 	badIntMsg[intMsgNumOffset] = tempBuffer[0];

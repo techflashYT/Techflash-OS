@@ -68,21 +68,21 @@ void kernelMain() {
 
 	// Initialize the 8259 Programmable Interrupt Controller
 	PICInit();
-	BP_Update();
+	
 
 	// Initialize the Global Descriptor Table
 	GDTInit();
-	BP_Update();
+	
 
 	// Initialize the Interrupt Descriptor Table
 	IDTInit();
-	BP_Update();
+	
 
 
 	// TODO: Distribute these               vvv !
 	// Initialize some exception handlers
 	initExceptions();
-	BP_Update();
+	
 	// Initialize the physical memory manager
 	PMM_Init();
 	testMalloc();
@@ -92,11 +92,11 @@ void kernelMain() {
 
 	// Init the keyboard driver
 	KBD_Init();
-	BP_Update();
+	
 
 	// Initialize the PIT to once every 1ms
 	initPIT(1000);
-	BP_Update();
+	
 
 	
 	KBD_SetIntState(0, true);
@@ -105,23 +105,20 @@ void kernelMain() {
 	log(MODNAME, "INTERRUPTS ARE BEING ENABLED!!!", LOGLEVEL_WARN);
 	asm volatile ("sti");
 	timerReady = true;
-	BP_Update();
+	
 
 	// Initialize the parallel port (we need interrupts for this, since it has a timeout)
 	parallel.init();
-	BP_Update();
+	
 
 	initSyscalls();
-	BP_Update();
+	
 	parseTar((void *)bootboot.initrd_ptr);
-	BP_Update();
+	
 	handleEnv();
 
-	printf("Found \e[1;36m%u\e[0m CPUs!\r\n", numCPUs);
+	printf("Found \e[1m\e[36m%u\e[0m CPUs!\r\n", numCPUs);
 	
-	sleep(250);
-	
-	BP_FadeOut();
 	TTY_BlinkingCursor = true;
 
 	while (true) {

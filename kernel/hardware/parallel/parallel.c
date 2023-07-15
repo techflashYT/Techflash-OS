@@ -59,18 +59,8 @@ void parallelInit() {
 		return;
 	}
 	outl(LPT1 + 2, 0); // reset control port with null
-	uint_fast8_t offset1 = 53;
-	uint_fast8_t offset2 = 68;
-	uint_fast8_t offset3 = 83;
-	char *str = "I/O Ports according to the BIOS Data Area: Port 1: 0xAAA; Port 2: 0xAAA; Port 3: 0xAAA";
-	char *buffer = malloc(8);
-	padTo(utoa(LPT1, buffer, 16), 3);
-	memcpy(str + offset1, buffer, 3);
-	padTo(utoa(LPT2, buffer, 16), 3);
-	memcpy(str + offset2, buffer, 3);
-	padTo(utoa(LPT3, buffer, 16), 3);
-	memcpy(str + offset3, buffer, 3);
-	free(buffer);
+	char str[87];
+	sprintf(str,"I/O Ports according to the BIOS Data Area: Port 1: 0x%03X; Port 2: 0x%03X; Port 3: 0x%03X", LPT1, LPT2, LPT3);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 	return;
 }

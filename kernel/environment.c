@@ -19,21 +19,21 @@ void handleEnv() {
 		i++;
 	}
 	puts("\r\n");
-	char *buffer = malloc(35);
-	strcpy(buffer, "Entire env printed, ");
-	utoa(i, buffer + strlen(buffer), 10);
-	strcat(buffer, " bytes.");
-	log(MODNAME, buffer, LOGLEVEL_VERBOSE);
-	free(buffer);
+	{
+		char buffer[35];
+		sprintf(buffer, "Entire env printed, %d bytes.", i);
+		log(MODNAME, buffer, LOGLEVEL_VERBOSE);
+	}
 	parse(i);
 	return;
 }
 static void parse(uint_fast16_t size) {
+	(void)size;
 	log(MODNAME, "Started parsing the environment variables.", LOGLEVEL_VERBOSE);
-	uint_fast16_t i = 0;
+	/*uint_fast16_t i = 0;
 	bool workingOn;
-	char *currentKey = malloc(51);
-	char *currentVal = malloc(51);
+	char keys[51];
+	char currentVal[51];
 	while (true) {
 		break;
 		uint8_t currentKeyOrValIndex = 0;
@@ -44,7 +44,8 @@ static void parse(uint_fast16_t size) {
 			if (workingOn) { // key
 				if (environment[i] == '=') {
 					workingOn = false;
-					goto end;
+
+					continue;
 				}
 				currentKey[currentKeyOrValIndex] = environment[i];
 				goto end;
@@ -58,9 +59,7 @@ static void parse(uint_fast16_t size) {
 		end:
 		}
 	}
-leave:
-	free(currentKey);
-	free(currentVal);
+leave:*/
 	log(MODNAME, "Finished parsing the environment variables.", LOGLEVEL_VERBOSE);
 	return;
 }

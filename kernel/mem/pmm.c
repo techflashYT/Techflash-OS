@@ -127,7 +127,7 @@ void PMM_Init(void) {
 		}
 	}
 	printf("biggest entry: %d\r\naddr: %p\r\nInitializing allocator on it\r\n", biggest, entries[biggest].addr);
-	mallocInit(entries[biggest].addr);
+	mallocInit(entries[biggest].addr, entries[biggest].size);
 	void *a = malloc(65535);
 	printf("ptr: %p\r\n", a);
 	free(a);

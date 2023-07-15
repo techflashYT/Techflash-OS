@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <kernel/elf.h>
 const char elfMagic[] = {EIMAG0, EIMAG1, EIMAG2, EIMAG3};
 const uint_fast8_t archConvert[] = {
@@ -29,32 +30,25 @@ uint_fast8_t elfCheckIsValid(uint8_t *file, uint_fast8_t arch) {
 	if (header->arch != archConvert[arch]) {
 		// Nope, log and return 2
 		log("ELFLOAD", "File is a valid ELF, but is not valid for this CPU architecture.", LOGLEVEL_ERROR);
-		char *buffer = malloc(128);
-		strcpy(buffer, "You are running the ");
-		char *currentPtr = buffer + strlen(buffer);
-		strcpy(currentPtr, archConvertStr[arch]);
-		currentPtr = buffer + strlen(buffer);
-		strcpy(currentPtr, " version of Techflash OS.  However, this ELF file is only for ");
-		currentPtr = buffer + strlen(buffer);
-		if (header->arch == elfArch_i386)         strcpy(currentPtr, "i386");
-		else if (header->arch == elfArch_x86_64)  strcpy(currentPtr, "x86_64");
-		else if (header->arch == elfArch_arm32)   strcpy(currentPtr, "ARM32");
-		else if (header->arch == elfArch_arm64)   strcpy(currentPtr, "ARM64");
-		else if (header->arch == elfArch_powerpc) strcpy(currentPtr, "PowerPC");
-		else if (header->arch == elfArch_sparc)   strcpy(currentPtr, "SPARC");
-		else if (header->arch == elfArch_mips)    strcpy(currentPtr, "MIPS");
-		else if (header->arch == elfArch_ia64)    strcpy(currentPtr, "IA-64");
-		else if (header->arch == elfArch_riscv)   strcpy(currentPtr, "RISC-V");
-		else if (header->arch == elfArch_superh)  strcpy(currentPtr, "SuperH");
-		else if (header->arch == elfArch_none)    strcpy(currentPtr, "None");
-		else                                      strcpy(currentPtr, "*Invalid*");
-		currentPtr = buffer + strlen(buffer);
-				
-		
-		strcpy(currentPtr, " CPUs.");
-
-		log("ELFLOAD", buffer, LOGLEVEL_DEBUG);
-		free(buffer);
+		{
+			char buffer[128];
+			char ELFarch[16];
+			if      (header->arch == elfArch_i386)    strcpy(ELFarch, "i386");
+			else if (header->arch == elfArch_x86_64)  strcpy(ELFarch, "x86_64");
+			else if (header->arch == elfArch_arm32)   strcpy(ELFarch, "ARM32");
+			else if (header->arch == elfArch_arm64)   strcpy(ELFarch, "ARM64");
+			else if (header->arch == elfArch_powerpc) strcpy(ELFarch, "PowerPC");
+			else if (header->arch == elfArch_sparc)   strcpy(ELFarch, "SPARC");
+			else if (header->arch == elfArch_mips)    strcpy(ELFarch, "MIPS");
+			else if (header->arch == elfArch_ia64)    strcpy(ELFarch, "IA-64");
+			else if (header->arch == elfArch_riscv)   strcpy(ELFarch, "RISC-V");
+			else if (header->arch == elfArch_superh)  strcpy(ELFarch, "SuperH");
+			else if (header->arch == elfArch_none)    strcpy(ELFarch, "None");
+			else                                      strcpy(ELFarch, "*Invalid*");
+			sprintf(buffer, "You are running the %s version of Techflash OS.  However, this ELF file is only for %s CPUs.", archConvertStr[arch], ELFarch);
+			
+			log("ELFLOAD", buffer, LOGLEVEL_DEBUG);
+		}
 		return 2;
 	}
 

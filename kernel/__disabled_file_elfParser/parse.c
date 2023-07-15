@@ -68,32 +68,21 @@ static uint8_t load(ELF64ProgramHeader *ph) {
 
 	// copy it into memory
 	// a couple of variables, since we're gonna be logging this info before we use it, no sense calculating it twice!
-	char *buffer = malloc(128);
 	void *srcAddr = (ph + ph->p_offset);
 	void *destAddr = (void *)(ph->p_vaddr);
 	uint64_t size = ph->p_filesz;
+	{
+		char buffer[128];
 
-	if (size == 0)  {
-		strcpy(buffer, "Not bothering to copy ");
+		sprintf(buffer,
+			"%s %d bytes into memory from %p to %p%s",
+			(size == 0) ? "Not bothering to copy" : "Loading",
+			size, srcAddr, destAddr,
+			(size == 0) ? ", since there's nothing to copy!" : ".  This could cause issues."
+		);
+		log(MODNAME, buffer, LOGLEVEL_WARN);
 	}
-	else {
-		strcpy(buffer, "Loading ");
-	}
-
-	utoa(size, buffer + strlen(buffer), 10);
-	strcat(buffer, " bytes into memory from 0x");
-	utoa((uint64_t)srcAddr, buffer + strlen(buffer), 16);
-	strcat(buffer, " to 0x");
-	utoa((uint64_t)destAddr, buffer + strlen(buffer), 16);
-	if (size == 0) {
-		strcat(buffer, ", since there's nothing to copy!");
-	}
-	else {
-		strcat(buffer, ".  This could cause issues.");
-	}
-	log(MODNAME, buffer, LOGLEVEL_WARN);
-
-	free(buffer);
+	
 	if (size != 0) {
 		memcpy(destAddr, srcAddr, size);
 	}

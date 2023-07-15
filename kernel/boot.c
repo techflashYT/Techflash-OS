@@ -30,12 +30,13 @@ void BP_Init(const uint_fast8_t x, const uint_fast8_t y, const uint_fast8_t widt
 	BP_Width   = width;
 	
 	// Create the progress bar.
+	/*
 	putcAt('[', x, y, colors.vga.lgray);
 	putcAt(']', x + width, y, colors.vga.lgray);
 
 	for (uint8_t i = 0; i < (width - 1); i++) {
 		putcAt('#', x + 1 + i, y, 0x454550);
-	}
+	}*/
 }
 
 void BP_FadeOut() {

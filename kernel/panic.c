@@ -87,7 +87,7 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 	puts(" in the bug report:\r\n");
 	
 	TTY_Color = colors.error;
-	printf("Error: \e[1;33m%s", message);
+	printf("Error: \e[1m\e[33m%s", message);
 
 	regs(r);
 panic2:

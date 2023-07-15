@@ -11,8 +11,8 @@ static char lastKey;
 
 static bool isShifted = false;
 
-static char *nextKey;
-static char *lastNextKey;
+static char nextKey[8];
+static char lastNextKey[8];
 
 static char shiftedScancodes[] = {0xFF,
 	0xFF, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0xFF,
@@ -81,8 +81,8 @@ static char KBD_ScancodeToASCII(uint8_t scancode) {
 }
 
 char *KBD_GetLastSpecialKey() {
-	lastNextKey = nextKey;
-	nextKey = "\0\0\0";
+	memcpy(lastNextKey, nextKey, 8);
+	nextKey[0] = '\0';
 	return lastNextKey;
 }
 
@@ -121,7 +121,6 @@ void KBD_SetIntState(uint_fast8_t PS2Port, bool state) {
 	}
 }
 void KBD_Init() {
-	nextKey = malloc(8);
 	registerInterruptHandler(0x21, &KBD_IRQ); // register PS2 keyboard handler on IRQ1
 }
 

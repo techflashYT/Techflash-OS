@@ -1,9 +1,9 @@
 # Based on kernel/Makefile: For copyright notices, please view that file.
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
 FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -fno-lto -ffreestanding -fstack-protector-all
-OPTIMIZE   = -Ofast # NORMAL
+#OPTIMIZE   = -Ofast # NORMAL
 # OPTIMIZE   = -O2 # STABLE
-# OPTIMIZE   = -O0 # DEBUG
+OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
 CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 INCLUDES = $(shell find -O3 ../include/ -type f)
