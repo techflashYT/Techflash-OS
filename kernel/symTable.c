@@ -7,7 +7,8 @@ char symTableMagic[4] = {'S', 'Y', 'M', 'T'};
 bool validSymTable = true;
 #pragma GCC optimize("O0")
 MODULE("SYMTABLE");
-volatile symbolConvInfo_t *getSymbolByAddress(uint64_t address, volatile symbolConvInfo_t *info) {
+volatile symbolConvInfo_t *getSymbolByAddress(void *addr, volatile symbolConvInfo_t *info) {
+	uint64_t address = (uint64_t)addr;
 	if (validSymTable) {
 		if (!(memcmp(symTableMagic, symTable.magic, 4) == 0)) {
 			log(MODNAME, "Symbol Table magic ('SYMT') invalid.  Giving up on symbols.", LOGLEVEL_ERROR);

@@ -2,10 +2,10 @@
 # as part of the 'bootboot' repository on GitLab
 # Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
-FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -flto
+FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -fno-lto
 #OPTIMIZE   = -Ofast # NORMAL
-#OPTIMIZE   = -O2 # STABLE
-OPTIMIZE   = -O0 # DEBUG
+OPTIMIZE   = -O2 # STABLE
+# OPTIMIZE   = -O0 # DEBUG
 WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-strict-aliasing -Werror
 CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -T linkerScript.ld -static -L../lib -e _start
@@ -47,12 +47,7 @@ all: ../bin/tfos_kernel.elf
 ../build/kernel/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=145 -c $< -o $@
-
-../build/kernel/panic.o: panic.c $(INCLUDES)
-	@mkdir -p $(@D)
-	@echo "CC    $< => $(subst ../build/kernel/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=192 -c $< -o $@
+	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -Werror=stack-usage=350 -c $< -o $@
 
 ../build/kernel/font.o:
 	@mkdir -p $(@D)

@@ -114,8 +114,7 @@ panic2:
 		serial.writeString(SERIAL_PORT_COM1, str);
 	}
 	// stack trace
-	uint64_t *trace = stackTrace(9);
-	char addr[17];
+	void **trace = stackTrace(9);
 	symbolConvInfo_t info;
 	info.name = "nonsense";
 	info.offset = 0;
@@ -123,17 +122,11 @@ panic2:
 
 	for (uint64_t i = 0; trace[i] != 0; i++) {
 		getSymbolByAddress(trace[i], &info);
-		memset(addr, 0, 16);
-		utoa(trace[i], addr, 16);
-		padTo(addr, 16);
-
 		// basically prints `2: 0xDEADBEEF12345678 [someFunc+69420]` with very fancy colors
 		TTY_Bold = false;
 		TTY_Color = colors.warn;
-		putchar(i + 0x30);
-		puts(": ");
 
-		printf("\e[1m\e[37m0x%s \e[36m[\e[33m%s\e[37m+\e[31m%ld\e[36m]\e[37m\r\n", addr, info.name, info.offset);
+		printf("%ld: \e[1m\e[37m%p \e[36m[\e[33m%s\e[37m+\e[31m%ld\e[36m]\e[37m\r\n", i, trace[i], info.name, info.offset);
 	}
 
 	// write panic_screen.sys to the fb

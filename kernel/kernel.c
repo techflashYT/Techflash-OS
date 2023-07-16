@@ -76,8 +76,6 @@ void kernelMain() {
 
 	// Initialize the Interrupt Descriptor Table
 	IDTInit();
-	
-
 
 	// TODO: Distribute these               vvv !
 	// Initialize some exception handlers
