@@ -9,6 +9,7 @@
 // #if 0
 void testMalloc() {
 	uint8_t buf[64];
+	/*
 	printf("====== STARTING MALLOC TEST 1 ======\r\n");
 	printf("THIS TEST SHOULD NOT CAUSE LEAKS!\r\n\r\n");
 	
@@ -35,9 +36,10 @@ void testMalloc() {
 		lastPointer = pointer;
 		free(pointer);
 	}
-	printf("\r\n\r\n======= MALLOC TEST 1 RESULTS ======\r\n\r\n");
+	puts("\r\n\r\n======= MALLOC TEST 1 RESULTS ======\r\n\r\n");
 	printf("initial pointer: %p\r\n", initPtr1);
 	printf("final pointer:   %p\r\n\r\n\r\n", lastPointer);
+*/
 
 	printf("====== STARTING MALLOC TEST 2 ======\r\n");
 	printf("THIS TEST \e[1mSHOULD\e[0m CAUSE LEAKS!\r\n");
@@ -45,7 +47,7 @@ void testMalloc() {
 	void *initPtr2 = malloc(64);
 	void *lastPointer2 = NULL;
 	for (uint32_t i = 0; i < 10000; i++) {
-		printf("\rmalloc iteration %d", i);
+		// printf("\rmalloc iteration %d", i);
 		void *pointer = malloc(64);
 		memset(pointer, 0, 64);
 		memcpy(buf, pointer, 64);

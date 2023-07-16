@@ -52,10 +52,13 @@ static void regs(volatile registers_t *r) {
 	TTY_Color = colors.warn;
 	printf(
 		"	Other regs:\r\n"
-		"		\e[1m\e[36mCR2: \e[37m%p", (void *)r->intNo
+		"		\e[1m\e[36mCR2: \e[37m%p", (void *)cr2
 	);
 	if (r->intNo != 0) {
-		printf("	\e[36mInterrupt Number: \e[37m%p\r\n", (void *)r->intNo);
+		printf(
+			"	\e[36mInterrupt Number: \e[37m%p\r\n		\e[36mError Code: \e[37m%p",
+			(void *)r->intNo, (void *)r->errCode
+		);
 	}
 }
 uint8_t panicNum = 0;

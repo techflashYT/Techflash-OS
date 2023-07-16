@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <kernel/panic.h>
 #include <kernel/environment.h>
 #include <kernel/hardware/serial.h>
@@ -61,15 +62,30 @@ static void handleUnit(char *sizeStr, size_t size) {
 		break;
 	}
 }
-static void bitmapSet(int bit) {
+static void bitmapSet(size_t bit) {
+	// assert((bit >= 0));
+	char str[64];
+	sprintf(str, "memoryMap-set: %p", memoryMap);
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	sprintf(str, "&memoryMap-set[bit / 32]: %p", &(memoryMap[bit / 32]));
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
 	memoryMap[bit / 32] |= (1 << (bit % 32));
 }
 
-static void bitmapUnset(int bit) {
+static void bitmapUnset(size_t bit) {
+	// assert((bit >= 0));
 	memoryMap[bit / 32] &= ~ (1 << (bit % 32));
 }
 
-static bool bitmapTest(int bit) {
+static bool bitmapTest(size_t bit) {
+	char str[64];
+	sprintf(str, "bit: %lu", bit);
+	// assert((bit >= 0));
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	sprintf(str, "memoryMap-test: %p", memoryMap);
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	sprintf(str, "&memoryMap-test[bit / 32]: %p", &(memoryMap[bit / 32]));
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
 	return memoryMap[bit / 32] &  (1 << (bit % 32));
 }
 static void PMM_InitRegion(void *base, size_t size);
@@ -180,17 +196,19 @@ static void *baseAddr(uint32_t off, uint_fast8_t bits) {
 	for (uint_fast8_t i = 0; i != 7; i++) {
 		if (bitmapOff > regions[i].bitmapEnd) {
 			// it's the previous entry
-			volatile memRegion_t reg = regions[i - 1];
-			volatile void *addr = reg.startAddr;
-			char str[32];
-			sprintf(str, "base: %p", addr);
-			log(MODNAME, str, LOGLEVEL_DEBUG);
+			// char str[64];
+			volatile memRegion_t *reg = &(regions[i - 1]);
+			// sprintf(str, "reg: %p", &(reg->startAddr));
+			// log(MODNAME, str, LOGLEVEL_VERBOSE);
+			volatile void *addr = reg->startAddr;
+			// sprintf(str, "base: %p", addr);
+			// log(MODNAME, str, LOGLEVEL_DEBUG);
 			return (void *)addr;
 		}
 	}
 	return NULL;
 }
-
+/*
 static void *PMM_FindFree() {
 	// find the first free bit
 	for (uint32_t i = 0; i < maxBlks / 32; i++) {
@@ -198,14 +216,16 @@ static void *PMM_FindFree() {
 			for (int j = 0; j < 32; j++) {		// test each bit in the dword
 				int bit = 1 << j;
 				if (!(memoryMap[i] & bit)) {
-					return i * 4 * 8 + j + baseAddr(i, j);
+					globI = i;
+					globJ = j;
+					return (void *)(uint64_t)(i * 4 * 8 + j);
 				}
 			}
 		}
 	}
  
 	return NULL;
-}
+}*/
 
 static void PMM_InitRegion(void *base, size_t size) {
 	int align = (uint64_t)base / BLOCK_SIZE;
@@ -256,22 +276,25 @@ static void PMM_InitRegion(void *base, size_t size) {
 }*/
 
 void PMM_Free(void* p) {
+	char str[32];
+	sprintf(str, "fr(%p)", p);
+	log(MODNAME, str, LOGLEVEL_VERBOSE);
 	int frame = (uint64_t)p / BLOCK_SIZE;
- 
+
 	bitmapUnset(frame);
 	usedBlks--;
 }
 
 void *PMM_Alloc(size_t size) {
 	char str[32];
-	sprintf(str, "alloc(%ld)\r\n", size);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// sprintf(str, "alloc(%ld)", size);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 
 	if ((maxBlks - usedBlks) <= size) {
 		return 0;	// not enough space
 	}
 
-	void *frame = PMM_FindFree_s(size);
+	void *frame = (void *)((uint64_t)PMM_FindFree_s(size));
 	sprintf(str, "frame: %p", frame);
 	log(MODNAME, str, LOGLEVEL_VERBOSE);
 
@@ -285,7 +308,7 @@ void *PMM_Alloc(size_t size) {
 		bitmapSet((uint_fast64_t)frame + i);
 	}
 
-	void *addr = (void *)((uint_fast64_t)frame + (uint_fast64_t)baseAddr(globI, globJ));
+	void *addr = (void *)(((uint_fast64_t)frame * BLOCK_SIZE) + (uint_fast64_t)baseAddr(globI, globJ));
 	sprintf(str, "addr: %p", addr);
 	log(MODNAME, str, LOGLEVEL_VERBOSE);
 	usedBlks += size;
@@ -298,17 +321,30 @@ static void *PMM_FindFree_s(size_t size) {
 		return NULL;
 	}
 
-	if (size == 1) {
-		return PMM_FindFree();
-	}
+	// if (size == 1) {
+		// return PMM_FindFree();
+	// }
 
-	for (uint32_t i = 0; i < maxBlks / 32; i++) {
+	for (size_t i = 0; i < maxBlks / 32; i++) {
 		if (memoryMap[i] != 0xffffffff) {
-			for (int j = 0; j < 32; j++) {	// test each bit in the dword
-				int bit = 1 << j;
+			for (size_t j = 0; j < 32; j++) {	// test each bit in the dword
+				size_t bit = 1 << j;
 				if (!(memoryMap[i] & bit)) {
-					int startingBit = i * 32;
+					size_t startingBit = i * 32;
 					startingBit += bit;		//get the free bit in the dword at index i
+					if (startingBit >= 4096) {
+						log(MODNAME, "startingBit > 4096", LOGLEVEL_ERROR);
+						char str[64];
+						sprintf(str, "startingBit: %lu", startingBit);
+						log(MODNAME, str, LOGLEVEL_INFO);
+						sprintf(str, "i: %lu", i);
+						log(MODNAME, str, LOGLEVEL_INFO);
+						sprintf(str, "j: %lu", j);
+						log(MODNAME, str, LOGLEVEL_INFO);
+						sprintf(str, "bit: %lu", bit);
+						log(MODNAME, str, LOGLEVEL_INFO);
+						while (true) {};
+					}
 
 					uint32_t free = 0; //loop through each bit to see if its enough space
 					for (uint32_t count = 0; count <= size; count++) {
@@ -320,7 +356,11 @@ static void *PMM_FindFree_s(size_t size) {
 						if (free == size) {
 							globI = i;
 							globJ = j;
-							return (void *)(uint64_t)(i * 4 * 8 + j); //free count==size needed; return index
+							void *retVal = (void *)(uint64_t)(i * 4 * 8 + j);
+							char str[64];
+							sprintf(str, "findFreeRet: %p", retVal);
+							log(MODNAME, str, LOGLEVEL_VERBOSE);
+							return retVal; //free count==size needed; return index
 						}
 					}
 				}
