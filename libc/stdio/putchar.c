@@ -21,6 +21,12 @@ int putchar(const int ch) {
 		TTY_CursorX += 4;
 		return '\t';
 	}
+	if (ch == '\b') {
+		TTY_CursorX--;
+		putchar(' ');
+		TTY_CursorX--;
+		return '\b';
+	}
 	if (TTY_CursorX >= TTY_Width) {
 		TTY_CursorX = 0;
 		TTY_CursorY++;

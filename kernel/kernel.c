@@ -24,6 +24,7 @@
 #include <kernel/memory.h>
 #include <kernel/elf.h>
 #include <kernel/syscall.h>
+#include <kernel/acpi.h>
 
 #include <kernel/custom.h>
 MODULE("KERNEL");
@@ -83,6 +84,12 @@ void kernelMain() {
 	
 	// Initialize the physical memory manager
 	PMM_Init();
+
+	// Initialize ACPI
+	ACPI_Init();
+
+	// Initialize the PIT to once every 1ms
+	PIT_Init(1000);
 	testMalloc();
 
 	KBD_SetLED(KEYBOARD_LED_NUMLOCK, true);
@@ -92,8 +99,6 @@ void kernelMain() {
 	KBD_Init();
 	
 
-	// Initialize the PIT to once every 1ms
-	initPIT(1000);
 	
 
 	

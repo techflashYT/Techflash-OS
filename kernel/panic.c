@@ -63,6 +63,7 @@ static void regs(volatile registers_t *r) {
 }
 uint8_t panicNum = 0;
 __attribute__((noreturn)) void panic(const char* message, volatile registers_t *r) {
+	// while(true) {};
 	if (panicNum == 2) {
 		while (true) {asm("cli;hlt");}
 	}

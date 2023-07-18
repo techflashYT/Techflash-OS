@@ -1,4 +1,6 @@
 #pragma once
 #include <stdint.h>
-extern void initPIT(uint32_t frequency);
-extern void sleep(uint64_t ms);
+#include <stddef.h>
+extern void PIT_Init(uint32_t frequency);
+extern void sleep(size_t ms);
+extern size_t PIT_GetTicks();

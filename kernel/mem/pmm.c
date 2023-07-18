@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 #include <kernel/panic.h>
 #include <kernel/environment.h>
 #include <kernel/hardware/serial.h>
@@ -37,6 +38,11 @@ uint_fast8_t regIndex = 0;
 #define BLOCK_SIZE 4096
 #define BLOCKS_PER_BYTE 8
 #define BLOCK_ALIGN BLOCK_SIZE
+
+#define ALIGNED_PTR(x) \
+if (((size_t)x % 4096) != 0) { \
+	x += (4096 - ((size_t)x % 4096)); \
+}
 static usableMemEntry entries[16] = {{(void *)0xDEADBEEF, 0}};
 static void handleUnit(char *sizeStr, size_t size) {
 	double sizeFlt = size;
@@ -63,29 +69,30 @@ static void handleUnit(char *sizeStr, size_t size) {
 	}
 }
 static void bitmapSet(size_t bit) {
-	// assert((bit >= 0));
-	char str[64];
-	sprintf(str, "memoryMap-set: %p", memoryMap);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
-	sprintf(str, "&memoryMap-set[bit / 32]: %p", &(memoryMap[bit / 32]));
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	assert(bit >= 1);
+	// char str[64];
+	// sprintf(str, "memoryMap-set: %p", memoryMap);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// sprintf(str, "&memoryMap-set[bit / 32]: %p", &(memoryMap[bit / 32]));
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 	memoryMap[bit / 32] |= (1 << (bit % 32));
 }
 
 static void bitmapUnset(size_t bit) {
-	// assert((bit >= 0));
+	assert(bit >= 1);
 	memoryMap[bit / 32] &= ~ (1 << (bit % 32));
 }
 
 static bool bitmapTest(size_t bit) {
-	char str[64];
-	sprintf(str, "bit: %lu", bit);
+	assert(bit >= 1);
+	// char str[64];
+	// sprintf(str, "bit: %lu", bit);
 	// assert((bit >= 0));
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
-	sprintf(str, "memoryMap-test: %p", memoryMap);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
-	sprintf(str, "&memoryMap-test[bit / 32]: %p", &(memoryMap[bit / 32]));
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// sprintf(str, "memoryMap-test: %p", memoryMap);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// sprintf(str, "&memoryMap-test[bit / 32]: %p", &(memoryMap[bit / 32]));
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 	return memoryMap[bit / 32] &  (1 << (bit % 32));
 }
 static void PMM_InitRegion(void *base, size_t size);
@@ -161,6 +168,7 @@ void PMM_Init(void) {
 
 	memSz = totalUsableMem;
 	memoryMap = entries[biggest].addr;
+	ALIGNED_PTR(memoryMap);
 	maxBlks = (memSz * 1024) / BLOCK_SIZE;
 	usedBlks = maxBlks;
 	memoryMapSize = maxBlks / BLOCKS_PER_BYTE;
@@ -178,11 +186,18 @@ void PMM_Init(void) {
 	for (uint_fast8_t i = 0; i != numUsable; i++) {
 		void *addr = entries[i].addr;
 		size_t size = entries[i].size;
+		if (size < 4194304) {
+			sprintf(str, "Skipping usable memory entry #%u, it's too small (%lu)", i, entries[i].size);
+			log(MODNAME, str, LOGLEVEL_WARN);
+			// FIXME: ugly hack, if less than 4M, don't bother
+			continue;
+		}
 		if (entries[i].addr == memoryMap) {
 			log(MODNAME, "Initializing memory in region with memmap, dirty hack by +ptr & -size", LOGLEVEL_VERBOSE);
 			addr = memoryMapEnd;
 			size -= memoryMapSize;
 		}
+		ALIGNED_PTR(addr);
 		sprintf(str, "Initializing usable region at address %p, size %ld", addr, size);
 		log(MODNAME, str, LOGLEVEL_VERBOSE);
 		PMM_InitRegion(addr, size);
@@ -193,10 +208,17 @@ void PMM_Init(void) {
 }
 static void *baseAddr(uint32_t off, uint_fast8_t bits) {
 	uint64_t bitmapOff = (off * 32) + bits;
-	for (uint_fast8_t i = 0; i != 7; i++) {
+	// char str[64];
+	// sprintf(str, "off: %u; bits: %u; bitmapOff: %lu", off, bits, bitmapOff);
+	// log(MODNAME, str, LOGLEVEL_INFO);
+	for (int_fast8_t i = 0; i != 7; i++) {
+		// sprintf(str, "regions[%d].bitmapEnd: %lu", i, regions[i].bitmapEnd);
+		// log(MODNAME, str, LOGLEVEL_INFO);
 		if (bitmapOff > regions[i].bitmapEnd) {
+			assert((i - 1) >= 0);
 			// it's the previous entry
-			// char str[64];
+			// sprintf(str, "i - 1: %d", i - 1);
+			// log(MODNAME, str, LOGLEVEL_VERBOSE);
 			volatile memRegion_t *reg = &(regions[i - 1]);
 			// sprintf(str, "reg: %p", &(reg->startAddr));
 			// log(MODNAME, str, LOGLEVEL_VERBOSE);
@@ -204,6 +226,31 @@ static void *baseAddr(uint32_t off, uint_fast8_t bits) {
 			// sprintf(str, "base: %p", addr);
 			// log(MODNAME, str, LOGLEVEL_DEBUG);
 			return (void *)addr;
+		}
+	}
+	return NULL;
+}
+static void *reverseBaseAddr(void *p) {
+	// char str[64];
+	// sprintf(str, "off: %u; bits: %u; bitmapOff: %lu", off, bits, bitmapOff);
+	// log(MODNAME, str, LOGLEVEL_INFO);
+	for (int_fast8_t i = 0; i != 7; i++) {
+		// sprintf(str, "regions[%d].bitmapEnd: %lu", i, regions[i].bitmapEnd);
+		// log(MODNAME, str, LOGLEVEL_INFO);
+		if (p > regions[i].endAddr) {
+			assert((i - 1) >= 0);
+			// it's the previous entry
+			// sprintf(str, "i - 1: %d", i - 1);
+			// log(MODNAME, str, LOGLEVEL_VERBOSE);
+			volatile memRegion_t *reg = &(regions[i - 1]);
+			// sprintf(str, "reg: %p", &(reg->startAddr));
+			// log(MODNAME, str, LOGLEVEL_VERBOSE);
+			volatile void *addr = reg->startAddr;
+			// sprintf(str, "base: %p", addr);
+			// log(MODNAME, str, LOGLEVEL_DEBUG);
+			// sprintf(str, "rev: %p", );
+			// log(MODNAME, str, LOGLEVEL_WARN);
+			return (void *)((p - addr) / BLOCK_SIZE);
 		}
 	}
 	return NULL;
@@ -236,8 +283,8 @@ static void PMM_InitRegion(void *base, size_t size) {
 	}
 	
 	char str[26];
-	sprintf(str, "initreg with index %d", regIndex);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
+	// sprintf(str, "initreg with index %d", regIndex);
+	// log(MODNAME, str, LOGLEVEL_DEBUG);
 	regions[regIndex].startAddr = base;
 	regions[regIndex].endAddr = base + size;
 	regions[regIndex].numBlks = blocks;
@@ -245,10 +292,7 @@ static void PMM_InitRegion(void *base, size_t size) {
 	if (regIndex != 0) {
 		log(MODNAME, "regIndex != 0, adding previous region's blocks", LOGLEVEL_DEBUG);
 		for (int_fast8_t i = regIndex - 1; i != -1; i--) {
-			log(MODNAME, "loop iteration", LOGLEVEL_VERBOSE);
 			blocks += regions[i].numBlks;
-			sprintf(str, "adding %ld blocks from region %d", regions[i].numBlks, i);
-			log(MODNAME, str, LOGLEVEL_VERBOSE);
 		}
 		sprintf(str, "added %ld blocks", blocks - regions[regIndex].numBlks);
 		log(MODNAME, str, LOGLEVEL_DEBUG);
@@ -276,17 +320,36 @@ static void PMM_InitRegion(void *base, size_t size) {
 }*/
 
 void PMM_Free(void* p) {
-	char str[32];
-	sprintf(str, "fr(%p)", p);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
-	int frame = (uint64_t)p / BLOCK_SIZE;
+	assert(((size_t *)p > memoryMapEnd));
+	clock_t start = clock();
+	// char str[64];
+	uint64_t unbase = (uint64_t)reverseBaseAddr(p);
+	// sprintf(str, "unbase: %p", (void *)(uint64_t)unbase);
+	// log(MODNAME, str, LOGLEVEL_WARN);
+	int frame = unbase;
 
+	if (frame < 1) {
+		log(MODNAME, "frame < 1, returning", LOGLEVEL_WARN);
+		return;
+	}
+	// sprintf(str, "frame: %p", (void *)(uint64_t)frame);
+	// log(MODNAME, str, LOGLEVEL_WARN);
+
+	assert(bitmapTest(frame));
 	bitmapUnset(frame);
 	usedBlks--;
+	clock_t end = clock();
+	if ((end - start) > 100) {
+		// took more than 100ms, complain
+		char str[64];
+		sprintf(str, "PMM_Alloc() took %ldms!", end - start);
+		log(MODNAME, str, LOGLEVEL_WARN);
+	}
 }
 
 void *PMM_Alloc(size_t size) {
-	char str[32];
+	clock_t start = clock();
+	// char str[32];
 	// sprintf(str, "alloc(%ld)", size);
 	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 
@@ -295,31 +358,32 @@ void *PMM_Alloc(size_t size) {
 	}
 
 	void *frame = (void *)((uint64_t)PMM_FindFree_s(size));
-	sprintf(str, "frame: %p", frame);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// sprintf(str, "frame: %p", frame);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 
-
-	if (frame == NULL) {
-		serial.writeString(SERIAL_PORT_COM1, "NOT ENOGUH SPACE\r\n");
-		return 0;	// not enough space
-	}
+	assert(frame != NULL);
 
 	for (uint32_t i = 0; i < size; i++) {
 		bitmapSet((uint_fast64_t)frame + i);
 	}
 
 	void *addr = (void *)(((uint_fast64_t)frame * BLOCK_SIZE) + (uint_fast64_t)baseAddr(globI, globJ));
-	sprintf(str, "addr: %p", addr);
-	log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// // sprintf(str, "addr: %p", addr);
+	// log(MODNAME, str, LOGLEVEL_VERBOSE);
 	usedBlks += size;
 
+	clock_t end = clock();
+	if ((end - start) > 100) {
+		// took more than 100ms, complain
+		char str[64];
+		sprintf(str, "PMM_Free() took %ldms!", end - start);
+		log(MODNAME, str, LOGLEVEL_WARN);
+	}
 	return (void *)addr;
 }
 
 static void *PMM_FindFree_s(size_t size) {
-	if (size == 0) {
-		return NULL;
-	}
+	assert(size != 0);
 
 	// if (size == 1) {
 		// return PMM_FindFree();
@@ -331,20 +395,7 @@ static void *PMM_FindFree_s(size_t size) {
 				size_t bit = 1 << j;
 				if (!(memoryMap[i] & bit)) {
 					size_t startingBit = i * 32;
-					startingBit += bit;		//get the free bit in the dword at index i
-					if (startingBit >= 4096) {
-						log(MODNAME, "startingBit > 4096", LOGLEVEL_ERROR);
-						char str[64];
-						sprintf(str, "startingBit: %lu", startingBit);
-						log(MODNAME, str, LOGLEVEL_INFO);
-						sprintf(str, "i: %lu", i);
-						log(MODNAME, str, LOGLEVEL_INFO);
-						sprintf(str, "j: %lu", j);
-						log(MODNAME, str, LOGLEVEL_INFO);
-						sprintf(str, "bit: %lu", bit);
-						log(MODNAME, str, LOGLEVEL_INFO);
-						while (true) {};
-					}
+					startingBit += j;		//get the free bit in the dword at index i
 
 					uint32_t free = 0; //loop through each bit to see if its enough space
 					for (uint32_t count = 0; count <= size; count++) {
@@ -354,12 +405,14 @@ static void *PMM_FindFree_s(size_t size) {
 						}
 
 						if (free == size) {
+							// assert(((i != 0) && (j != 0)));
 							globI = i;
 							globJ = j;
 							void *retVal = (void *)(uint64_t)(i * 4 * 8 + j);
-							char str[64];
-							sprintf(str, "findFreeRet: %p", retVal);
-							log(MODNAME, str, LOGLEVEL_VERBOSE);
+							// char str[64];
+							// sprintf(str, "findFreeRet: %p", retVal);
+							// log(MODNAME, str, LOGLEVEL_VERBOSE);
+							assert(retVal != NULL);
 							return retVal; //free count==size needed; return index
 						}
 					}
@@ -367,6 +420,5 @@ static void *PMM_FindFree_s(size_t size) {
 			}
 		}
 	}
-
-	return NULL;
+	assert(false);
 }
