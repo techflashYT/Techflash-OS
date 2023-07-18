@@ -2,8 +2,11 @@
 #include <stdint.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/hardware/IO.h>
+#include <assert.h>
+#include <kernel/panic.h>
 // MODULE("SERIAL");
 void serialWriteString(const uint_fast16_t port, const char* value) {
+	assert(value != NULL);
 	if (!serial.working) {
 		return;
 	}

@@ -158,7 +158,7 @@ void PMM_Init(void) {
 	}
 	{
 		char str[128];
-		sprintf(str, "biggest entry: %d; addr: %p; Initializing allocator on it\r\n", biggest, entries[biggest].addr);
+		sprintf(str, "biggest entry: %d; addr: %p; Initializing allocator on it", biggest, entries[biggest].addr);
 		log(MODNAME, str, LOGLEVEL_VERBOSE);
 	}
 	/*mallocInit(entries[biggest].addr, entries[biggest].size);
