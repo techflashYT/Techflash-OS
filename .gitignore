@@ -6,7 +6,6 @@ lib
 util/mkbootimg
 util/fasm
 *__pycache__*
-bootboot/bootboot.*
 log
 bx_enh_dbg.ini
 tmp

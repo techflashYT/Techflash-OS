@@ -1,9 +1,5 @@
 #include <stdbool.h>
-/* imported virtual addresses, see linker script */
-#include <external/bootboot.h>
-extern BOOTBOOT bootboot;               // see bootboot.h
-extern uint8_t environment[4096]; // configuration, UTF-8 text key=value pairs
-extern uint8_t fb;                      // linear framebuffer mapped
+#include <external/limine.h>
 typedef struct {
 	const char key[50];
 	const char value[50];
