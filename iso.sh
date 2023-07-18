@@ -4,18 +4,8 @@ if [ ! -f sysroot/boot/install ]; then
 	printf "ERROR: Kernel not found!  Please run ./build.sh first.\r\n"
 	exit 1
 fi
-cd bootboot
-if [ ! -f bootboot.bin ]; then
-	wget https://gitlab.com/bztsrc/bootboot/-/raw/master/dist/bootboot.bin -q --progress=bar --show-progress
-fi
-if [ ! -f bootboot.efi ]; then
-	wget https://gitlab.com/bztsrc/bootboot/-/raw/master/dist/bootboot.efi -q --progress=bar --show-progress
-fi
-cd ..
 cp -r sysroot isodir
-mkdir -p isodir/BOOTBOOT
-cp bootboot/bootboot.bin isodir/BOOTBOOT/BOOTBOOT.BIN
-cp bootboot/bootboot.efi isodir/BOOTBOOT/BOOTBOOT.EFI
+mkdir -p isodir
 
 # Make initrd
 mkdir -p tmp/initrd/sys
@@ -25,12 +15,6 @@ cp misc/converted/panic_screen.bin tmp/initrd/panic_screen.sys
 
 prevDir=$(pwd)
 
-pushd tmp/initrd > /dev/null 2>&1
-tar --format=ustar -czf "$prevDir"/isodir/BOOTBOOT/INITRD -- *
-unset prevDir
-popd > /dev/null 2>&1
-
-cat bootboot/config > isodir/BOOTBOOT/CONFIG
 mkdir -p isodir/boot/grub/fonts
 
 cd grub
