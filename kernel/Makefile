@@ -1,6 +1,3 @@
-# Original version Copyright 2017 - 2021 bzt (bztsrc@git.lab)
-# as part of the 'bootboot' repository on GitLab
-# Original File is availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/Makefile
 CPUFLAGS   = -march=core2 -mno-3dnow -mno-mmx
 FEATURES   = -fbuiltin -fdiagnostics-color=always -fno-pic -ffreestanding -fstack-protector-all -fno-lto
 #OPTIMIZE   = -Ofast # NORMAL
@@ -10,7 +7,6 @@ WARNINGS   = -Wall -Wextra -Wunused -Wunreachable-code -Wno-uninitialized -Wno-s
 CFLAGS     = $(WARNINGS) -g -nostdlib -I../include -imacros misc/defines.h -include kernel/kernel.h -include kernel/log.h -std=gnu2x -mcmodel=kernel -fno-omit-frame-pointer $(CPUFLAGS) $(OPTIMIZE) $(FEATURES)
 LDFLAGS    = -fdiagnostics-color=always -nostdlib -T linkerScript.ld -static -L../lib -e _start
 LIBS       = -lk
-STRIPFLAGS = -s -K mmio -K fb -K bootboot -K environment -K initstack
 INCLUDES   = $(shell find -O3 ../include/ -type f)
 SHELL=/bin/bash
 vpath %.c ./
@@ -26,8 +22,6 @@ all: ../bin/tfos_kernel.elf
 	@echo "CCLD  $(subst ../build/kernel/,,$(compile)) symbols.o => tfos_kernel.elf"
 	@$(CC) $(LDFLAGS) $(compile) ../build/kernel/testELF.o ../build/symbols.o $(LIBS) -o ../bin/tfos_kernel.elf  2> >(../util/rederr.sh >&2);exit $$?
 		
-#@echo "Stripping Debug Symbols..."
-#@x86_64-elf-strip $(STRIPFLAGS) ../bin/tfos_kernel.elf
 	@echo "Making sysroot..."
 	@../util/sysroot.sh doIt
 ../build/tfos_kernel_nosyms.elf: ../build/kernel/testELF.o $(compile) ../build/kernel/symTableDummyDat.o

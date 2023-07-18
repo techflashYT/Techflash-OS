@@ -119,10 +119,9 @@ uint_fast8_t handleCommands(const char* input) {
 		return 0;
 	}
 	else if (checkInput(input, "clear")) {
-		memset(&fb, 0, bootboot.fb_size);
+		// TODO: Clear framebuffer
 		TTY_CursorX = 0;
 		TTY_CursorY = 0;
-		TTY_CursorAfterPromptX = 0;
 		return 0;
 	}
 	else if (checkInput(input, "serialwrite")) {

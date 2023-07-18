@@ -10,14 +10,14 @@ void handleEnv() {
 	uint_fast16_t i = 0;
 	log(MODNAME, "Printing entire env!", LOGLEVEL_VERBOSE);
 	
-	while (environment[i] != '\0') {
-		char byte = environment[i];
-		if (byte == '\n') {
-			putchar('\r');
-		}
-		putchar(byte);
-		i++;
-	}
+	// while (environment[i] != '\0') {
+		// char byte = environment[i];
+		// if (byte == '\n') {
+			// putchar('\r');
+		// }
+		// putchar(byte);
+		// i++;
+	// }
 	puts("\r\n");
 	{
 		char buffer[35];

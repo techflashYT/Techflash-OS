@@ -23,8 +23,8 @@ void TTY_Init() {
 	TTY_CursorX   = 0;
 	TTY_CursorY   = 0;
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
-	TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
-	TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
+	// TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
+	// TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
 }
 
 #pragma GCC diagnostic push
@@ -32,24 +32,24 @@ void TTY_Init() {
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
 void TTY_SetBackground(const uint32_t color) {
 	TTY_TextBackground = color;
-	int s = bootboot.fb_scanline;
-	for (uint32_t y = 0; y < bootboot.fb_height; y++) {
-		for (uint32_t x = 0; x < bootboot.fb_width; x++) {
-			*((uint32_t *)(bootboot.fb_ptr + s * y + x * 4)) = color;
-		}
-	}
+	// int s = bootboot.fb_scanline;
+	// for (uint32_t y = 0; y < bootboot.fb_height; y++) {
+		// for (uint32_t x = 0; x < bootboot.fb_width; x++) {
+			// *((uint32_t *)(bootboot.fb_ptr + s * y + x * 4)) = color;
+		// }
+	// }
 }
 
 void TTY_Clear() {
-	int s = bootboot.fb_scanline;
+	// int s = bootboot.fb_scanline;
 	// Set cursor to top left corner.
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
 	// Fill the screen with the background color.
-	for (uint32_t y = 0; y < bootboot.fb_height; y++) {
-		for (uint32_t x = 0; x < bootboot.fb_width; x++) {
-			*((uint32_t*)(&fb + s * y + x * 4)) = TTY_TextBackground;
-		}
-	}
+	// for (uint32_t y = 0; y < bootboot.fb_height; y++) {
+		// for (uint32_t x = 0; x < bootboot.fb_width; x++) {
+			// *((uint32_t*)(&fb + s * y + x * 4)) = TTY_TextBackground;
+		// }
+	// }
 }
 #pragma GCC diagnostic pop

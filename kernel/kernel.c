@@ -1,8 +1,3 @@
-/*
-	Original version Copyright 2017 - 2021 bzt (bztsrc@gitlab)
-	as part of the 'bootboot' repository on GitLab.
-	Original file available at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/kernel.c
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -35,6 +30,7 @@ extern void initThings();
 extern void initExceptions();
 extern void PICInit();
 extern bool timerReady;
+/*
 static uint8_t whatCoreAmI() {
 	uint64_t rbx = 0;
 	asm (
@@ -45,18 +41,18 @@ static uint8_t whatCoreAmI() {
 		:
 	);
 	return (rbx >> 24);
-}
+}*/
 uint8_t numCPUs = 1;
 extern void testMalloc();
 // cppcheck-suppress unusedFunction
 void kernelMain() {
 	// before we do anything, if we're not the bootstrap processor, just hang.
 	// in future versions, they'll do things, for now, they won't
-	if (whatCoreAmI() != bootboot.bspid) {
+	// if (whatCoreAmI() != bspid) {
 		// non bootstrap processor
-		numCPUs++;
-		asm ("cli;hlt");
-	}
+		// numCPUs++;
+		// asm ("cli;hlt");
+	// }
 	SSEInit();
 
 
@@ -116,7 +112,7 @@ void kernelMain() {
 
 	initSyscalls();
 	
-	parseTar((void *)bootboot.initrd_ptr);
+	// TODO: parseTar(ptr);
 	
 	handleEnv();
 
