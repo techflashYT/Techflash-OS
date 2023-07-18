@@ -15,31 +15,50 @@ cp misc/converted/panic_screen.bin tmp/initrd/panic_screen.sys
 
 prevDir=$(pwd)
 
-mkdir -p isodir/boot/grub/fonts
+pushd tmp/initrd
+tar --format=ustar -cf "$prevDir"/isodir/boot/initrd -- *
+unset prevDir
+popd
 
-cd grub
-cat ISO_GRUB_CFG.cfg > ../isodir/boot/grub/grub.cfg
-cp grub_bg.png ../isodir/boot/bg.png
-cp font.pf2 ../isodir/boot/grub/fonts/unicode.pf2
-cd ..
-grub=NONE
-if ( command -v grub-mkrescue > /dev/null ); then
-	grub=grub
+
+if ! [ -f limine/limine-bios.sys ]; then
+	wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/limine-bios.sys -O limine/limine-bios.sys
 fi
-if ( command -v grub2-mkrescue > /dev/null ); then
-	grub=grub2
+if ! [ -f limine/limine-uefi-cd.bin ]; then
+	wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/limine-uefi-cd.bin -O limine/limine-uefi-cd.bin
 fi
-# ${grub}-mkstandalone -O x86_64-efi \
-# 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
-# 	--themes="" \
-# 	--disable-shim-lock \
-# 	-o "isodir/EFI/TechflashOS/BOOTx64.EFI" "isodir/boot/grub/grub.cfg"
+if ! [ -f limine/limine-bios-cd.bin ]; then
+	wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/limine-bios-cd.bin -O limine/limine-bios-cd.bin
+fi
+
+cp -r limine/ isodir/
+xorriso -as mkisofs -b limine/limine-bios-cd.bin --no-emul-boot --boot-load-size 4 --boot-info-table --efi-boot limine/limine-uefi-cd.bin --efi-boot-part --efi-boot-image --protective-msdos-label isodir -o bin/TFOS_ISO.iso
+
+# mkdir -p isodir/boot/grub/fonts
+
+# cd grub
+# cat ISO_GRUB_CFG.cfg > ../isodir/boot/grub/grub.cfg
+# cp grub_bg.png ../isodir/boot/bg.png
+# cp font.pf2 ../isodir/boot/grub/fonts/unicode.pf2
+# cd ..
+# grub=NONE
+# if ( command -v grub-mkrescue > /dev/null ); then
+# 	grub=grub
+# fi
+# if ( command -v grub2-mkrescue > /dev/null ); then
+# 	grub=grub2
+# fi
+# # ${grub}-mkstandalone -O x86_64-efi \
+# # 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+# # 	--themes="" \
+# # 	--disable-shim-lock \
+# # 	-o "isodir/EFI/TechflashOS/BOOTx64.EFI" "isodir/boot/grub/grub.cfg"
 	
-# ${grub}-mkstandalone -O i386-efi \
-# 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
-# 	--themes="" \
-# 	--disable-shim-lock \
-# 	-o "isodir/EFI/TechflashOS/BOOTIA32.EFI" "isodir/boot/grub/grub.cfg"
+# # ${grub}-mkstandalone -O i386-efi \
+# # 	--modules="efi_gop efi_uga video_bochs video_cirrus gfxterm gettext png" \
+# # 	--themes="" \
+# # 	--disable-shim-lock \
+# # 	-o "isodir/EFI/TechflashOS/BOOTIA32.EFI" "isodir/boot/grub/grub.cfg"
 
-${grub}-mkrescue -o bin/TFOS_ISO.iso isodir --themes=""
+# ${grub}-mkrescue -o bin/TFOS_ISO.iso isodir --themes=""
 

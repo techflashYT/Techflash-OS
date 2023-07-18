@@ -6,6 +6,8 @@ lib
 util/mkbootimg
 util/fasm
 *__pycache__*
+limine/*.sys
+limine/*.bin
 log
 bx_enh_dbg.ini
 tmp

@@ -30,4 +30,4 @@ fi
 if [ "$CPU" = "default" ]; then
 	CPU="host"
 fi
-eval "$(echo "${SUDO}qemu-system-x86_64 -m 1024M -smp $CORES -cpu $CPU $KVM-cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $* -serial stdio")" # fix obscure bug
+eval "$(echo "${SUDO}qemu-system-x86_64 -no-shutdown -no-reboot -m 1024M -smp $CORES -cpu $CPU $KVM-cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $* -serial stdio")" # fix obscure bug

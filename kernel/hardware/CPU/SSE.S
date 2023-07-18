@@ -21,7 +21,10 @@ SSEEnable:
 	mov %cr4, %rax
 	or $3 << 9, %ax
 	mov %rax, %cr4
-SSECheckAdditional:
+
+	mov $0, %rax
+	ret
+/*SSECheckAdditional:
 	# Check for the rest of SSE versions that aren't garunteed with x86_64
 
 	push %rbx
@@ -85,7 +88,7 @@ SSECheckAdditional:
 		jmp .retrn
 	.NoSSE4A:
 		mov 0b00110111, %rax
-		jmp .retrn
+		jmp .retrn*/
 SSEInit:
 	# Since we are running in x86_64 mode, according to the AMD64 docs, we are garunteed to have at least SSE and SSE2
 	call SSEEnable # Calls SSECheckAdditional by simply continuing down.

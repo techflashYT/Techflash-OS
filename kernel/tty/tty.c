@@ -23,8 +23,10 @@ void TTY_Init() {
 	TTY_CursorX   = 0;
 	TTY_CursorY   = 0;
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
-	// TTY_Width     = ((bootboot.fb_width / font->width) * 0.885);
-	// TTY_Height    = ((bootboot.fb_height / font->height) * 0.99);
+	// TTY_Width     = 80;
+	// TTY_Height    = 25;
+	TTY_Width     = ((fb->width / font->width) * 0.885);
+	TTY_Height    = ((fb->height / font->height) * 0.99);
 }
 
 #pragma GCC diagnostic push
