@@ -1,6 +1,8 @@
 // NOTE: Yes, this is indeed the same file between both the internal libc and the userspace wrappers, I just symlinked it across.
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <kernel/tty.h>
 char buffer[16] = {0};
 int puts(const char *s) {
 	/*
@@ -18,9 +20,6 @@ int puts(const char *s) {
 		putchar(' ');
 		return 0;
 	}*/
-	while (*s) {
-		putchar(*s);
-		s++;
-	}
+	flanterm_write(TTY_Ctx, s, strlen(s));
 	return 0;
 }

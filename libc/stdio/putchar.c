@@ -9,31 +9,6 @@
 #include <kernel/hardware/serial.h>
 extern bool timerReady;
 int putchar(const int ch) {
-	if (ch == '\r') { // CR ('\r')
-		TTY_CursorX = 0;
-		return '\r';
-	}
-	if (ch == '\n') { // CR ('\r')
-		TTY_CursorY++;
-		return '\n';
-	}
-	if (ch == '\t') { // Tab ('\t')
-		TTY_CursorX += 4;
-		return '\t';
-	}
-	if (ch == '\b') {
-		TTY_CursorX--;
-		putchar(' ');
-		TTY_CursorX--;
-		return '\b';
-	}
-	if (TTY_CursorX >= TTY_Width) {
-		TTY_CursorX = 0;
-		TTY_CursorY++;
-	}
-	if (TTY_CursorY >= TTY_Height) {
-		TTY_Scroll("1");
-	}
-	FB_DrawChar(ch, TTY_CursorX, TTY_CursorY);
+	flanterm_write(TTY_Ctx, (char []){ch, '\0'}, 1);
 	return ch;
 }

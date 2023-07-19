@@ -6,6 +6,7 @@
 #include <kernel/font.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
+
 // static bool     TTY_NextBlinkShouldBeOn;
 uint_fast32_t TTY_Index;
 uint_fast32_t TTY_Height;
@@ -17,16 +18,12 @@ uint_fast16_t TTY_CursorX;
 bool          TTY_BlinkingCursor;
 bool          TTY_Ready;
 volatile bool TTY_Bold;
+struct flanterm_context *TTY_Ctx; 
 
 void TTY_Init() {
-	TTY_Ready     = false;
-	TTY_CursorX   = 0;
-	TTY_CursorY   = 0;
-	TTY_Color     = colors.vga.lgray; // VGA light gray.
-	// TTY_Width     = 80;
-	// TTY_Height    = 25;
-	TTY_Width     = ((fb->width / font->width) * 0.885);
-	TTY_Height    = ((fb->height / font->height) * 0.99);
+	TTY_Ctx = flanterm_fb_simple_init(fb->address, fb->width, fb->height, fb->pitch);
+	char str[] = "hellorld?";
+	flanterm_write(TTY_Ctx, str, sizeof(str));
 }
 
 #pragma GCC diagnostic push
@@ -34,24 +31,22 @@ void TTY_Init() {
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
 void TTY_SetBackground(const uint32_t color) {
 	TTY_TextBackground = color;
-	// int s = bootboot.fb_scanline;
-	// for (uint32_t y = 0; y < bootboot.fb_height; y++) {
-		// for (uint32_t x = 0; x < bootboot.fb_width; x++) {
-			// *((uint32_t *)(bootboot.fb_ptr + s * y + x * 4)) = color;
-		// }
-	// }
+	for (uint32_t y = 0; y < fb->height; y++) {
+		for (uint32_t x = 0; x < fb->width; x++) {
+			*((uint32_t *)((uint64_t)fb->address * y + (x * 4))) = color;
+		}
+	}
 }
 
 void TTY_Clear() {
-	// int s = bootboot.fb_scanline;
 	// Set cursor to top left corner.
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
 	// Fill the screen with the background color.
-	// for (uint32_t y = 0; y < bootboot.fb_height; y++) {
-		// for (uint32_t x = 0; x < bootboot.fb_width; x++) {
-			// *((uint32_t*)(&fb + s * y + x * 4)) = TTY_TextBackground;
-		// }
-	// }
+	for (uint32_t y = 0; y < fb->height; y++) {
+		for (uint32_t x = 0; x < fb->width; x++) {
+			*((uint32_t*)((uint64_t)fb->address * y + x * 4)) = TTY_TextBackground;
+		}
+	}
 }
 #pragma GCC diagnostic pop

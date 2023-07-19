@@ -73,7 +73,7 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
-	TTY_SetBackground(0x0062A8); // light blue
+	TTY_SetBackground(0x0062A8FF); // light blue
 	TTY_Color = colors.vga.white;
 
 	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");

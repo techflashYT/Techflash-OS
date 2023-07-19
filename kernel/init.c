@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -6,6 +7,8 @@
 #include <kernel/bda.h>
 #include <kernel/tty.h>
 #include <kernel/environment.h>
+#include <kernel/panic.h>
+#include <kernel/hardware/serial.h>
 #include <kernel/hardware/CPU/x86Setup.h>
 
 extern void elfInit();
@@ -39,7 +42,6 @@ void initThings() {
 	bda = (void *)0x400 + hhdm.response->offset;
 	// elfInit();
 	timerReady = false;
-	fb = limineFb.response->framebuffers[0];
 	// memset(((uint32_t *)fb->address), 0x0000FFff, 1000);
 	// ((uint32_t *)fb->address)[0] = 0xffffffff;
 	// ((uint32_t *)fb->address)[1] = 0xffffffff;
@@ -59,4 +61,13 @@ void initThings() {
 	
 	// Start initializing a TTY.
 	TTY_Init();
+	char str[64];
+	for (uint_fast8_t i = 0; i != limineFb.response->framebuffer_count; i++) {
+		sprintf(str, "fb[%d]: %p\r\n", i, limineFb.response->framebuffers);
+		serial.writeString(SERIAL_PORT_COM1, str);
+	}
+
+	fb = limineFb.response->framebuffers[0];
+	// DUMPREGS;
+	// panic("test123", regs);
 }

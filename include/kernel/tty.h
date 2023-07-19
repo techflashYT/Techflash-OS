@@ -1,6 +1,8 @@
 #pragma once
 #include <stdbool.h>
 #include <stdint.h>
+#include <external/flanterm/flanterm.h>
+#include <external/flanterm/backends/fb.h>
 extern bool          TTY_Ready;
 extern volatile bool TTY_Bold;
 extern bool          TTY_BlinkingCursor;
@@ -11,6 +13,7 @@ extern uint32_t      TTY_TextBackground;
 extern uint_fast32_t TTY_Width;
 extern uint_fast32_t TTY_Height;
 extern uint_fast32_t TTY_Index;
+extern struct flanterm_context *TTY_Ctx;
 
 extern void           TTY_SetBackground(const uint32_t color);
 extern void           TTY_Blink        ();

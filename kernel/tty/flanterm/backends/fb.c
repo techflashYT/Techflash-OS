@@ -26,8 +26,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "../flanterm.h"
-#include "fb.h"
+#include <external/flanterm/flanterm.h>
+#include <external/flanterm/backends/fb.h>
 #include <string.h>
 
 #ifndef FLANTERM_FB_DISABLE_BUMP_ALLOC

@@ -59,7 +59,7 @@ void kernelMain() {
 	initThings();
 	puts("hellorld");
 	serial.writeString(SERIAL_PORT_COM1, "hellorld?");
-	while (true) {}
+	// while (true) {}
 	// Say that the kernel is loading and to please wait.
 	// if (env.experimental.progressBarBoot) {
 	uint_fast8_t bootX = ((TTY_Width / 2) - (TTY_Width / 3)); // idk it looks centered to me
