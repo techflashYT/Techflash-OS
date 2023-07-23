@@ -60,7 +60,11 @@ void parallelInit() {
 	}
 	outl(LPT1 + 2, 0); // reset control port with null
 	char str[87];
-	sprintf(str,"I/O Ports according to the BIOS Data Area: Port 1: 0x%03lX; Port 2: 0x%03lX; Port 3: 0x%03lX", LPT1, LPT2, LPT3);
+	#if UINT_FAST32_MAX == UINT32_MAX
+	sprintf(str,"I/O Ports according to the BIOS Data Area: Port 1: 0x%03X; Port 2: 0x%03X; Port 3: 0x%03X", LPT1, LPT2, LPT3);
+	#else
+	sprintf(str,"I/O Ports according to the BIOS Data Area: Port 1: 0x%03X; Port 2: 0x%03X; Port 3: 0x%03X", LPT1, LPT2, LPT3);
+	#endif
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 	return;
 }

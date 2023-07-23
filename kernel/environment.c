@@ -21,7 +21,11 @@ void handleEnv() {
 	puts("\r\n");
 	{
 		char buffer[35];
-		sprintf(buffer, "Entire env printed, %ld bytes.", i);
+		#if UINT_FAST32_MAX == UINT32_MAX
+		sprintf(buffer, "Entire env printed, %u bytes.", i);
+		#else
+		sprintf(buffer, "Entire env printed, %lu bytes.", i);
+		#endif
 		log(MODNAME, buffer, LOGLEVEL_VERBOSE);
 	}
 	parse(i);

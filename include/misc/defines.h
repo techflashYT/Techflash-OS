@@ -22,6 +22,9 @@
 #define free(x) freeDebugWrapper((x), __FILE__, __LINE__)
 #endif
 
+
+#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+
 #define DUMPREGS \
 extern registers_t regsDump;\
 asm("movq %%rax, %0\r\n"      : "=r" (regsDump.rax)     : );\
