@@ -6,3 +6,4 @@ rm -rf bin
 rm -rf lib
 rm -rf sysroot
 rm -rf isodir
+rm -rf tmp
