@@ -23,17 +23,17 @@ all: ../lib/$(outFileName)
 ../lib/$(outFileName): $(compile)
 	@mkdir -p ../lib
 	@echo "Generating libc archive: $(outFileName)"
-	@x86_64-elf-ar cr ../lib/$(outFileName) $(compile)
+	@$(AR) cr ../lib/$(outFileName) $(compile)
 	@echo "C library ready for use with userspace apps."
 
 ../build/userspaceLibcWrappers/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/userspaceLibcWrappers/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
+	@$(CC) $(CFLAGS) -mno-red-zone -c $< -o $@
 ../build/userspaceLibcWrappers/%.o: %.S
 	@mkdir -p $(@D)
 	@echo "AS    $< => $(subst ../build/userspaceLibcWrappers/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
+	@$(CC) $(CFLAGS) -mno-red-zone -c $< -o $@
 
 
 clean:

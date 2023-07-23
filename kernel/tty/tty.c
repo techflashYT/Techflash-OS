@@ -6,7 +6,6 @@
 #include <kernel/font.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
-
 // static bool     TTY_NextBlinkShouldBeOn;
 uint_fast32_t TTY_Index;
 uint_fast32_t TTY_Height;
@@ -18,12 +17,16 @@ uint_fast16_t TTY_CursorX;
 bool          TTY_BlinkingCursor;
 bool          TTY_Ready;
 volatile bool TTY_Bold;
-struct flanterm_context *TTY_Ctx; 
 
 void TTY_Init() {
-	TTY_Ctx = flanterm_fb_simple_init(fb->address, fb->width, fb->height, fb->pitch);
-	char str[] = "hellorld?";
-	flanterm_write(TTY_Ctx, str, sizeof(str));
+	TTY_Ready     = false;
+	TTY_CursorX   = 0;
+	TTY_CursorY   = 0;
+	TTY_Color     = colors.vga.lgray; // VGA light gray.
+	// TTY_Width     = 80;
+	// TTY_Height    = 25;
+	TTY_Width     = ((fb->width / font->width) * 0.885);
+	TTY_Height    = ((fb->height / font->height) * 0.99);
 }
 
 #pragma GCC diagnostic push

@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 char symTableMagic[4] = {'S', 'Y', 'M', 'T'};
 bool validSymTable = true;
 #pragma GCC optimize("O0")

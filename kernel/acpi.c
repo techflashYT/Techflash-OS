@@ -12,7 +12,7 @@ static bool doChecksum(ACPISDTHeader *tableHeader) {
 	}
 	if (sum != 0) {
 		char str[64];
-		sprintf(str, "Checksum wrong by %d", sum);
+		sprintf(str, "Checksum wrong by %ld", sum);
 		log(MODNAME, str, LOGLEVEL_WARN);
 	}
 	return sum == 0;

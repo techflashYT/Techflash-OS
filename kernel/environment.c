@@ -21,7 +21,7 @@ void handleEnv() {
 	puts("\r\n");
 	{
 		char buffer[35];
-		sprintf(buffer, "Entire env printed, %d bytes.", i);
+		sprintf(buffer, "Entire env printed, %ld bytes.", i);
 		log(MODNAME, buffer, LOGLEVEL_VERBOSE);
 	}
 	parse(i);

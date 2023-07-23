@@ -25,18 +25,18 @@ all: ../lib/$(outFileName)
 ../lib/$(outFileName): $(compile)
 	@mkdir -p ../lib
 	@echo "Generating libk archive: $(outFileName)"
-	@x86_64-elf-ar cr ../lib/$(outFileName) $(compile)
+	@$(AR) cr ../lib/$(outFileName) $(compile)
 	@echo "C library ready for use with kernel."
 
 ../build/libc/%.o: %.c $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/libc/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -include kernel/kernel.h -include kernel/log.h -mno-red-zone -c $< -o $@
+	@$(CC) $(CFLAGS) -include kernel/kernel.h -include kernel/log.h -mno-red-zone -c $< -o $@
 
 ../build/libc/%.o: %.S $(INCLUDES)
 	@mkdir -p $(@D)
 	@echo "CC    $< => $(subst ../build/libc/,,$@)"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $< -o $@
+	@$(CC) $(CFLAGS) -mno-red-zone -c $< -o $@
 
 clean:
 	@rm -f $(compile) ../build/libc/*.a || true
