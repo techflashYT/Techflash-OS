@@ -3,6 +3,11 @@
 .type kernelMain, @function
 .global _start
 .type _start, @function
+
+/*
+Very early initialization.  Stuff that can't be done safely from within the C code.
+*/
+
 _start:
 	cli
 
@@ -19,6 +24,10 @@ _start:
 	pop  %rax
 	*/
 
+	# enable SSE, since the C code uses it.
+	call SSEInit
+
+	# 
 	# call the main kernel function in C
 	call kernelMain
 	

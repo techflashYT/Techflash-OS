@@ -8,16 +8,16 @@ extern volatile bool TTY_Bold;
 extern bool          TTY_BlinkingCursor;
 extern uint_fast16_t TTY_CursorX;
 extern uint_fast16_t TTY_CursorY;
-extern uint_fast32_t      TTY_Color;
-extern uint_fast32_t      TTY_TextBackground;
-extern uint_fast32_t TTY_Width;
-extern uint_fast32_t TTY_Height;
+extern uint_fast32_t TTY_Color;
+extern uint_fast32_t TTY_TextBackground;
+extern uint_fast16_t TTY_Width;
+extern uint_fast16_t TTY_Height;
 extern uint_fast32_t TTY_Index;
 extern struct flanterm_context *TTY_Ctx;
 
 extern void           TTY_SetBackground(const uint32_t color);
 extern void           TTY_Blink        ();
-extern void           TTY_Scroll       (const char *numLines);
+extern void           TTY_Scroll       (const int numLines);
 extern void           TTY_Init         ();
 
 extern bool           FB_HandleEsc(char nextChar);

@@ -23,7 +23,7 @@ bool haveAllocated;
 unsigned char *lastValidHeapAddress;
 unsigned char *heapSpace;
 
-psf2_t *font;
+// psf2_t *font;
 bool timerReady;
 
 volatile struct limine_hhdm_request hhdm = {
@@ -38,7 +38,7 @@ volatile struct limine_framebuffer *fb;
 
 // calls the init functions to initialize the function pointers for all of the structs
 void initThings() {
-	font = (psf2_t*)&_binary_font_psf_start;
+	// font = (psf2_t*)&_binary_font_psf_start;
 	bda = (void *)0x400 + hhdm.response->offset;
 	// elfInit();
 	timerReady = false;
@@ -59,8 +59,6 @@ void initThings() {
 	// initialize the colors struct
 	colorsInit();
 	
-	// Start initializing a TTY.
-	TTY_Init();
 	char str[64];
 	for (uint_fast8_t i = 0; i != limineFb.response->framebuffer_count; i++) {
 		sprintf(str, "fb[%d]: %p\r\n", i, limineFb.response->framebuffers);
@@ -68,6 +66,9 @@ void initThings() {
 	}
 
 	fb = limineFb.response->framebuffers[0];
+
+	// Start initializing a TTY.
+	TTY_Init();
 	// DUMPREGS;
 	// panic("test123", regs);
 }

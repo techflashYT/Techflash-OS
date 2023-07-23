@@ -10,12 +10,14 @@
 SSSE3:
 .byte 0
 .section .text
-SSEEnable:
+SSEInit:
 	# Enable SSE
 	mov %cr0, %rax
 	and $0xFFFB, %ax # Clear coprocessor emulation bit (use hardware FPU)
 	push %rax
-	call FPUInit
+	
+	# initialize FPU
+	fninit
 	pop %rax
 	mov %rax, %cr0
 	mov %cr4, %rax
@@ -89,7 +91,3 @@ SSEEnable:
 	.NoSSE4A:
 		mov 0b00110111, %rax
 		jmp .retrn*/
-SSEInit:
-	# Since we are running in x86_64 mode, according to the AMD64 docs, we are garunteed to have at least SSE and SSE2
-	call SSEEnable # Calls SSECheckAdditional by simply continuing down.
-	ret

@@ -1,11 +1,12 @@
-#include <stdio.h>
+// #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <kernel/tty.h>
-#include <kernel/font.h>
+#include <kernel/newFont.h>
 #include <kernel/environment.h>
 #include <kernel/graphics.h>
+#include <kernel/hardware/serial.h>
 // static bool     TTY_NextBlinkShouldBeOn;
 uint_fast32_t TTY_Index;
 uint_fast32_t TTY_Height;
@@ -23,10 +24,20 @@ void TTY_Init() {
 	TTY_CursorX   = 0;
 	TTY_CursorY   = 0;
 	TTY_Color     = colors.vga.lgray; // VGA light gray.
+	// TTY_Width     = ((fb->width / font->width) * 0.885);
+	// TTY_Height    = ((fb->height / font->height) * 0.99);
 	// TTY_Width     = 80;
 	// TTY_Height    = 25;
-	TTY_Width     = ((fb->width / font->width) * 0.885);
-	TTY_Height    = ((fb->height / font->height) * 0.99);
+	uint_fast8_t width;
+	uint_fast8_t height;
+	if (memcmp(font.header.ident, "TFF", 3) != 0) {
+		serial.writeString(SERIAL_PORT_COM1, "TFF header bad\r\n");
+		while(true) {asm("cli;hlt");}
+	}
+	UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
+	serial.writeString(SERIAL_PORT_COM1, "TFF header correct, init font\r\n");
+	TTY_Width     = (fb->width  / width );
+	TTY_Height    = (fb->height / height);
 }
 
 #pragma GCC diagnostic push
