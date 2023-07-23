@@ -15,10 +15,6 @@ if [ "$2" = "--no-kvm" ]; then
 	CPU="core2duo"
 fi
 
-if [ "$(id -u)" -ne 0 ] && [ "$KVM" = "--enable-kvm " ]; then
-	printf "\033[1;33mPlease enter your sudo password to be able to run QEMU with KVM!\033[0m\r\n"
-	SUDO="sudo "
-fi
 if [ "$1" = "--cores" ]; then
 	export CORES="$2"
 	set -- "$3"
@@ -30,4 +26,4 @@ fi
 if [ "$CPU" = "default" ]; then
 	CPU="host"
 fi
-eval "$(echo "${SUDO}qemu-system-x86_64 -no-shutdown -no-reboot -m 1024M -smp $CORES -cpu $CPU $KVM-cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $* -serial stdio")" # fix obscure bug
+eval "$(echo "qemu-system-x86_64 -no-shutdown -no-reboot -m 1024M -smp $CORES -cpu $CPU $KVM-cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $* -serial stdio")" # fix obscure bug
