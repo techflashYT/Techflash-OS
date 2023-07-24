@@ -3,11 +3,30 @@ font_t font = {
 	.header = {
 		.ident = {'T', 'F', 'F'},
 		.version = PACK_VERSION(0, 0, 1),
-		.numGlyphs = 1,
-		.widthHeight = PACK_WIDTH_HEIGHT(8, 16)
+		.numGlyphs = 3,
+		.widthHeight = PACK_WIDTH_HEIGHT(8, 16),
+		.unkCharGlyph = 0x00
 	},
 	.glyphs = {
-		{	.glyphNum = 'A',
+		{	.glyphNum = 0x00,
+			.glyphBitField = {
+				0b10101010,
+				0b00111101,
+				0b11100110,
+				0b00001101,
+				0b10011000,
+				0b00110001,
+				0b10110000,
+				0b00110001,
+				0b10000000,
+				0b01111001,
+				0b11111000,
+				0b00000001,
+				0b10000000,
+				0b00000001,
+				0b10101010
+			}
+		}, {	.glyphNum = 'A',
 			.glyphBitField = {
 				0b00000000,
 				0b00000000,

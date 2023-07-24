@@ -27,13 +27,7 @@ int putchar(const int ch) {
 		TTY_CursorX--;
 		return '\b';
 	}
-	if (TTY_CursorX >= TTY_Width) {
-		TTY_CursorX = 0;
-		TTY_CursorY++;
-	}
-	if (TTY_CursorY >= TTY_Height) {
-		TTY_Scroll("1");
-	}
+
 	FB_DrawChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }

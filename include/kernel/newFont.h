@@ -36,7 +36,7 @@ typedef struct {
 	*/
 	struct {
 		uint8_t glyphNum;
-		uint8_t glyphBitField[8 * 16];
+		uint8_t glyphBitField[16];
 	} __attribute__((packed)) glyphs[];
 } __attribute__((packed)) font_t;
 extern font_t font;
