@@ -46,7 +46,9 @@ all: ../bin/tfos_kernel.elf
 ../build/kernel/font.o:
 	@mkdir -p $(@D)
 	@echo "Building Font..."
-	@$(LD) -r -b binary font.psf -o ../build/kernel/font.o
+	@perl ../util/navcc.perl vgafont.f16 > font.c
+	@echo "CC    font.c => $(subst ../build/kernel/,,$@)"
+	@$(CC) $(CFLAGS) -c font.c -o $@
 
 ../test: ../test.c
 	$(error Hey!  Fix the ELF tester binaries first!)

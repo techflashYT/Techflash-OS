@@ -40,9 +40,6 @@ void TTY_Init() {
 	TTY_Height    = (fb->height / height);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#pragma GCC diagnostic ignored "-Wstringop-overflow"
 void TTY_SetBackground(const uint32_t color) {
 	TTY_TextBackground = color;
 	for (uint32_t y = 0; y < fb->height; y++) {
@@ -63,4 +60,3 @@ void TTY_Clear() {
 		}
 	}
 }
-#pragma GCC diagnostic pop

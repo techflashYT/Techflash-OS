@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <kernel/environment.h>
-#include <kernel/font.h>
+#include <kernel/newFont.h>
 #include <kernel/hardware/serial.h>
 #include <kernel/tty.h>
 #include <kernel/panic.h>
@@ -26,12 +26,12 @@ void TTY_Scroll(const int numLines) {
 		panic("TTY: Attempted to scroll to an invalid line!", regs);
 	}
 	// Figure out how many pixels we need to move in order to move 1 line
-	// uint_fast8_t width;
-	// uint_fast8_t height;
-	// UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
-	// (void)width;
-	// uint_fast32_t numPixels = numLines * height;
-	uint_fast32_t numPixels = numLines * font->height;
+	uint_fast8_t width;
+	uint_fast8_t height;
+	UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
+	(void)width;
+	uint_fast32_t numPixels = numLines * height;
+	// uint_fast32_t numPixels = numLines * font.header.widthHeight;
 
 	// The destination of the move is just the top of the framebuffer
 	uint32_t* destination = (uint32_t*)fb->address;

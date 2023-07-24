@@ -55,7 +55,7 @@ void kernelMain() {
 	// }
 
 	initThings();
-	puts("AB");
+	puts("ABCDEFGHELLORLD????");
 	serial.writeString(SERIAL_PORT_COM1, "hellorld?");
 	while (true) {}
 	// Say that the kernel is loading and to please wait.

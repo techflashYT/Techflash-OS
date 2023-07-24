@@ -7,3 +7,4 @@ rm -rf lib
 rm -rf sysroot
 rm -rf isodir
 rm -rf tmp
+rm -f  kernel/font.c

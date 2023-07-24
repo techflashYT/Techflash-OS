@@ -38,7 +38,7 @@ volatile struct limine_framebuffer *fb;
 
 // calls the init functions to initialize the function pointers for all of the structs
 void initThings() {
-	// font = (psf2_t*)&_binary_font_psf_start;
+	// font = (uint8_t *)&_binary_font_vga_start;
 	bda = (void *)0x400 + hhdm.response->offset;
 	// elfInit();
 	timerReady = false;
