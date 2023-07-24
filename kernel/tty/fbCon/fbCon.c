@@ -78,8 +78,8 @@ void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yP
 	if (i == font.header.numGlyphs) {
 		i = font.header.unkCharGlyph;
 	}
-	sprintf(str, "i = 0x%04X\r\nnum: %04X\r\n", i, font.header.numGlyphs);
-	serial.writeString(SERIAL_PORT_COM1, str);
+	// sprintf(str, "i = 0x%04X\r\nnum: %04X\r\n", i, font.header.numGlyphs);
+	// serial.writeString(SERIAL_PORT_COM1, str);
 	// find the specified glyph
 	uint8_t *bitfield = font.glyphs[i].glyphBitField;
 	
