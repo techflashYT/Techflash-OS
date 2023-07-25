@@ -20,5 +20,14 @@ extern void           TTY_Blink        ();
 extern void           TTY_Scroll       (const int numLines);
 extern void           TTY_Init         ();
 
+typedef struct {
+	char ch;
+	uint16_t x, y;
+	uint32_t color;
+	uint32_t background;
+} bufferEntry_t;
+
 extern bool           FB_HandleEsc(char nextChar);
-extern void           FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y);
+extern void           FB_WriteChar(const char ch, const uint_fast16_t x, const uint_fast16_t y);
+extern void           FB_ReInit   (bufferEntry_t *newBuffer, int newBufferSize);
+extern void           FB_Update   ();

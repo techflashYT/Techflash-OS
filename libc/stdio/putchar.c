@@ -28,6 +28,6 @@ int putchar(const int ch) {
 		return '\b';
 	}
 
-	FB_DrawChar(ch, TTY_CursorX, TTY_CursorY);
+	FB_WriteChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }
