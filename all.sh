@@ -4,6 +4,7 @@ set -e
 if [ "$1" != "--no-pull" ]; then
 	git pull
 fi
+rm -rf sysroot isodir tmp
 if ! ( command -v grub-mkrescue > /dev/null || command -v grub2-mkrescue > /dev/null ); then
 	echo "Uh oh!  Looks like you don't have grub(2)-mkrescue and xorriso!  These are required to create the bootable ISO image."
 	exit 1
@@ -40,8 +41,3 @@ if ! ./build.sh; then
 fi
 echo "ISO"
 ./iso.sh
-
-printf "Cleaning up temporary files...\r\n"
-rm -rf sysroot isodir tmp
-printf "Done!\r\n"
-echo "Done!  Boot ISO is in bin/TFOS_ISO.iso"

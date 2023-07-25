@@ -20,6 +20,18 @@ tar --format=ustar -cf "$prevDir"/isodir/boot/initrd -- *
 unset prevDir
 popd
 
+if ! [ -f limine/limine.c ]; then
+	wget https://raw.githubusercontent.com/limine-bootloader/limine/v5.x-branch-binary/limine.c -O limine/limine.c
+fi
+if ! [ -f limine/limine-bios-hdd.h ]; then
+	wget https://raw.githubusercontent.com/limine-bootloader/limine/v5.x-branch-binary/limine-bios-hdd.h -O limine/limine-bios-hdd.h
+fi
+if ! [ -f limine/limine-cmd ]; then
+	echo "CC    limine.c ==> limine-cmd"
+	cd limine
+	gcc limine.c -o limine-cmd
+	cd ../
+fi
 
 if ! [ -f limine/limine-bios.sys ]; then
 	wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/limine-bios.sys -O limine/limine-bios.sys
@@ -31,8 +43,10 @@ if ! [ -f limine/limine-bios-cd.bin ]; then
 	wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/limine-bios-cd.bin -O limine/limine-bios-cd.bin
 fi
 
-cp -r limine/ isodir/
+mkdir -p isodir/limine
+cp limine/limine-{bios.sys,uefi-cd.bin,bios-cd.bin} limine/limine.cfg isodir/limine
 xorriso -as mkisofs -b limine/limine-bios-cd.bin --no-emul-boot --boot-load-size 4 --boot-info-table --efi-boot limine/limine-uefi-cd.bin --efi-boot-part --efi-boot-image --protective-msdos-label isodir -o bin/TFOS_ISO.iso
+limine/limine-cmd bios-install bin/TFOS_ISO.iso
 
 # mkdir -p isodir/boot/grub/fonts
 
