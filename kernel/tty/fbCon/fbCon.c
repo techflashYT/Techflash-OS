@@ -48,7 +48,7 @@ void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yP
 	if (TTY_Bold) {
 		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-		for (uint_fast8_t i = 0; i < 4; i++) {
+		for (uint_fast8_t i = 0; i != 4; i++) {
 			uint8_t originalByte = ((uint8_t*)&TTY_Color)[i];
 			((uint8_t *)&textColor)[i] += 0x55;
 
@@ -86,18 +86,18 @@ void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yP
 	// iterate through each bit of the glyph
 	for (uint_fast8_t j = 0; j < height; j++) {
 		uint8_t row = bitfield[j];
-		for(uint_fast8_t k = 0; k < width; k++){
-			((uint32_t *)fb->address)[(fbIndex++) + (fbLine * fb->width)] = (row & (1 << (7 - k))) ? TTY_Color : TTY_TextBackground;
+		for (uint_fast8_t k = 0; k < width; k++){
+			((uint32_t *)fb->address)[(fbIndex++) + (fbLine * fb->width)] = (row & (1 << (7 - k))) ? textColor : TTY_TextBackground;
 		}
 		fbLine++;
 		fbIndex = (TTY_CursorX * (width + charSpacing));
 	}
 	
 	TTY_CursorX++;
-	if (TTY_CursorX > TTY_Width) {
+	if (TTY_CursorX > (TTY_Width + 2)) {
 		TTY_CursorX = 0;
 		TTY_CursorY++;
-		if (TTY_CursorY > TTY_Height) {
+		if (TTY_CursorY > (TTY_Height + 2)) {
 			TTY_Scroll(1);
 		}
 	}

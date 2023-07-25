@@ -3,7 +3,12 @@ SYSTEM_HEADER_PROJECTS="libc kernel userspaceLibcWrappers"
 PROJECTS="libc kernel userspaceLibcWrappers"
 
 export MAKE="${MAKE:-make --no-print-directory}"
-export HOST="${HOST:-"x86_64-elf-"}"
+if [ "$HOST" = "" ]; then
+	export HOST="x86_64-elf-"
+fi
+if [ "$HOST" = "none" ]; then
+	export HOST=""
+fi
 
 export AR="${HOST}"ar
 export AS="${HOST}"as

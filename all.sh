@@ -26,7 +26,7 @@ if ! ( command -v x86_64-elf-gcc > /dev/null || command -v x86_64-elf-as > /dev/
 	fi
 	echo -e "\e[1;33m ===> WARNING!!  This is entirely unsupported and 99% likely will not work!!  However, since the user is positive, we are attempting to do it anyways!!\e[0m"
 
-	export HOST=""
+	export HOST="none"
 	. ./util/config.sh
 fi
 if [ ! -f .config ]; then
