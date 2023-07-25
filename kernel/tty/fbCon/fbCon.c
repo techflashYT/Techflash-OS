@@ -94,12 +94,12 @@ void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yP
 	}
 	
 	TTY_CursorX++;
-	if (TTY_CursorX > (TTY_Width + 2)) {
+	if (TTY_CursorX >= TTY_Width) {
 		TTY_CursorX = 0;
 		TTY_CursorY++;
-		if (TTY_CursorY > (TTY_Height + 2)) {
-			TTY_Scroll(1);
-		}
+	}
+	if (TTY_CursorY >= TTY_Height) {
+		TTY_Scroll(1);
 	}
 
 }
