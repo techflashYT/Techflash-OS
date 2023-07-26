@@ -17,7 +17,7 @@ extern struct flanterm_context *TTY_Ctx;
 
 extern void           TTY_SetBackground(const uint32_t color);
 extern void           TTY_Blink        ();
-extern void           TTY_Scroll       (const int numLines);
+extern void           TTY_Scroll       (const uint_fast16_t numLines);
 extern void           TTY_Init         ();
 
 typedef struct {
@@ -31,3 +31,8 @@ extern bool           FB_HandleEsc(char nextChar);
 extern void           FB_WriteChar(const char ch, const uint_fast16_t x, const uint_fast16_t y);
 extern void           FB_ReInit   (bufferEntry_t *newBuffer, int newBufferSize);
 extern void           FB_Update   ();
+
+extern void           FB_DrawLine     (uint_fast16_t y);
+extern void           FB_DeleteLine   (uint_fast16_t y);
+extern void           FB_SetBufferItem(uint_fast16_t x, uint_fast16_t y, bufferEntry_t entry);
+extern bufferEntry_t  FB_GetBufferItem(uint_fast16_t x, uint_fast16_t y);

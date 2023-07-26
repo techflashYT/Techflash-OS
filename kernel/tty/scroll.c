@@ -1,66 +1,69 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include <kernel/tty.h>
 #include <kernel/environment.h>
 #include <kernel/newFont.h>
-#include <kernel/hardware/serial.h>
-#include <kernel/tty.h>
-#include <kernel/panic.h>
-/* Thanks to @quietfanatic on StackOverflow for this code, they helped make this actually optimized, check out their comment:
- * https://stackoverflow.com/a/74765904/16387557
- * along with my original question of how to optimize it:
- * https://stackoverflow.com/questions/74765778/c-osdev-how-could-i-shift-the-contents-of-a-32-bit-framebuffer-upwards-effic
- */
-void TTY_Scroll(const int numLines) {
-	// Convert string to integer
-	// uint_fast16_t numLines = atoi(numLines);
+#include <string.h>
+#include <assert.h>
 
-	// Test if we'll be scrolling to outside of the framebuffer
-	int_fast16_t testForBounds = TTY_CursorY;
-	testForBounds -= numLines;
-	// Would this place it before the framebuffer?
-	if (testForBounds < 0) {
-		// Yes, panic
-		DUMPREGS;
-		panic("TTY: Attempted to scroll to an invalid line!", regs);
-	}
-	// Figure out how many pixels we need to move in order to move 1 line
-	uint_fast8_t width;
-	uint_fast8_t height;
+#include <assert.h>
+
+static void TTY_ScrollBasic(uint_fast16_t numLines) {
+	int width, height;
 	UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
 	(void)width;
-	uint_fast32_t numPixels = numLines * height;
-	// uint_fast32_t numPixels = numLines * font.header.widthHeight;
 
-	// The destination of the move is just the top of the framebuffer
-	uint32_t* destination = (uint32_t*)fb->address;
+	uint32_t* fbAddress = (uint32_t*)fb->address;
+	uint_fast64_t fbWidth = fb->width;
+	uint_fast64_t fbHeight = fb->height;
+	uint_fast64_t fbPitch = fb->pitch / sizeof(uint32_t);
 
-	// Start the move from the top of the framebuffer plus number
-	// of lines to scroll.
-	uint32_t* source = (uint32_t*)fb->address + (numPixels * fb->width);
+	// Check if the number of lines to scroll is within the valid range
+	assert(numLines < fbHeight);
 
-	// The total number of pixels to move is the size of the
-	// framebuffer minus the amount of lines we want to scroll.
-	uint_fast32_t pixelSize = (fb->height - numPixels) * fb->width;
+	// Check if the framebuffer address is not NULL
+	assert(fbAddress != NULL);
 
-	// The total number of bytes is that times the size of one pixel.
-	uint_fast32_t byteSize = pixelSize * sizeof(uint32_t);
+	// Check if the framebuffer width and height are greater than 0
+	assert(fbWidth > 0);
+	assert(fbHeight > 0);
 
-	// Save the original value for whether the cursor should blink
-	bool blinkingCursorOrig = TTY_BlinkingCursor;
+	if (numLines >= fbHeight) {
+		numLines = fbHeight - 1;
+	}
+	uint_fast64_t shiftNum = numLines * height;
 
-	// Disable the blinking cursor, it could cause issues.
-	TTY_BlinkingCursor = false;
+	// Check if the scrolling operation stays within the framebuffer boundaries
+	assert(shiftNum <= fbHeight);
 
-	// Do the move
-	memmove(destination, source, byteSize);
+	// Check if the font height is greater than 0
+	assert(height > 0);
 
-	
-	// Set the cursor to the right position
+	// Check if the framebuffer address is properly aligned
+	assert(((uintptr_t)fbAddress) % sizeof(uint32_t) == 0);
+
+	// Shift the lines up
+	for (uint_fast64_t y = shiftNum; y < fbHeight; y++) {
+		for (uint_fast64_t x = 0; x < fbWidth; x++) {
+			fbAddress[(y - shiftNum) * fbPitch + x] = fbAddress[y * fbPitch + x];
+		}
+	}
+
+	// Clear the new lines at the bottom
+	for (uint_fast64_t y = fbHeight - shiftNum; y < fbHeight; y++) {
+		for (uint_fast64_t x = 0; x < fbWidth; x++) {
+			fbAddress[y * fbPitch + x] = TTY_TextBackground;
+		}
+	}
+
 	TTY_CursorY -= numLines;
+}
 
-	// Set the blinking cursor to the previous value.
-	TTY_BlinkingCursor = blinkingCursorOrig;
-	return;
+
+
+
+
+void TTY_Scroll(uint_fast16_t numLines) {
+	if (!TTY_Ready) {
+		TTY_ScrollBasic(numLines);
+	}
+	// TODO: Shift full char buffer up
 }

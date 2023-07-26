@@ -13,8 +13,8 @@
 #define __GETCALLER_1(x) __builtin_extract_return_addr(__builtin_return_address(x))
 
 #define MODULE(x) static const char *MODNAME = (x)
-#define errorColor   0x00FF4444
-#define warningColor 0x00FFD866
+#define errorColor   0xFFFF4444
+#define warningColor 0xFFFFD866
 
 #ifdef MEM_DEBUG
 #define malloc(x) mallocDebugWrapper((x), __FILE__, __LINE__)

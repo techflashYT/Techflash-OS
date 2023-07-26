@@ -50,4 +50,5 @@ void log(const char *module, const char* message, uint_fast8_t logLevel) {
 	}
 	puts("\e[0m\r\n");
 	TTY_Color = origColor;
+	FB_Update();
 }

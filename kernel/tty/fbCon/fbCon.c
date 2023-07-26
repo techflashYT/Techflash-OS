@@ -3,6 +3,7 @@
 #include <kernel/hardware/serial.h>
 #include <kernel/environment.h>
 #include <stdio.h>
+#include <assert.h>
 #include <stdint.h>
 
 static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yPos, const uint32_t color, const uint32_t bgColor);
@@ -22,12 +23,41 @@ static bufferEntry_t  bufferStatic[255];
 static bufferEntry_t *buffer = bufferStatic;
 int bufCount = 0;
 
+
 void FB_WriteChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
+	if (nextCharIsEsc) {
+		if (FB_HandleEsc(ch)) {
+			nextCharIsEsc = false;
+		}
+		return;
+	}
+	if (ch == 0x1B) {
+		nextCharIsEsc = true;
+		return;
+	}
+	uint32_t textColor = TTY_Color;
+	if (TTY_Bold) {
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+		for (uint_fast8_t i = 0; i != 4; i++) {
+			uint8_t originalByte = ((uint8_t*)&TTY_Color)[i];
+			((uint8_t *)&textColor)[i] += 0x55;
+
+			// Check for overflow
+			if (((uint8_t *)&textColor)[i] < originalByte) {
+				((uint8_t *)&textColor)[i] = 0xFF;
+			}
+		}
+
+		#pragma GCC diagnostic pop
+	}
+
+
 	bufferEntry_t entry;
 	entry.ch = ch;
 	entry.x = x;
 	entry.y = y;
-	entry.color = TTY_Color;
+	entry.color = textColor;
 	entry.background = TTY_TextBackground;
 
 	buffer[bufCount] = entry;
@@ -36,6 +66,17 @@ void FB_WriteChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 	// Check if buffer exceeds threshold
 	if (bufCount >= FLUSH_THRESHOLD) {
 		FB_Update();
+	}
+
+	TTY_CursorX++;
+	if (TTY_CursorX >= TTY_Width) {
+		TTY_CursorX = 0;
+		TTY_CursorY++;
+	}
+	if (TTY_CursorY >= TTY_Height) {
+		// forcibly flush the buffer before scrolling
+		FB_Update();
+		TTY_Scroll(1);
 	}
 }
 
@@ -62,33 +103,8 @@ void FB_ReInit(bufferEntry_t* newBuffer, int newBufferSize) {
 
 char str[300];
 static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yPos, const uint32_t color, const uint32_t bgColor) {
-	(void)xPos;
-	(void)yPos;
-	if (nextCharIsEsc) {
-		if (FB_HandleEsc(ch)) {
-			nextCharIsEsc = false;
-		}
-		return;
-	}
-	if (ch == 0x1B) {
-		nextCharIsEsc = true;
-		return;
-	}
-	uint32_t textColor = color;
-	if (TTY_Bold) {
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-		for (uint_fast8_t i = 0; i != 4; i++) {
-			uint8_t originalByte = ((uint8_t*)&color)[i];
-			((uint8_t *)&textColor)[i] += 0x55;
-
-			// Check for overflow
-			if (((uint8_t *)&textColor)[i] < originalByte) {
-				((uint8_t *)&textColor)[i] = 0xFF;
-			}
-		}
-
-		#pragma GCC diagnostic pop
+	if (ch == '[') {
+		asm("nop");
 	}
 	uint_fast8_t width;
 	uint_fast8_t height;
@@ -97,8 +113,8 @@ static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast
 	UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
 
 
-	uint_fast64_t fbLine = (TTY_CursorY * height);
-	uint_fast64_t fbIndex = (TTY_CursorX * (width + charSpacing));
+	uint_fast64_t fbLine = (yPos * height);
+	uint_fast64_t fbIndex = (xPos * (width + charSpacing));
 	uint_fast8_t i;
 	for (i = 0; i != font.header.numGlyphs; i++) {
 		if (font.glyphs[i].glyphNum == ch) {
@@ -114,22 +130,19 @@ static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast
 	uint8_t *bitfield = font.glyphs[i].glyphBitField;
 	
 	// iterate through each bit of the glyph
+	bool isSet = false;
 	for (uint_fast8_t j = 0; j < height; j++) {
 		uint8_t row = bitfield[j];
-		for (uint_fast8_t k = 0; k < width; k++){
-			((uint32_t *)fb->address)[(fbIndex++) + (fbLine * fb->width)] = (row & (1 << (7 - k))) ? textColor : bgColor;
+		for (uint_fast8_t k = 0; k < width; k++) {
+			uint64_t offset = (fbIndex++) + (fbLine * fb->width);
+			bool set = (row & (1 << (7 - k)));
+			((uint32_t *)fb->address)[offset] = set ? color : bgColor;
+			if (set || ch == ' ') {
+				isSet = true;
+			}
 		}
 		fbLine++;
-		fbIndex = (TTY_CursorX * (width + charSpacing));
+		fbIndex = (xPos * (width + charSpacing));
 	}
-	
-	TTY_CursorX++;
-	if (TTY_CursorX >= TTY_Width) {
-		TTY_CursorX = 0;
-		TTY_CursorY++;
-	}
-	if (TTY_CursorY >= TTY_Height) {
-		TTY_Scroll(1);
-	}
-
+	assert((isSet))
 }
