@@ -3,11 +3,9 @@ build
 sysroot
 isodir
 lib
-util/mkbootimg
-util/fasm
 *__pycache__*
-limine/*.sys
-limine/*.bin
+limine/
+!limine/limine.cfg
 log
 bx_enh_dbg.ini
 tmp
