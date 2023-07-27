@@ -37,7 +37,7 @@ PICInit:
 
 	# Send ICW 3 - Set the IR line to connect both PICs ---------
 	# Send ICW 3 to primary PIC
-	movb 0x4,%al				# 0x04 => 0100, second bit (IR line 2)
+	movb $0x4,%al				# 0x04 => 0100, second bit (IR line 2)
 	outb %al, PIC_1_DATA		# write to data register of primary PIC
 
 	# Send ICW 3 to secondary PIC

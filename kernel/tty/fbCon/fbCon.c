@@ -1,10 +1,30 @@
 #include <kernel/tty.h>
-#include <kernel/font.h>
+#include <kernel/newFont.h>
+#include <kernel/hardware/serial.h>
 #include <kernel/environment.h>
-bool nextCharIsEsc = false;
-#pragma GCC optimize "O0"
+#include <stdio.h>
+#include <assert.h>
+#include <stdint.h>
 
-void FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
+static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yPos, const uint32_t color, const uint32_t bgColor);
+static bool nextCharIsEsc = false;
+#pragma GCC optimize "O0"
+static uint_fast8_t charSpacing = 0;
+
+
+
+// Specifications
+static int MAX_BUFFER_SIZE = 255;
+#define FLUSH_THRESHOLD (MAX_BUFFER_SIZE * 75 / 100)
+
+
+
+static bufferEntry_t  bufferStatic[255];
+static bufferEntry_t *buffer = bufferStatic;
+int bufCount = 0;
+
+
+void FB_WriteChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 	if (nextCharIsEsc) {
 		if (FB_HandleEsc(ch)) {
 			nextCharIsEsc = false;
@@ -19,7 +39,7 @@ void FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 	if (TTY_Bold) {
 		#pragma GCC diagnostic push
 		#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-		for (uint_fast8_t i = 0; i < 4; i++) {
+		for (uint_fast8_t i = 0; i != 4; i++) {
 			uint8_t originalByte = ((uint8_t*)&TTY_Color)[i];
 			((uint8_t *)&textColor)[i] += 0x55;
 
@@ -31,30 +51,98 @@ void FB_DrawChar(const char ch, const uint_fast16_t x, const uint_fast16_t y) {
 
 		#pragma GCC diagnostic pop
 	}
-	int_fast32_t bpl = (font->width + 7) / 8;
-	int_fast32_t offs = 0;
-	uint8_t *glyph = (uint8_t*)&_binary_font_psf_start + font->headerSize + (ch > 0 && (uint32_t)ch < font->numOfGlyphs ? ch : 0) *font->bytesPerGlyph;
-	int_fast32_t kx = x;
-	int_fast32_t offsY = (font->height * (((y * bootboot.fb_width) * 4) == 0 ? 0 : (((y * bootboot.fb_width) * 4))));
-	TTY_CursorX++;
-	
-	offs = ((kx * (font->width + 1) * 4) + offsY);
-	
-	
-	for (uint_fast32_t y2 = 0; y2 < font->height; y2++) {
-		int_fast32_t line = 0;
-		int_fast32_t mask = 0;
-		line = offs;
-		mask = 1 << (font->width - 1);
-		for (uint_fast32_t x2 = 0; x2 < font->width; x2++) {
-			uint32_t *ptr = ((uint32_t *)((uint64_t)&fb + line));
-			*ptr = (((int) *glyph) & (mask)) ? textColor : TTY_TextBackground;
-			mask >>= 1;
-			line += 4;
-		}
-		*((uint32_t *)((uint64_t) &fb + line)) = TTY_TextBackground;
-		glyph += bpl;
-		offs += bootboot.fb_scanline;
+
+
+	bufferEntry_t entry;
+	entry.ch = ch;
+	entry.x = x;
+	entry.y = y;
+	entry.color = textColor;
+	entry.background = TTY_TextBackground;
+
+	buffer[bufCount] = entry;
+	bufCount++;
+
+	// Check if buffer exceeds threshold
+	if (bufCount >= FLUSH_THRESHOLD) {
+		FB_Update();
 	}
-	return;
+
+	TTY_CursorX++;
+	if (TTY_CursorX >= TTY_Width) {
+		TTY_CursorX = 0;
+		TTY_CursorY++;
+	}
+	if (TTY_CursorY >= TTY_Height) {
+		// forcibly flush the buffer before scrolling
+		FB_Update();
+		TTY_Scroll(1);
+	}
+}
+
+void FB_Update() {
+	int i;
+	for (i = 0; i < bufCount; i++) {
+		bufferEntry_t entry = buffer[i];
+		FB_DrawChar(entry.ch, entry.x, entry.y, entry.color, entry.background);
+	}
+	bufCount = 0; // Reset buffer
+}
+
+void FB_ReInit(bufferEntry_t* newBuffer, int newBufferSize) {
+	// Assuming the new buffer has been allocated using malloc with specified new size
+	// Copy from old buffer to new
+	for (int i = 0; i < bufCount; i++) {
+		newBuffer[i] = buffer[i];
+	}
+	// Make the new buffer as the active buffer
+	buffer = newBuffer;
+	// Resize the buffer size
+	MAX_BUFFER_SIZE = newBufferSize;
+}
+
+char str[300];
+static void FB_DrawChar(const char ch, const uint_fast16_t xPos, const uint_fast16_t yPos, const uint32_t color, const uint32_t bgColor) {
+	if (ch == '[') {
+		asm("nop");
+	}
+	uint_fast8_t width;
+	uint_fast8_t height;
+
+
+	UNPACK_WIDTH_HEIGHT(font.header.widthHeight, width, height);
+
+
+	uint_fast64_t fbLine = (yPos * height);
+	uint_fast64_t fbIndex = (xPos * (width + charSpacing));
+	uint_fast8_t i;
+	for (i = 0; i != font.header.numGlyphs; i++) {
+		if (font.glyphs[i].glyphNum == ch) {
+			break;
+		}
+	}
+	if (i == font.header.numGlyphs) {
+		i = font.header.unkCharGlyph;
+	}
+	// sprintf(str, "i = 0x%04X\r\nnum: %04X\r\n", i, font.header.numGlyphs);
+	// serial.writeString(SERIAL_PORT_COM1, str);
+	// find the specified glyph
+	uint8_t *bitfield = font.glyphs[i].glyphBitField;
+	
+	// iterate through each bit of the glyph
+	bool isSet = false;
+	for (uint_fast8_t j = 0; j < height; j++) {
+		uint8_t row = bitfield[j];
+		for (uint_fast8_t k = 0; k < width; k++) {
+			uint64_t offset = (fbIndex++) + (fbLine * fb->width);
+			bool set = (row & (1 << (7 - k)));
+			((uint32_t *)fb->address)[offset] = set ? color : bgColor;
+			if (set || ch == ' ') {
+				isSet = true;
+			}
+		}
+		fbLine++;
+		fbIndex = (xPos * (width + charSpacing));
+	}
+	assert((isSet))
 }

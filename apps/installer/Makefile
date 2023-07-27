@@ -16,10 +16,10 @@ include ../.config
 .SUFFIXES: .o .c
 
 all: $(compile)
-	@x86_64-elf-gcc $(CFLAGS) -
+	@$(CC) $(CFLAGS) -
 .c.o:
 	@echo "CC    $(subst .o,.c,$@) => $@"
-	@x86_64-elf-gcc $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/installer/$@
+	@$(CC) $(CFLAGS) -mno-red-zone -c $(subst .o,.c,$@) -o ../build/installer/$@
 
 clean:
 	@rm -f $(compile) ../build/installer/*.elf || true

@@ -1,34 +1,62 @@
-/*
-	Original version Copyright 2017 - 2021 bzt (bztsrc@gitlab)
-	as part of the 'bootboot' repository on GitLab.
-	Original file availible at https://gitlab.com/bztsrc/bootboot/-/blob/master/mykernel/c/link.ld
-*/
-mmio        = 0xfffffffff8000000;              /* these are configurable for level 2 loaders */
-fb          = 0xfffffffffc000000;
-bootboot    = 0xffffffffffe00000;
-environment = 0xffffffffffe01000;
-initstack   = 65536;
+/* original file here: https://github.com/limine-bootloader/limine-barebones/blob/trunk/kernel/linker.ld */
+/* Tell the linker that we want an x86_64 ELF64 output file */
+OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_ARCH(i386:x86-64)
+
+/* We want the symbol _start to be our entry point */
+ENTRY(_start)
+
+/* Define the program headers we want so the bootloader gives us the right */
+/* MMU permissions */
 PHDRS {
-	boot PT_LOAD;                                /* one single loadable segment */
-
+    text    PT_LOAD    FLAGS((1 << 0) | (1 << 2)) ; /* Execute + Read */
+    rodata  PT_LOAD    FLAGS((1 << 2)) ;            /* Read only */
+    data    PT_LOAD    FLAGS((1 << 1) | (1 << 2)) ; /* Write + Read */
+    dynamic PT_DYNAMIC FLAGS((1 << 1) | (1 << 2)) ; /* Dynamic PHDR for relocations */
 }
+
 SECTIONS {
-	. = 0xffffffffffe02000;
-	.text : {
-		KEEP(*(.text.boot)) *(.text .text.*)   /* code */
-		*(.rodata .rodata.*)                   /* data */
-		*(.data .data.*)
-	} :boot
-	.idt BLOCK(0x1000) : ALIGN(0x1000) {
-		idtEntries = .;
-		. = . + 0x1000;
-	}
-	.bss (NOLOAD) : {                          /* bss */
-		. = ALIGN(16);
-		*(.bss .bss.*)
-		*(COMMON)
-	} :boot
+    /* We wanna be placed in the topmost 2GiB of the address space, for optimisations */
+    /* and because that is what the Limine spec mandates. */
+    /* Any address in this region will do, but often 0xffffffff80000000 is chosen as */
+    /* that is the beginning of the region. */
+    . = 0xffffffff80000000;
 
-	/DISCARD/ : { *(.eh_frame) *(.comment) }
+    .text : {
+        *(.text .text.*)
+    } :text
+
+    /* Move to the next memory page for .rodata */
+    . += CONSTANT(MAXPAGESIZE);
+
+    .rodata : {
+        *(.rodata .rodata.*)
+    } :rodata
+
+    /* Move to the next memory page for .data */
+    . += CONSTANT(MAXPAGESIZE);
+
+    .data : {
+        *(.data .data.*)
+    } :data
+
+    /* Dynamic section for relocations, both in its own PHDR and inside data PHDR */
+    .dynamic : {
+        *(.dynamic)
+    } :data :dynamic
+
+    /* NOTE: .bss needs to be the last thing mapped to :data, otherwise lots of */
+    /* unnecessary zeros will be written to the binary. */
+    /* If you need, for example, .init_array and .fini_array, those should be placed */
+    /* above this. */
+    .bss : {
+        *(.bss .bss.*)
+        *(COMMON)
+    } :data
+
+    /* Discard .note.* and .eh_frame since they may cause issues on some hosts. */
+    /DISCARD/ : {
+        *(.eh_frame)
+        *(.note .note.*)
+    }
 }
-

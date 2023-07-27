@@ -98,26 +98,30 @@ static bool bitmapTest(size_t bit) {
 static void PMM_InitRegion(void *base, size_t size);
 // static void PMM_DeInitRegion(void *base, size_t size);
 static void *PMM_FindFree_s(size_t size);
+volatile struct limine_memmap_request mmapRequest = {
+    .id = LIMINE_MEMMAP_REQUEST,
+    .revision = 0,
+};
 // Initialize the physical memory manager
 void PMM_Init(void) {
+	struct limine_memmap_entry **mmap = mmapRequest.response->entries;
 	log(MODNAME, "Init PMM", LOGLEVEL_INFO);
 	entries[15].addr = (void *)0xDEADBEEF;
 	entries[15].size = 0;
 	uint_fast8_t numUsable = 0;
 	uint_fast64_t totalUsableMem = 0;
 	{
-		uint_fast8_t bootbootEntries = (bootboot.size - 128) / 16;
-		MMapEnt *mmap = &bootboot.mmap;
+		uint_fast8_t mmapEntries = mmapRequest.response->entry_count;
 		uint_fast8_t memEntryIndex = 0;
 		log(MODNAME, "====== MEMORY MAP ======", LOGLEVEL_INFO);
 
-		for (uint_fast8_t i = 0; i != bootbootEntries; i++) {
-			void *ptr = (void *)MMapEnt_Ptr(&mmap[i]);
-			uint_fast64_t size = MMapEnt_Size(&mmap[i]);
-			uint_fast8_t type = MMapEnt_Type(&mmap[i]);
+		for (uint_fast8_t i = 0; i != mmapEntries; i++) {
+			void *ptr = (void *)mmap[i]->base;
+			uint_fast64_t size = mmap[i]->length;
+			uint_fast8_t type = mmap[i]->type;
 
 			char *free = "no";
-			if (MMapEnt_IsFree(&mmap[i])) {
+			if (type == LIMINE_MEMMAP_USABLE) {
 				free = "yes";
 				entries[memEntryIndex].addr = ptr;
 				entries[memEntryIndex].size = size;
@@ -126,10 +130,15 @@ void PMM_Init(void) {
 				numUsable++;
 			}
 			char *typeStr;
-			if (type == MMAP_USED) {typeStr = "Used";}
-			if (type == MMAP_FREE) {typeStr = "Free";}
-			if (type == MMAP_ACPI) {typeStr = "ACPI";}
-			if (type == MMAP_MMIO) {typeStr = "MMIO";}
+			if (type == LIMINE_MEMMAP_USABLE)                 {typeStr = "Free";}
+			if (type == LIMINE_MEMMAP_RESERVED)               {typeStr = "Reserved";}
+			if (type == LIMINE_MEMMAP_ACPI_RECLAIMABLE)       {typeStr = "ACPI (Reclaimable)";}
+			if (type == LIMINE_MEMMAP_ACPI_NVS)               {typeStr = "ACPI (NVS)";}
+			if (type == LIMINE_MEMMAP_BAD_MEMORY)             {typeStr = "Bad Memory";}
+			if (type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE) {typeStr = "Bootloader (Reclaimable)";}
+			if (type == LIMINE_MEMMAP_KERNEL_AND_MODULES)     {typeStr = "Kernel & Modules";}
+			if (type == LIMINE_MEMMAP_FRAMEBUFFER)            {typeStr = "Framebuffer";}
+			else {typeStr = "????";}
 
 			char sizeStr[12];
 			handleUnit(sizeStr, size);

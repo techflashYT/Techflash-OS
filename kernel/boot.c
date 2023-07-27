@@ -19,7 +19,7 @@ void BP_Init(const uint_fast8_t x, const uint_fast8_t y, const uint_fast8_t widt
 		// int min = CONFIG_KERN_VERSION_MINOR;
 		// int pat = CONFIG_KERN_VERSION_PATCH;
 		char str[64];
-		sprintf(str, "Techflash OS \e[1m\e[36mv%d.%d.%d\e[0m Loading...\r\n", 1, 0, 0);
+		sprintf(str, "Techflash OS \e[36m\e[1mv%d.%d.%d\e[0m Loading...\r\n", 1, 0, 0);
 		puts(str);
 		serial.writeString(SERIAL_PORT_COM1, str);
 	}

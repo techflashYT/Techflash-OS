@@ -1,12 +1,16 @@
 #include <stdlib.h>
-void *memcpy(void* destination, const void* source, size_t num) {
-	// Convert to char* for easy access
-	char *src  = (char *)source;
-	char *dest = (char *)destination;
+#include <assert.h>
+void *memcpy(void *dest, const void *src, size_t n) {
+	assert((n != 0));
+	assert((dest > (void *)4096));
+	assert((src  > (void *)4096));
+	assert((dest != src));
 
+	char *d = dest;
+	const char *s = src;
 	// Copy bytes
-	for (size_t i = 0; i < num; i++) {
-		dest[i] = src[i];
+	for (size_t i = 0; i < n; i++) {
+		d[i] = s[i];
 	}
-	return destination;
+	return d;
 }

@@ -73,7 +73,7 @@ __attribute__((noreturn)) void panic(const char* message, volatile registers_t *
 
 	TTY_CursorX = 0;
 	TTY_CursorY = 0;
-	TTY_SetBackground(0x0062A8); // light blue
+	TTY_SetBackground(0x0062A8FF); // light blue
 	TTY_Color = colors.vga.white;
 
 	serial.writeString(SERIAL_PORT_COM1, "Kernel Panic!  Error: ");
@@ -133,27 +133,6 @@ panic2:
 		printf("%ld: \e[1m\e[37m%p \e[36m[\e[33m%s\e[37m+\e[31m%ld\e[36m]\e[37m\r\n", i, trace[i], info.name, info.offset);
 	}
 
-	// write panic_screen.sys to the fb
-	serial.writeString(SERIAL_PORT_COM1, "dumping img to fb...");
-
-	uint8_t *filePtr = 0;
-	size_t fileSize = readFile(((uint8_t *)bootboot.initrd_ptr), "panic_screen.sys", &filePtr);
-	printf("\r\npanic_screen.sys filesize: %lu\r\nptr: %p\r\n", fileSize, filePtr);
-	if (fileSize == 0) {
-		puts("\r\nFailed to read panic_screen.sys, not drawing panic img...\r\n");
-		goto doneImg;
-	}
-
-	uint_fast16_t width  = filePtr[0];
-	uint_fast16_t height = filePtr[1];
-	printf("width: %u\r\nheight: %u\r\n", width, height);
-	for (uint_fast16_t x = 0; x != width; x++) {
-		for (uint_fast16_t y = 0; y != height; y++) {
-			size_t fbOff = (((y + ((bootboot.fb_height / 2) - (height / 2))) * bootboot.fb_width) +  (x + ((bootboot.fb_width / 2) - (width / 2))));
-			((uint32_t *)bootboot.fb_ptr)[fbOff] = filePtr[(y * filePtr[0]) + x];
-		}
-	}
-doneImg:
 	serial.writeString(SERIAL_PORT_COM1, "done\r\n");
 	serial.writeString(SERIAL_PORT_COM1, "halting...\r\n");
 	while (true) {

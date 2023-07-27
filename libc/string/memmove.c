@@ -1,8 +1,14 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <assert.h>
+#include <kernel/panic.h>
 
 void *memmove(void *dest, const void *src, size_t n) {
+	assert((n != 0));
+	assert((dest > (void *)4096));
+	assert((src  > (void *)4096));
+	assert((dest != src));
 	uint8_t* dst = (uint8_t*) dest;
 	const uint8_t* srcTemp = (const uint8_t*) src;
 	if (dst < srcTemp) {

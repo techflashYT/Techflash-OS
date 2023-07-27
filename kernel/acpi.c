@@ -4,6 +4,7 @@
 #include <kernel/panic.h>
 MODULE("X86ACPI");
 
+
 static bool doChecksum(ACPISDTHeader *tableHeader) {
 	uint_fast32_t sum = 0;
 
@@ -12,7 +13,13 @@ static bool doChecksum(ACPISDTHeader *tableHeader) {
 	}
 	if (sum != 0) {
 		char str[64];
-		sprintf(str, "Checksum wrong by %d", sum);
+		#if UINT_FAST32_MAX == UINT32_MAX
+		sprintf(str, "Checksum wrong by %u", sum);
+		#elif UINT_FAST32_MAX == UINT64_MAX
+		sprintf(str, "Checksum wrong by %lu", sum);
+		#else
+		#error Unsupported uint_fast32_t size
+		#endif
 		log(MODNAME, str, LOGLEVEL_WARN);
 	}
 	return sum == 0;

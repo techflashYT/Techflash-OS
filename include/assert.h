@@ -1,3 +1,5 @@
+#include <kernel/panic.h>
+#include <stdio.h>
 #ifdef NDEBUG
 	#define assert(expr) ((void)0)
 #else
