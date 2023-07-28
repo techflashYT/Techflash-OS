@@ -30,7 +30,9 @@ bin/TFOS_ISO.iso: bin/tfos_kernel.elf isodir limineCoreFiles  limine/limine-cmd
 	@$(info Done!)
 
 
-isodir: bin/tfos_kernel.elf limineCoreFiles
+sysroot: bin/tfos_kernel.elf
+
+isodir: bin/tfos_kernel.elf limineCoreFiles sysroot
 	@mkdir -p isodir/limine
 	@mkdir -p isodir/EFI/BOOT
 	@cp limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin limine/limine.cfg isodir/limine/
@@ -49,6 +51,7 @@ limine/limine-cmd: limine/limine.c limine/limine-bios-hdd.h
 
 
 bin/tfos_kernel.elf:
+	@$(MAKE) -C libc HOSTCC=$(HOSTCC)
 	@$(MAKE) -C kernel HOSTCC=$(HOSTCC)
 
 #config: bin/configure
