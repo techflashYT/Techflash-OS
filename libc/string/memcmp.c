@@ -1,3 +1,4 @@
+#include <stdint.h>
 int memcmp(const void *s1, const void *s2, int_fast64_t len) {
 	const uint8_t *p = s1;
 	const uint8_t *q = s2;

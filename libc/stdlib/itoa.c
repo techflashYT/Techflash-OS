@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <kernel/panic.h>
-#include <kernel/tty.h>
 /*
 	Based on "C++ version 0.4 char* style itoa"
 	by Lukás Chmela.

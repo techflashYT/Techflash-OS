@@ -5,6 +5,7 @@
 #define __need_wint_t
 #define __need_NULL
 #include <stddef.h>
+#include <stdint.h>
 char *itoa(uint_fast64_t value, char* result, uint_fast8_t base);
 char *utoa(uint_fast64_t value, volatile char* result, uint_fast8_t base);
 void *malloc(size_t size);

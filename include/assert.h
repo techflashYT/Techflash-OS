@@ -1,7 +1,8 @@
-#include <kernel/panic.h>
+// #include <kernel/panic.h>
 #include <stdio.h>
-#ifdef NDEBUG
+// #ifdef NDEBUG
 	#define assert(expr) ((void)0)
+/*
 #else
 	#define assert(expr)\
 		if (!(expr)) {\
@@ -10,4 +11,4 @@
 			sprintf(__assertStr, "Assertion `%s' failed in file " __FILE__ ":%d\r\n", #expr, __LINE__);\
 			panic(__assertStr, regs);\
 		}
-#endif
+#endif*/

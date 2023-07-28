@@ -1,3 +1,4 @@
+#include <stdint.h>
 int strcmp(const char *str1, const char *str2) {
 	while (*str1) {
 		// if characters differ, or end of the second string is reached

@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include <string.h>
 #include <assert.h>
-#include <kernel/panic.h>
 
 void *memmove(void *dest, const void *src, size_t n) {
 	assert((n != 0));

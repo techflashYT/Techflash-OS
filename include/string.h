@@ -1,5 +1,6 @@
 #define __need_size_t
 #include <stddef.h>
+#include <stdint.h>
 // set `n` bytes of `s` to `c`
 extern void   *memset(void *s, uint_fast64_t c, size_t n);
 extern void   *memcpy(void *destination, const void *source, size_t num);
