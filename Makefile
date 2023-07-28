@@ -4,19 +4,22 @@ HOSTCC=$(shell command -v clang 2> /dev/null)
 endif
 
 ifeq ($(HOSTCC),)
-$(error No C compiler found. Please install gcc or clang)
+$(error [31mNo C compiler found. Please install gcc or clang.[0m)
 endif
 
-$(info Using $(HOSTCC) as the C compiler)
+$(info Using $(HOSTCC) as the host C compiler)
 
 
-.PHONY: config clean all iso usb
+.PHONY: config clean all iso usb limineCoreFiles
 
 all: iso
 
 iso: bin/TFOS_ISO.iso
 
-bin/TFOS_ISO.iso: bin/tfos_kernel.elf isodir limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin limine/limine-cmd
+
+limineCoreFiles: limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin
+
+bin/TFOS_ISO.iso: bin/tfos_kernel.elf isodir limineCoreFiles  limine/limine-cmd
 	@$(info Creating ISO...)
 	@xorriso -as mkisofs -b limine/limine-bios-cd.bin --no-emul-boot \
 	 	--boot-load-size 4 --boot-info-table --efi-boot limine/limine-uefi-cd.bin \
@@ -27,8 +30,12 @@ bin/TFOS_ISO.iso: bin/tfos_kernel.elf isodir limine/limine-bios.sys limine/limin
 	@$(info Done!)
 
 
-isodir: bin/tfos_kernel.elf
-	@mkdir -p isodir
+isodir: bin/tfos_kernel.elf limineCoreFiles
+	@mkdir -p isodir/limine
+	@mkdir -p isodir/EFI/BOOT
+	@cp limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin limine/limine.cfg isodir/limine/
+	@for f in AA64 RISCV64 X64 IA32; do mcopy -i limine/limine-uefi-cd.bin ::EFI/BOOT/BOOT$$f.EFI isodir/EFI/BOOT/; done
+
 
 limine/%.%:
 	@$(info Downloading $(notdir $@) from GitHub...)
@@ -42,7 +49,7 @@ limine/limine-cmd: limine/limine.c limine/limine-bios-hdd.h
 
 
 bin/tfos_kernel.elf:
-	@$(MAKE) -C kernel
+	@$(MAKE) -C kernel HOSTCC=$(HOSTCC)
 
 #config: bin/configure
 #	@bin/configure
