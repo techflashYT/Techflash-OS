@@ -20,7 +20,7 @@ all: ../lib/libc.a
 ../lib/libc.a: $(OBJFILES)
 	@mkdir -p $(@D)
 	@$(info AR    $(patsubst ../build/libc/%,%,$^) ==> $(patsubst ../lib/%,%,$@))
-	@$(AR) cr $^ $@
+	@$(AR) cr $@ $^
 	@$(info [32mKernel libc compiled![0m)
 
 
