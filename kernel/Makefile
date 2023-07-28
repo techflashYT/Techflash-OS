@@ -6,8 +6,7 @@ endif
 
 LIBS=-lc
 
-
-LDFLAGS=-L../lib
+LDFLAGS=-L../lib -TlinkerScript.ld
 CFLAGS=-nostdlib -ffreestanding
 
 $(info Using $(CC) as the kernel C compiler)
