@@ -1,7 +1,12 @@
-CC=$(shell command -v x86_64-elf-gcc 2> /dev/null)
+ifeq ($(strip $(ARCH)),)
+	ARCH=x86_64
+endif
+
+CC=$(shell command -v $(ARCH)-elf-gcc 2> /dev/null)
+
 ifeq ($(strip $(CC)),)
-$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
-CC=$(HOSTCC)
+	$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
+	CC=$(HOSTCC)
 endif
 
 LIBS=-lc
@@ -11,10 +16,12 @@ CFLAGS=-nostdlib -ffreestanding
 
 $(info Using $(CC) as the kernel C compiler)
 
-CFILES = $(shell find -O3 -name '*.c')
-ASMFILES = $(shell find -O3 -name '*.S')
+CFILES       = $(shell find -O3 . -name '*.c' -not -path './arch/*')
+ARCHCFILES   = $(shell find -O3 arch/$(ARCH) -name '*.c')
+ARCHASMFILES = $(shell find -O3 arch/$(ARCH) -name '*.S')
+ASMFILES     = $(shell find -O3 . -name '*.S' -not -path './arch/*')
 
-OBJFILES=$(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES))
+OBJFILES=$(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES)) $(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES))
 all: ../bin/tfos_kernel.elf
 
 ../bin/tfos_kernel.elf: $(OBJFILES)
