@@ -13,7 +13,10 @@ endif
 LIBS=-lc
 
 LDFLAGS=-L../lib -TlinkerScript.ld -fpie
-CFLAGS=-nostdlib -ffreestanding -g -I../include -fpie
+WARN=-Wall -Wextra -Wno-pedantic -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
+FEAT=-ffreestanding -fpie
+INCLUDES=-imacros misc/defines.h -include kernel/log.h
+CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) $(INCLUDES) -std=gnu2x
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32
