@@ -10,7 +10,7 @@ void COM_Write(uint8_t serPort, uint8_t byte) {
 }
 void COM_WriteStr(uint8_t serPort, const char *str) {
 	while (*str != '\0') {
-		COM_Write(serPort, *str);
+		COM_Write(serPort, *(uint8_t *)str);
 		str++;
 	}
 }
@@ -19,5 +19,5 @@ void COM_LogWrapper(const char ch, const uint16_t x, const uint16_t y, const uin
 	(void)y;
 	(void)fgColor;
 	(void)bgColor;
-	COM_Write(0, ch);
+	COM_Write(0, (uint8_t)ch);
 }
