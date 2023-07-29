@@ -18,7 +18,7 @@ iso: bin/TFOS_ISO.iso
 
 
 run:
-	@qemu-system-x86_64 -no-shutdown -no-reboot -m 1024M -smp 2 -cpu core2 --enable-kvm -cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $(EXTRAARGS) -serial stdio
+	@qemu-system-x86_64 -no-shutdown -no-reboot -m 1024M -smp 2 -cpu core2duo --enable-kvm -cdrom bin/TFOS_ISO.iso -display gtk -s -d cpu_reset,int,pcall,unimp $(EXTRAARGS) -serial stdio
 
 limineCoreFiles: limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin
 
