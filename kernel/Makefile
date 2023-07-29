@@ -5,23 +5,39 @@ endif
 CC=$(shell command -v $(ARCH)-elf-gcc 2> /dev/null)
 
 ifeq ($(strip $(CC)),)
-	$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
-	CC=$(HOSTCC)
+$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
+CC=$(HOSTCC)
 endif
+
 
 LIBS=-lc
 
 LDFLAGS=-L../lib -TlinkerScript.ld
-CFLAGS=-nostdlib -ffreestanding
+CFLAGS=-nostdlib -ffreestanding -g -I../include
+ifeq ($(ARCH),i386)
+CFLAGS += -m32
+ASFLAGS += -m32
+endif
 
 $(info Using $(CC) as the kernel C compiler)
 
 CFILES       = $(shell find -O3 . -name '*.c' -not -path './arch/*')
 ARCHCFILES   = $(shell find -O3 arch/$(ARCH) -name '*.c')
-ARCHASMFILES = $(shell find -O3 arch/$(ARCH) -name '*.S')
+ARCHASMFILES = $(shell find -O3 arch/$(ARCH) -name '*.S' | sort)
+
+ifeq ($(ARCH),x86_64)
+ARCHCFILES  += $(shell find -O3 arch/x86 -name '*.c')
+ARCHASMFILES+= $(shell find -O3 arch/x86 -name '*.S' | sort)
+endif
+ifeq ($(ARCH),i386)
+ARCHCFILES  += $(shell find -O3 arch/x86 -name '*.c')
+ARCHASMFILES+= $(shell find -O3 arch/x86 -name '*.S' | sort)
+endif
+
+
 ASMFILES     = $(shell find -O3 . -name '*.S' -not -path './arch/*')
 
-OBJFILES=$(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES)) $(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES))
+OBJFILES=$(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES))  $(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES))
 all: ../bin/tfos_kernel.elf
 
 ../bin/tfos_kernel.elf: $(OBJFILES)
@@ -37,5 +53,5 @@ all: ../bin/tfos_kernel.elf
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)
 	@$(info AS    $< ==> $(patsubst %.c,%.o,$<))
-	@$(CC) -c $< -o $@
+	@$(CC) $(ASFLAGS) -c $< -o $@
 	

@@ -6,12 +6,16 @@ CC=$(shell command -v $(ARCH)-elf-gcc 2> /dev/null)
 AR=$(shell command -v $(ARCH)-elf-ar 2> /dev/null)
 
 ifeq ($(strip $(CC)),)
-	$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
-	CC=$(HOSTCC)
-	AR=$(HOSTCC:gcc=ar)
+$(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
+CC=$(HOSTCC)
+AR=$(HOSTCC:gcc=ar)
 endif
 
 CFLAGS=-nostdlib -ffreestanding -I../include
+
+ifeq ($(ARCH),i386)
+CFLAGS += -m32
+endif
 
 $(info Using $(CC) as the libc C compiler)
 
