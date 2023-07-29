@@ -32,7 +32,6 @@
             ],
             "forcedInclude": [
                 "include/misc/defines.h",
-                "include/kernel/kernel.h",
                 "include/kernel/log.h"
             ]
         },

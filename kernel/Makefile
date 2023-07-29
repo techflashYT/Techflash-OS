@@ -42,12 +42,12 @@ all: ../bin/tfos_kernel.elf
 ../bin/tfos_kernel.elf: $(OBJFILES)
 	@mkdir -p $(@D)
 	@$(info LD    $(patsubst ../build/kernel/%.o,%.o,$^) $(foreach lib,$(subst -l,lib,$(LIBS)),$(lib).a) ==> $(patsubst ../bin/%,%,$@))
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $^ -o $@
+	@$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 ../build/kernel/%.o: %.c
 	@mkdir -p $(@D)
-#	@$(info CC    $< ==> $(patsubst %.c,%.o,$<))
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(info CC    $< ==> $(patsubst %.c,%.o,$<))
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)
