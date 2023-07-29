@@ -42,7 +42,7 @@ isodir: bin/tfos_kernel.elf limineCoreFiles
 	@for f in AA64 RISCV64 X64 IA32; do mcopy -i limine/limine-uefi-cd.bin ::EFI/BOOT/BOOT$$f.EFI isodir/EFI/BOOT/; done
 
 
-limine/%.%:
+limine/%:
 	@$(info Downloading $(notdir $@) from GitHub...)
 	@wget https://github.com/limine-bootloader/limine/raw/v5.x-branch-binary/$(notdir $@) -O $@
 
