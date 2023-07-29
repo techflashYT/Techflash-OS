@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <kernel/tty.h>
 int putchar(const int ch) {
 	/*
 	if (ch == '\r') { // CR ('\r')
@@ -21,6 +22,7 @@ int putchar(const int ch) {
 		return '\b';
 	}*/
 
+	TTY_Write(ch, TTY_CursorX, TTY_CursorY, TTY_Color, TTY_BgColor);
 	// FB_WriteChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }

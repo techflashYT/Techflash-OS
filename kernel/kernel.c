@@ -1,6 +1,9 @@
 #include <external/limine.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <kernel/COM.h>
+#include <kernel/tty.h>
+#include <kernel/arch.h>
 
 struct limine_smp_request smpRequest = {
 	.id = LIMINE_SMP_REQUEST,
@@ -9,6 +12,15 @@ struct limine_smp_request smpRequest = {
 };
 
 void main() {
-	COM_WriteStr(0, "Hello, world!\r\n");
+	TTY_SetWriteFunc(COM_LogWrapper);
+	printf(
+		"SMP Request info:\r\n"
+		"  - Number of CPUs: %lu\r\n"
+		"  - Bootstrap Processor Local APIC ID: %lu\r\n"
+		"  - X2APIC: %s\r\n",
+		smpRequest.response->cpu_count,
+		smpRequest.response->bsp_lapic_id,
+		(smpRequest.response->flags & 1) ? "Enabled" : "Disabled"
+	);
 	while (true) {}
 }
