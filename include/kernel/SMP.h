@@ -1,0 +1,1 @@
+extern void SMP_Init();
