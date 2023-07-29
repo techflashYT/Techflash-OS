@@ -22,7 +22,7 @@ int putchar(const int ch) {
 		return '\b';
 	}*/
 
-	TTY_Write(ch, TTY_CursorX, TTY_CursorY, TTY_Color, TTY_BgColor);
+	TTY_Write((char)ch, TTY_CursorX, TTY_CursorY, TTY_Color, TTY_BgColor);
 	// FB_WriteChar(ch, TTY_CursorX, TTY_CursorY);
 	return ch;
 }

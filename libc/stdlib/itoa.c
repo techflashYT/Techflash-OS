@@ -6,7 +6,7 @@
 	by Lukás Chmela.
 	http://www.strudel.org.uk/itoa/
 */
-char *itoa(uint_fast64_t value, char* result, uint_fast8_t base) {
+char *itoa(int_fast64_t value, char* result, uint_fast8_t base) {
 	// FIXME: (stupid workaround for a bug that I can't figure out, find real fix) if 0 just put zero and return
 	if (value == 0) {
 		*result = '0';
@@ -20,15 +20,15 @@ char *itoa(uint_fast64_t value, char* result, uint_fast8_t base) {
 	}
 
 	char* ptr = result, *ptr1 = result, tmp_char;
-	long tmp_value;
+	long tmpVal;
 	while (value) {
-		tmp_value = value;
+		tmpVal = value;
 		value /= base;
-		*ptr++ = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" [(long)35 + (tmp_value - value * base)];
+		*ptr++ = "ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" [(long)35 + (tmpVal - value * base)];
 	}
 
 	// Apply negative sign
-	if (tmp_value < (long)0 && base == 10) {
+	if (tmpVal < (long)0 && base == 10) {
 		*ptr++ = '-';
 	}
 	*ptr-- = '\0';

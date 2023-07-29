@@ -981,7 +981,7 @@ static inline void formatStringLoop(outputGadget_t* output, const char* format, 
 					outRev_(output, ")llun(", 6, width, flags);
 				}
 				else {
-					printfSize_t l = strnlen_s(p, precision ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
+					printfSize_t l = (printfSize_t)strnlen_s(p, precision ? precision : PRINTF_MAX_POSSIBLE_BUFFER_SIZE);
 					// pre padding
 					if (flags & FLAGS_PRECISION) {
 						l = (l < precision ? l : precision);
