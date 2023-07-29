@@ -9,5 +9,6 @@ struct limine_smp_request smpRequest = {
 };
 
 void main() {
-	
+	COM_WriteStr(0, "Hello, world!\r\n");
+	while (true) {}
 }

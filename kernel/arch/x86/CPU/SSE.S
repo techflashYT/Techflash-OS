@@ -35,10 +35,12 @@ x86_SSE_Init:
 	# no, write the next char
     outb %al, %dx
 	# loop back
-	jmp .loop
+	lea .loop(%rip), %rbx
+	jmp *%rbx
 
 .halt:
 	cli
 	hlt
-	jmp .halt
+	lea .halt(%rip), %rbx
+	jmp *%rbx
 

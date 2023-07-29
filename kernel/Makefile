@@ -12,8 +12,8 @@ endif
 
 LIBS=-lc
 
-LDFLAGS=-L../lib -TlinkerScript.ld
-CFLAGS=-nostdlib -ffreestanding -g -I../include
+LDFLAGS=-L../lib -TlinkerScript.ld -fpie
+CFLAGS=-nostdlib -ffreestanding -g -I../include -fpie
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32
@@ -34,7 +34,6 @@ ARCHCFILES  += $(shell find -O3 arch/x86 -name '*.c')
 ARCHASMFILES+= $(shell find -O3 arch/x86 -name '*.S' | sort)
 endif
 
-
 ASMFILES     = $(shell find -O3 . -name '*.S' -not -path './arch/*')
 
 OBJFILES=$(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES))  $(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES))
@@ -47,8 +46,8 @@ all: ../bin/tfos_kernel.elf
 
 ../build/kernel/%.o: %.c
 	@mkdir -p $(@D)
-	@$(info CC    $< ==> $(patsubst %.c,%.o,$<))
-	@$(CC) $(CFLAGS) -c $< -o $@
+#	@$(info CC    $< ==> $(patsubst %.c,%.o,$<))
+	$(CC) $(CFLAGS) -c $< -o $@
 
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)

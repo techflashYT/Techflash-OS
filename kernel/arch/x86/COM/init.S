@@ -78,6 +78,8 @@ x86_COM_Init:
 
 	# is the byte that we got back 0xAE?
 	cmp $0xAE, %al
+	// lea .badSerial(%rip), %rbx
+	// jne *%rbx
 	jne .badSerial
 
 	# YES!  We have working serial!

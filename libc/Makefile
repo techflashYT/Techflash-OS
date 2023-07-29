@@ -3,28 +3,37 @@ ifeq ($(strip $(ARCH)),)
 endif
 
 CC=$(shell command -v $(ARCH)-elf-gcc 2> /dev/null)
-AR=$(shell command -v $(ARCH)-elf-ar 2> /dev/null)
 
 ifeq ($(strip $(CC)),)
 $(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
 CC=$(HOSTCC)
-AR=$(HOSTCC:gcc=ar)
 endif
 
-CFLAGS=-nostdlib -ffreestanding -I../include
 
+CFLAGS=-nostdlib -ffreestanding -g -I../include -fpie
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
+ASFLAGS += -m32
 endif
 
 $(info Using $(CC) as the libc C compiler)
 
 CFILES       = $(shell find -O3 . -name '*.c' -not -path './arch/*')
 ARCHCFILES   = $(shell find -O3 arch/$(ARCH) -name '*.c')
-ARCHASMFILES = $(shell find -O3 arch/$(ARCH) -name '*.S')
+ARCHASMFILES = $(shell find -O3 arch/$(ARCH) -name '*.S' | sort)
+
+ifeq ($(ARCH),x86_64)
+ARCHCFILES  += $(shell find -O3 arch/x86 -name '*.c')
+ARCHASMFILES+= $(shell find -O3 arch/x86 -name '*.S' | sort)
+endif
+ifeq ($(ARCH),i386)
+ARCHCFILES  += $(shell find -O3 arch/x86 -name '*.c')
+ARCHASMFILES+= $(shell find -O3 arch/x86 -name '*.S' | sort)
+endif
+
 ASMFILES     = $(shell find -O3 . -name '*.S' -not -path './arch/*')
 
-OBJFILES=$(patsubst ./%.c,../build/libc/%.o,$(CFILES)) $(patsubst ./%.S,../build/libc/%.o,$(ASMFILES)) $(patsubst %.c,../build/libc/%.o,$(ARCHCFILES)) $(patsubst %.S,../build/libc/%.o,$(ARCHASMFILES))
+OBJFILES=$(patsubst %.S,../build/libc/%.o,$(ARCHASMFILES))  $(patsubst ./%.c,../build/libc/%.o,$(CFILES)) $(patsubst ./%.S,../build/libc/%.o,$(ASMFILES)) $(patsubst %.c,../build/libc/%.o,$(ARCHCFILES))
 all: ../lib/libc.a
 
 
