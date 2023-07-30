@@ -4,5 +4,4 @@
 typedef void registers_t;
 #endif
 
-extern void ARCH_Init();
-extern void ARCH_PrintRegs(registers_t *regs);
+void __attribute__((noreturn)) panic(char *message, registers_t *regs);
