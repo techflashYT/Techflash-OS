@@ -12,7 +12,7 @@ endif
 
 WARN=-Wall -Wextra -Wpedantic -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
 FEAT=-ffreestanding -fpie
-CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT)
+CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) -march=core2 -mno-3dnow
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32
