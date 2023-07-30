@@ -4,7 +4,7 @@
 volatile struct limine_smp_request smpRequest = {
 	.id = LIMINE_SMP_REQUEST,
 	.revision = 0,
-	.flags = 0 // FIXME: fix this so that I can use the x2apic without getting NULL back from limine
+	.flags = 1 // FIXME: fix this so that I can use the x2apic without getting NULL back from limine
 };
 void SMP_Init() {
 	if (smpRequest.response == NULL) {
