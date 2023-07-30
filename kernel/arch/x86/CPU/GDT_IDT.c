@@ -55,7 +55,7 @@ void x86_IDT_Init() {
 	outb(0x21, 0x0);
 	outb(0xA1, 0x0);
 	for (uint8_t i = 0; i != 0xFF; i++) {
-		x86_IDT_SetGate(i, (uint64_t)&x86_ISR_StubArray[i], 0x08, 0x8E);
+		x86_IDT_SetGate(i, (uint64_t)&x86_ISR_StubArray[i], 0x28, 0x8E);
 	}
 
 
