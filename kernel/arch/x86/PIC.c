@@ -23,6 +23,9 @@ void x86_PIC_SendEOI() {
 }
 // TODO: Move this crap out of PIC.c
 void x86_ISR_Handler(registers_t *regs) {
+	char buffer[87];
+
+	// while(true) {}
 	regs->intNo += 128;
 	lastInterruptNumber = regs->intNo;
 	if (interruptHandlers[regs->intNo] != 0) {
@@ -32,7 +35,6 @@ void x86_ISR_Handler(registers_t *regs) {
 	}
 	// panic("Unhandled Interrupt", regs);
 	// log it, pray that it isn't necessary, and continue
-	char buffer[87];
 	sprintf(buffer, "Interrupt 0x%02lx triggered with no handler!  Ignoring it and hoping nothing bad happens.", regs->intNo);
 	log(MODNAME, buffer, LOGLEVEL_WARN);
 }

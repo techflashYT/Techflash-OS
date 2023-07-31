@@ -4,4 +4,5 @@ void x86_64_Init() {
 	x86_GDT_Init();
 	x86_IDT_Init();
 	x86_Exceptions_Init();
+	return;
 }

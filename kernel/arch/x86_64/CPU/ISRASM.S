@@ -100,10 +100,13 @@ ISR_NOERR i
 .endr
 
 x86_ISR_StubNoErr:
+	pop %rax
 	pushq (%rsp) # copy interrupt number to the correct location
+	jmp .ready
 x86_ISR_StubErr:
-	cld
 	pop %rax # restore RAX from before we clobbered it to relative jump here
+.ready:
+	cld
 	PUSHALL
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
 	mov %rsp, %r12
