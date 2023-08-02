@@ -12,4 +12,8 @@ void main() {
 	BOOT_CheckLoader();
 	SMP_Init();
 	ARCH_Init();
+	PMM_Init();
+
+	puts("Kernel execution done.  Hanging.\r\n");
+	while (true) {asm ("cli; hlt");}
 }
