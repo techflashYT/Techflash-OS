@@ -44,18 +44,14 @@ pop %r15
 .macro ISR_NOERR num
 .align 8
    push $\num-128
-   push %rax
-   leaq x86_ISR_StubNoErr(%rip), %rax
-   jmp *%rax
+   jmp x86_ISR_StubNoErr
 .align 8
 .endm
 
 .macro ISR_ERR num
 .align 8
    push $\num-128
-   push %rax
-   leaq x86_ISR_StubErr(%rip), %rax
-   jmp *%rax
+   jmp x86_ISR_StubNoErr
 .align 8
 .endm
 
@@ -100,12 +96,11 @@ ISR_NOERR i
 .endr
 
 x86_ISR_StubNoErr:
-	pop %rax
+	// pop %rax
 	pushq (%rsp) # copy interrupt number to the correct location
-	jmp .ready
+	// jmp .ready
 x86_ISR_StubErr:
-	pop %rax # restore RAX from before we clobbered it to relative jump here
-.ready:
+	// pop %rax # restore RAX from before we clobbered it to relative jump here
 	cld
 	PUSHALL
 	mov %rsp, %rdi # Save start of struct as pointer in %rdi (first argument according to x86_64 SYSV ABI)
@@ -117,8 +112,7 @@ x86_ISR_StubErr:
 	mov %ax, %fs
 	mov %ax, %gs
 
-	leaq x86_ISR_Handler(%rip), %rax
-	call *%rax
+	call x86_ISR_Handler
 
 	movq %r12, %rsp # Restore stack pointer
 	mov $0x10, %rax # Segment selector for kernel code
@@ -127,8 +121,7 @@ x86_ISR_StubErr:
 	mov %ax, %fs
 	mov %ax, %gs
 	
-	leaq x86_PIC_SendEOI(%rip), %rax
-	call *%rax
+	call x86_PIC_SendEOI
 
 	POPALL
 	add $16, %rsp

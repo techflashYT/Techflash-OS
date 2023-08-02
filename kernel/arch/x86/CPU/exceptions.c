@@ -17,6 +17,8 @@ static void invalidOpcodeHandler(registers_t *regs) {panic("(#UD) Invalid Opcode
 	7 is "Device not available", which is used when an FPU instruction is executed but there is no FPU present.
 	This is simply impossible as the bootloader that this OS uses will not run on a CPU that is that old.
 */
+// FIXME: Implementing it anyways because it happened???
+static void deviceNotAvailableHandler(registers_t *regs) {panic("(#NM) Device Not Available", regs);}
 // 8
 static void doubleFaultHandler(registers_t *regs) {panic("(#DF) Double Fault", regs);}
 /*
@@ -64,6 +66,7 @@ void x86_Exceptions_Init() {
 	x86_ISR_RegisterHandler(4,  &overflowHandler);
 	x86_ISR_RegisterHandler(5,  &boundRangeExceededHandler);
 	x86_ISR_RegisterHandler(6,  &invalidOpcodeHandler);
+	x86_ISR_RegisterHandler(7,  &deviceNotAvailableHandler);
 	x86_ISR_RegisterHandler(8,  &doubleFaultHandler);
 	x86_ISR_RegisterHandler(11, &segmentNotPresetHandler);
 	x86_ISR_RegisterHandler(12, &stackSegmentFaultHandler);
