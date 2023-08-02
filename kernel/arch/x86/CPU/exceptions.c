@@ -1,6 +1,8 @@
 #include <kernel/panic.h>
 #include <kernel/arch/x86/ISR.h>
 #include <stdio.h>
+MODULE("X86INT");
+
 // 0
 static void zeroDivHandler(registers_t *regs) {panic("(#DE) Integer Division by Zero", regs);}
 // 1, 3
@@ -59,6 +61,7 @@ static void securityExceptionHandler(registers_t *regs) {panic("(#SX) Security E
 
 
 void x86_Exceptions_Init() {
+	log(MODNAME, "Initializing Exception Handlers", LOGLEVEL_INFO);
 	x86_ISR_RegisterHandler(0,  &zeroDivHandler);
 	x86_ISR_RegisterHandler(1,  &debugHandler);
 	x86_ISR_RegisterHandler(2,  &NMIHandler);
@@ -89,4 +92,5 @@ void x86_Exceptions_Init() {
 	x86_ISR_RegisterHandler(29, &VMMCommunicationExceptionHandler);
 	x86_ISR_RegisterHandler(30, &securityExceptionHandler);
 	x86_ISR_RegisterHandler(31, &reservedHandler);
+	log(MODNAME, "Done Initializing Exception Handlers!", LOGLEVEL_INFO);
 }
