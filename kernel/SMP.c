@@ -1,26 +1,12 @@
-#include <stddef.h>
-#include <external/limine.h>
-#include <stdio.h>
-volatile struct limine_smp_request smpRequest = {
-	.id = LIMINE_SMP_REQUEST,
-	.revision = 0,
-	.flags = 1 // FIXME: fix this so that I can use the x2apic without getting NULL back from limine
-};
+#include <kernel/bootloader.h>
+MODULE("SMP");
+extern void LM_SMP_Init();
+
+
 void SMP_Init() {
-	if (smpRequest.response == NULL) {
-		puts("Limine didn't give us a valid SMP response...\r\n");
+	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
+		LM_SMP_Init();
+		return;
 	}
-	else {
-		printf(
-			"SMP Response Info:\r\n"
-			"  - Response revision: %lu\r\n"
-			"  - Number of CPUs: %lu\r\n"
-			"  - Bootstrap Processor Local APIC ID: %u\r\n"
-			"  - X2APIC: %s\r\n",
-			smpRequest.response->revision,
-			smpRequest.response->cpu_count,
-			smpRequest.response->bsp_lapic_id,
-			(smpRequest.response->flags & 1) ? "Enabled" : "Disabled"
-		);
-	}
+	log(MODNAME, "Unknown Bootloader! not initializing SMP manually, since we don't really know the machine state.", LOGLEVEL_WARN);
 }

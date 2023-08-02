@@ -1,12 +1,15 @@
 #include <kernel/COM.h>
 #include <kernel/SMP.h>
 #include <kernel/tty.h>
+#include <kernel/mem.h>
 #include <kernel/arch.h>
+#include <kernel/bootloader.h>
+#include <stdio.h>
+
 
 void main() {
 	TTY_SetWriteFunc(COM_LogWrapper);
+	BOOT_CheckLoader();
 	SMP_Init();
 	ARCH_Init();
-	*(uint8_t *)0x000 = 0x10;
-	while (true) {}
 }
