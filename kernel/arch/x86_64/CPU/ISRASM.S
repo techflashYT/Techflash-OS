@@ -47,7 +47,7 @@ pop %r15
 .macro ISR_ERR num
 .align 8
    push $\num-128
-   jmp x86_ISR_StubNoErr
+   jmp x86_ISR_StubErr
 .align 8
 .endm
 
@@ -92,7 +92,7 @@ ISR_NOERR i
 .endr
 
 x86_ISR_StubNoErr:
-	// pushq (%rsp) # copy interrupt number to the correct location
+	pushq (%rsp) # copy interrupt number to the correct location
 x86_ISR_StubErr:
 	cld
 	PUSHALL
