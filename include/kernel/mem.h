@@ -9,6 +9,8 @@
 #define MM_TYPE_MMIO 3
 // Bootloader stuff, might be freeable, make sure to check flags
 #define MM_TYPE_BOOT 4
+// unknown, we have no idea what this is
+#define MM_TYPE_UNKN 0xFF
 
 // reclaimable memory
 #define MM_FLAG_RECLAIM  0x1

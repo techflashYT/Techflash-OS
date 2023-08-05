@@ -24,11 +24,12 @@ memmap_t *LM_ParseMemmap() {
 		     if (current->type == LIMINE_MEMMAP_USABLE)                 {memmap->entries[i].type = MM_TYPE_FREE;}
 		else if (current->type == LIMINE_MEMMAP_RESERVED)               {memmap->entries[i].type = MM_TYPE_RSRV;}
 		else if (current->type == LIMINE_MEMMAP_ACPI_RECLAIMABLE)       {memmap->entries[i].type = MM_TYPE_ACPI; memmap->entries[i].flags = MM_FLAG_RECLAIM;}
-		else if (current->type == LIMINE_MEMMAP_ACPI_NVS)               {memmap->entries[i].type = MM_TYPE_RSRV; memmap->entries[i].flags = MM_FLAG_READONLY;}
+		else if (current->type == LIMINE_MEMMAP_ACPI_NVS)               {memmap->entries[i].type = MM_TYPE_ACPI; memmap->entries[i].flags = MM_FLAG_READONLY;}
 		else if (current->type == LIMINE_MEMMAP_BAD_MEMORY)             {memmap->entries[i].type = MM_TYPE_RSRV; memmap->entries[i].flags = MM_FLAG_BAD_MEM;}
 		else if (current->type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE) {memmap->entries[i].type = MM_TYPE_BOOT; memmap->entries[i].flags = MM_FLAG_RECLAIM;}
 		else if (current->type == LIMINE_MEMMAP_KERNEL_AND_MODULES)     {memmap->entries[i].type = MM_TYPE_BOOT; memmap->entries[i].flags = MM_FLAG_KERNEL | MM_FLAG_MODULES;}
 		else if (current->type == LIMINE_MEMMAP_FRAMEBUFFER)            {memmap->entries[i].type = MM_TYPE_MMIO; memmap->entries[i].flags = MM_FLAG_FRAMEBUF;}
+		else                                                            {memmap->entries[i].type = MM_TYPE_UNKN;}
 	}
 	return memmap;
 }
