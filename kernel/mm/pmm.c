@@ -38,10 +38,10 @@ static void PMM_CalcSizeStr(char *sizeStr, size_t size) {
 	}
 	decimal = oldSize % 1024;
 	if (decimal > 0) {
-		snprintf(sizeStr, sizeof(sizeStr), "%ld.%02ld%c", size, (decimal * 100) / 1024, types[i]);
+		sprintf(sizeStr, "%ld.%ld%c", size, (decimal * 100) / 1024, types[i]);
 	}
 	else {
-		snprintf(sizeStr, sizeof(sizeStr), "%ld%c", size, types[i]);
+		sprintf(sizeStr, "%ld%c", size, types[i]);
 	}
 }
 
