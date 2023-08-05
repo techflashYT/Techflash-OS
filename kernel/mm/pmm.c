@@ -20,29 +20,29 @@ static memmap_t *BOOT_ParseMemmap() {
 }
 
 static void PMM_CalcSizeStr(char *sizeStr, size_t size) {
-	    uint_fast8_t i;
-		size_t oldSize, decimal;
-		char *types = "BKMGTP???";
-		for (i = 0; i != 6; i++) {
-			if ((size % 1024) == 0) {
-				oldSize = size;
-				size /= 1024;
-				continue;
-			}
-			if ((size / 1024) >= 10) {
-				oldSize = size;
-				size /= 1024;
-				continue;
-			}
-			break;
+	uint_fast8_t i;
+	size_t oldSize, decimal;
+	char *types = "BKMGTP???";
+	for (i = 0; i != 6; i++) {
+		if ((size % 1024) == 0) {
+			oldSize = size;
+			size /= 1024;
+			continue;
 		}
-		decimal = oldSize % 1024;
-		if (decimal > 0) {
-			snprintf(sizeStr, sizeof(sizeStr), "%ld.%02ld%c", size, (decimal * 100) / 1024, types[i]);
+		if ((size / 1024) >= 10) {
+			oldSize = size;
+			size /= 1024;
+			continue;
 		}
-		else {
-			snprintf(sizeStr, sizeof(sizeStr), "%ld%c", size, types[i]);
-		}
+		break;
+	}
+	decimal = oldSize % 1024;
+	if (decimal > 0) {
+		snprintf(sizeStr, sizeof(sizeStr), "%ld.%02ld%c", size, (decimal * 100) / 1024, types[i]);
+	}
+	else {
+		snprintf(sizeStr, sizeof(sizeStr), "%ld%c", size, types[i]);
+	}
 }
 
 void PMM_Init() {
@@ -81,7 +81,7 @@ void PMM_Init() {
 		if ((memmap->numEntries >= 10) && (i < 10)) {
 			space = " ";
 		}
-		sprintf(str, "Entry %d%s: %p - %p; %s; Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + memmap->entries[i].size / 100, sizeStr, typeStr);
+		sprintf(str, "Entry %d%s: %p - %p; %s; Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + memmap->entries[i].size, sizeStr, typeStr);
 		log(MODNAME, str, LOGLEVEL_DEBUG);
 	}
 }
