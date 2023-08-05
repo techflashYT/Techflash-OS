@@ -67,6 +67,8 @@ void PMM_Init() {
 	char str[128];
 	uint64_t usable = 0;
 	char sizeStr[16];
+	uint_fast8_t usableIdx = 0;
+	int usableRegions[16];
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
@@ -111,6 +113,8 @@ void PMM_Init() {
 
 		if (memmap->entries[i].type == MM_TYPE_FREE) {
 			usable += memmap->entries[i].size;
+			usableRegions[usableIdx] = i;
+			usableIdx++;
 		}
 
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + size, sizeStr, typeStr);
