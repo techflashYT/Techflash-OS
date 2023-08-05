@@ -4,6 +4,10 @@
 .noSSEstr: .asciz "No SSE Support!!  Hanging...\r\n"
 .noSSEstrEnd:
 
+.section .bss
+mxcsr:
+.long 0
+
 .section .text
 x86_SSE_Init:
 	mov $0x1, %eax
@@ -12,15 +16,20 @@ x86_SSE_Init:
 	jz .noSSE
 	# SSE is available
 
-	mov %cr0, %rax
-	and $0xFFFB, %ax	# clear coprocessor emulation CR0.EM
-	or $0x2, %ax		# set coprocessor monitoring  CR0.MP
-	mov %rax, %cr0
 	mov %cr4, %rax
-	or $3 << 9, %ax		# set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	or $0x600, %ax		# set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
 	mov %rax, %cr4
 
 	fninit
+	mov %cr0, %rax
+	and $0xFFFB, %ax	# clear coprocessor emulation CR0.EM
+	or $0x2, %ax		# set coprocessor monitoring  CR0.MP	
+	mov %rax, %cr0
+
+	// stmxcsr mxcsr
+	mov $0x1F80, mxcsr
+	ldmxcsr mxcsr
+
 
 	mov $0x00, %rax
 	ret
@@ -31,7 +40,7 @@ x86_SSE_Init:
 	#ifdef __x86_64__
 		leaq .noSSEstr(%rip), %rsi
 	#else
-		leaq .noSSEstr(%rip), %esi
+		leaq .noSSEstr(%eip), %esi
 	#endif
 
 .loop:

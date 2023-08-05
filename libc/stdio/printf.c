@@ -51,24 +51,24 @@
 // 1. Some compilers are finicky about this;
 // 2. Some people may want to convert this to C89;
 // 3. If you try to use it as C++, only C++20 supports compound literals
-static inline double_with_bit_access getBitAccess(double x) {
-	double_with_bit_access dwba;
-	dwba.F = x;
-	return dwba;
-}
+// static inline double_with_bit_access getBitAccess(double x) {
+	// double_with_bit_access dwba;
+	// dwba.F = x;
+	// return dwba;
+// }
 
-static inline int getSignBit(double x) {
+// static inline int getSignBit(double x) {
 	// The sign is stored in the highest bit
-	return (int) (getBitAccess(x).U >> (DOUBLE_SIZE_IN_BITS - 1));
-}
+	// return (int) (getBitAccess(x).U >> (DOUBLE_SIZE_IN_BITS - 1));
+// }
 
-static inline int getExp2(double_with_bit_access x) {
+// static inline int getExp2(double_with_bit_access x) {
 	// The exponent in an IEEE-754 floating-point number occupies a contiguous
 	// sequence of bits (e.g. 52..62 for 64-bit doubles), but with a non-trivial representation: An
 	// unsigned offset from some negative value (with the extremal offset values reserved for
 	// special use).
-	return (int)((x.U >> DOUBLE_STORED_MANTISSA_BITS ) & DOUBLE_EXPONENT_MASK) - DOUBLE_BASE_EXPONENT;
-}
+	// return (int)((x.U >> DOUBLE_STORED_MANTISSA_BITS ) & DOUBLE_EXPONENT_MASK) - DOUBLE_BASE_EXPONENT;
+// }
 // Note: This function currently assumes it is not passed a '\0' c,
 // or alternatively, that '\0' can be passed to the function in the output
 // gadget. The former assumption holds within the printf library. It also
