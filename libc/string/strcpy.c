@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 char* strcpy(char* destination, const char* source) {
 	// return if no memory is allocated to the destination
 	if (destination == NULL) {

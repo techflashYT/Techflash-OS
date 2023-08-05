@@ -7,6 +7,7 @@ x86_GDT_Flush:
 	movw %ax, %fs
 	movw %ax, %gs
 	movw %ax, %ss
+	
 	pushq $0x08   // push CS
 	pushq 8(%rsp) // push return address
-	retfq $0x08   // return there, clearing old address
+	lretq $0x08   // return there, clearing old address

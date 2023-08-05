@@ -4,8 +4,8 @@
 
 MODULE("X86INT");
 
-static x86_GDT_Entry64_t gdtEntries[5];
 static x86_GDT_Ptr64_t   gdtPtr;
+static x86_GDT_Entry64_t gdtEntries[5];
 static void x86_GDT_SetGate(int32_t num, uint64_t base, uint32_t limit, uint8_t access, uint8_t gran) {
 	(void)num;
 	gdtEntries[num].baseLow = (base & 0xFFFF);
@@ -76,6 +76,7 @@ void x86_IDT_Init() {
 	}
 
 
-	asm("lidt (x86_IDT_Descriptor)");
+	uint64_t junk;
+	asm("leaq x86_IDT_Descriptor(%%rip), %0; lidt (%0)" : "=a"(junk));
 	log(MODNAME, "IDT Loaded!", LOGLEVEL_INFO);
 }

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 int atoi(const char *nptr) {
 	// Initialize result
 	int res = 0;

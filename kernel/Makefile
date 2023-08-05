@@ -9,6 +9,8 @@ $(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)
 CC=$(HOSTCC)
 endif
 
+CC=clang -target x86_64-unknown-none
+
 
 LIBS=-lc
 

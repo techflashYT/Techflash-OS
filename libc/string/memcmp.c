@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include <stddef.h>
 int memcmp(const void *s1, const void *s2, size_t len) {
 	const uint8_t *p = s1;
@@ -10,7 +11,7 @@ int memcmp(const void *s1, const void *s2, size_t len) {
 	}
 	while (len > 0) {
 		if (*p != *q) {
-			// compare the mismatching character
+		// compare the mismatching character
 			charCompareStatus = (*p > *q) ? 1 : -1;
 			break;
 		}

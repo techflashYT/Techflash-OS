@@ -20,7 +20,7 @@ char *itoa(int_fast64_t value, char* result, uint_fast8_t base) {
 	}
 
 	char* ptr = result, *ptr1 = result, tmp_char;
-	long tmpVal;
+	long tmpVal = 0;
 	while (value) {
 		tmpVal = value;
 		value /= base;

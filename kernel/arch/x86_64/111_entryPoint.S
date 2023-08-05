@@ -9,8 +9,8 @@ _start:
 	lea x86_COM_Init(%rip), %rax
 	call *%rax
 
-	lea x86_SSE_Init(%rip), %rax
-	call *%rax
+	// lea x86_SSE_Init(%rip), %rax
+	// call *%rax
 
 	lea main(%rip), %rax
 	call *%rax

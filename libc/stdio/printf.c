@@ -40,7 +40,6 @@
 	NOTE: This code has been modified from the original.
 	For the original file, please see https://github.com/eyalroz/printf/blob/master/src/printf/printf.c
 */
-#pragma GCC optimize("O0")
 #include <stdint.h>
 #include <limits.h>
 #include <stdbool.h>

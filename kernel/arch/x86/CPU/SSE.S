@@ -1,10 +1,10 @@
-.global x86_SSE_Init
+/*.global x86_SSE_Init
 .type x86_SSE_Init,@function
 .section .rodata
 .noSSEstr: .asciz "No SSE Support!!  Hanging...\r\n"
 .noSSEstrEnd:
 
-.section .bss
+.section .data
 mxcsr:
 .long 0
 
@@ -27,7 +27,7 @@ x86_SSE_Init:
 	mov %rax, %cr0
 
 	// stmxcsr mxcsr
-	mov $0x1F80, mxcsr
+	movl $0x1F80, mxcsr
 	ldmxcsr mxcsr
 
 
@@ -65,3 +65,4 @@ x86_SSE_Init:
 	lea .halt(%rip), %rbx
 	jmp *%rbx
 
+*/

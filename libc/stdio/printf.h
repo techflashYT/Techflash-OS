@@ -2,14 +2,10 @@
 
 #include <stdarg.h>
 #include <stddef.h>
-
-#ifdef __GNUC__
-	#define ATTR_PRINTF(one_based_format_index, first_arg) __attribute__((format(gnu_printf, (one_based_format_index), (first_arg))))
-	#define ATTR_VPRINTF(one_based_format_index) ATTR_PRINTF((one_based_format_index), 0)
-#else
-	#define ATTR_PRINTF(one_based_format_index, first_arg)
-	#define ATTR_VPRINTF(one_based_format_index)
-#endif
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <ctype.h>
 
 // If you want to include this implementation file directly rather than
 // link against, this will let you control the functions' visibility,
@@ -242,7 +238,3 @@ typedef struct {
 	printfSize_t pos;
 	printfSize_t max_chars;
 } outputGadget_t;
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
