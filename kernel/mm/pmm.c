@@ -44,12 +44,29 @@ static void PMM_CalcSizeStr(char *sizeStr, size_t size) {
 		sprintf(sizeStr, "%ld%c", size, types[i]);
 	}
 }
+static char *typeStrs[] = {
+	"Usable",
+	"Reserved",
+	"ACPI",
+	"Memory Mapped I/O",
+	"Bootloader",
+};
 
+static char *flagsStrs[] = {
+	"Reclaimable",
+	"Bad Memory",
+	"Read Only",
+	"Framebuffer",
+	"Kernel",
+	"Modules",
+};
 void PMM_Init() {
 	log(MODNAME, "PMM Initializing", LOGLEVEL_INFO);
 	log(MODNAME, "Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
 	char str[128];
+	uint64_t usable = 0;
+	char sizeStr[16];
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
@@ -71,17 +88,35 @@ void PMM_Init() {
 		- Calculate the size, adding the suffix of `B` (bytes), `K` (KB), `M` (MB), `G`, (GB), `T`, (TB), `P`, (PB). 
 		*/
 		uint64_t size = memmap->entries[i].size;
-		char sizeStr[16];
-		char *typeStr = "typeStr";
+		char typeStr[128];
+		strcpy(typeStr, typeStrs[memmap->entries[i].type]);
 
 		// Make size & type strings
 		PMM_CalcSizeStr(sizeStr, size);
+		strcat(sizeStr, ";");
+
+
+		for (uint_fast8_t j = 0; j != 6; j++) {
+			if (memmap->entries[i].flags & (1 << j)) {
+				strcat(typeStr, " (");
+				strcat(typeStr, flagsStrs[j]);
+				strcat(typeStr, ")");
+			}
+		}
 
 		char *space = "";
 		if ((memmap->numEntries >= 10) && (i < 10)) {
 			space = " ";
 		}
-		sprintf(str, "Entry %d%s: %p - %p; %s; Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + memmap->entries[i].size, sizeStr, typeStr);
+
+		if (memmap->entries[i].type == MM_TYPE_FREE) {
+			usable += memmap->entries[i].size;
+		}
+
+		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + size, sizeStr, typeStr);
 		log(MODNAME, str, LOGLEVEL_DEBUG);
 	}
+	PMM_CalcSizeStr(sizeStr, usable);
+	sprintf(str, "Total usable memory: %s", sizeStr);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
 }
