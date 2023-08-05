@@ -64,7 +64,6 @@ static char *flagsStrs[] = {
 void PMM_Init() {
 	log(MODNAME, "PMM Initializing", LOGLEVEL_INFO);
 	log(MODNAME, "Getting memory map from bootloader...", LOGLEVEL_DEBUG);
-	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
 	char str[128];
 	uint64_t usable = 0;
 	char sizeStr[16];
@@ -74,22 +73,10 @@ void PMM_Init() {
 	memmap_t *memmap = BOOT_ParseMemmap();
 
 	sprintf(str, "Got memory map with %lu entries at %p", memmap->numEntries, memmap);
+	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {
-		/* TODO: Make size & type strings with the following logic:
-		- `(size % 1024) == 0`
-			- YES, Cleanly divisible by 1024, just divide by 1024 and repeat the loop
-			- NO, Not cleanly divisible by 1024, continue below
-		- `(size / 1024) >= 10`
-			- YES, dividing by 1024 gives a number greater than 10, just divide by 1024 and repeat the loop, keeping track of the decimal portion of the number.
-			- NO, dividing by 1024 gives a number less than 10, continue below
-		- Is the number a clean integer, with no remaining decimal places?  (e.g. 10)
-			- YES, treat it as a basic integer, don't include the decimal portion in the string.
-			- NO, it's a decimal number, include the decimal portion in the string
-		- By this point, the current state of the number should be: Greater than 10, less than 1024, either a decimal number, or standard integer.
-		- Calculate the size, adding the suffix of `B` (bytes), `K` (KB), `M` (MB), `G`, (GB), `T`, (TB), `P`, (PB). 
-		*/
 		uint64_t size = memmap->entries[i].size;
 		char typeStr[128];
 		strcpy(typeStr, typeStrs[memmap->entries[i].type]);
