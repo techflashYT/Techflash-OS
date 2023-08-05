@@ -1,4 +1,3 @@
-#include <external/limine.h>
 #include <kernel/mem.h>
 #include <kernel/bootloader.h>
 #include <kernel/registers.h>
@@ -65,8 +64,8 @@ void PMM_Init() {
 	log(MODNAME, "PMM Initializing", LOGLEVEL_INFO);
 	log(MODNAME, "Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	char str[128];
-	uint64_t usable = 0;
 	char sizeStr[16];
+	uint64_t usable = 0;
 	uint_fast8_t usableIdx = 0;
 	int usableRegions[16] = {0xFFFF};
 
@@ -77,35 +76,28 @@ void PMM_Init() {
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {
-		uint64_t size = memmap->entries[i].size;
 		char typeStr[128];
-		strcpy(typeStr, typeStrs[memmap->entries[i].type]);
+		memmapEntry_t cur = memmap->entries[i];
 
 		// Make size & type strings
-		PMM_CalcSizeStr(sizeStr, size);
+		PMM_CalcSizeStr(sizeStr, cur.size);
 		strcat(sizeStr, ";");
 
-
+		strcpy(typeStr, typeStrs[cur.type]);
 		for (uint_fast8_t j = 0; j != 6; j++) {
-			if (memmap->entries[i].flags & (1 << j)) {
-				strcat(typeStr, " (");
-				strcat(typeStr, flagsStrs[j]);
-				strcat(typeStr, ")");
-			}
+			if (cur.flags & (1 << j)) {sprintf(typeStr + strlen(typeStr), " (%s)", flagsStrs[j]);}
 		}
-
+		
 		char *space = "";
-		if ((memmap->numEntries >= 10) && (i < 10)) {
-			space = " ";
-		}
+		if ((memmap->numEntries >= 10) && (i < 10)) {space = " ";}
 
-		if (memmap->entries[i].type == MM_TYPE_FREE) {
-			usable += memmap->entries[i].size;
+		if (cur.type == MM_TYPE_FREE) {
+			usable += cur.size;
 			usableRegions[usableIdx] = i;
 			usableIdx++;
 		}
 
-		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, memmap->entries[i].start, memmap->entries[i].start + size, sizeStr, typeStr);
+		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
 		log(MODNAME, str, LOGLEVEL_DEBUG);
 	}
 	PMM_CalcSizeStr(sizeStr, usable);
@@ -116,9 +108,7 @@ void PMM_Init() {
 	bool first = true;
 	for (uint_fast8_t i = 0; i != usableIdx; i++) {
 		if (!first) {strcat(str, ", ");}
-		char tmp[8];
-		sprintf(tmp, "%d", usableRegions[i]);
-		strcat(str, tmp);
+		sprintf(str + strlen(str), "%d", usableRegions[i]);
 		first = false;
 	}
 	log(MODNAME, str, LOGLEVEL_DEBUG);
