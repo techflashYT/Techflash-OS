@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 void *memcpy(void *dest, const void *src, size_t n) {
 	assert((n != 0));

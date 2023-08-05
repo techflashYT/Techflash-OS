@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stddef.h>
-#include <string.h>
 #include <assert.h>
 
 void *memmove(void *dest, const void *src, size_t n) {

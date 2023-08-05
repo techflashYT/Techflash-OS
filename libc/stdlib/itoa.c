@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdlib.h>
 #include <limits.h>
 /*
 	Based on "C++ version 0.4 char* style itoa"

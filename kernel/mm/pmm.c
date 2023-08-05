@@ -21,7 +21,8 @@ static memmap_t *BOOT_ParseMemmap() {
 
 static void PMM_CalcSizeStr(char *sizeStr, size_t size) {
 	uint_fast8_t i;
-	size_t oldSize, decimal;
+	size_t oldSize = 0;
+	size_t decimal = 0;
 	char *types = "BKMGTP???";
 	for (i = 0; i != 6; i++) {
 		if ((size % 1024) == 0) {
@@ -72,7 +73,7 @@ void PMM_Init() {
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
-	sprintf(str, "Got memory map with %d entries at %p", memmap->numEntries, memmap);
+	sprintf(str, "Got memory map with %lu entries at %p", memmap->numEntries, memmap);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {

@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 // Thanks to https://github.com/Mathewnd for this code!
 char *utoa(uint_fast64_t value, volatile char* result, uint_fast8_t base) {

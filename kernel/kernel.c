@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-void main() {
+void __attribute__((noreturn)) main() {
 	TTY_SetWriteFunc(COM_LogWrapper);
 	BOOT_CheckLoader();
 	SMP_Init();

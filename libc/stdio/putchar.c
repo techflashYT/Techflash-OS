@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <kernel/tty.h>
 int putchar(const int ch) {
 	/*

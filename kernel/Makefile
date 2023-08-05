@@ -9,7 +9,7 @@ $(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)
 CC=$(HOSTCC)
 endif
 
-CC=clang -target x86_64-unknown-none
+CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier
 
 
 LIBS=-lc

@@ -26,14 +26,16 @@
 #define MM_FLAG_MODULES  0x20
 
 
+// these are the types they are to allow for proper alignment
 typedef struct {
-	uint8_t type;
-	uint8_t flags;
-	void   *start;
-	size_t  size;
+	uint32_t type;
+	uint32_t flags;
+	void    *start;
+	size_t   size;
 } memmapEntry_t;
+
 typedef struct {
-	uint8_t numEntries;
+	uint64_t numEntries;
 	memmapEntry_t entries[];
 } memmap_t;
 
