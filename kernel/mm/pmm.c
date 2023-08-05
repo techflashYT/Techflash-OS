@@ -69,7 +69,7 @@ void PMM_Init() {
 	uint64_t usable = 0;
 	char sizeStr[16];
 	uint_fast8_t usableIdx = 0;
-	int usableRegions[16];
+	int usableRegions[16] = {0xFFFF};
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
@@ -123,5 +123,16 @@ void PMM_Init() {
 	}
 	PMM_CalcSizeStr(sizeStr, usable);
 	sprintf(str, "Total usable memory: %s", sizeStr);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
+	
+	strcpy(str, "Usable regions: ");
+	bool first = true;
+	for (uint_fast8_t i = 0; i != usableIdx; i++) {
+		if (!first) {strcat(str, ", ");}
+		char tmp[8];
+		sprintf(tmp, "%d", usableRegions[i]);
+		strcat(str, tmp);
+		first = false;
+	}
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 }
