@@ -45,27 +45,20 @@ static void PMM_CalcSizeStr(char *sizeStr, size_t size) {
 	}
 }
 static char *typeStrs[] = {
-	"Usable",
-	"Reserved",
-	"ACPI",
-	"Memory Mapped I/O",
-	"Bootloader",
+	"Usable", "Reserved", "ACPI",
+	"Memory Mapped I/O", "Bootloader",
 };
 
 static char *flagsStrs[] = {
-	"Reclaimable",
-	"Bad Memory",
-	"Read Only",
-	"Framebuffer",
-	"Kernel",
-	"Modules",
+	"Reclaimable", "Bad Memory", "Read Only",
+	"Framebuffer", "Kernel", "Modules",
 };
 void PMM_Init() {
 	log(MODNAME, "PMM Initializing", LOGLEVEL_INFO);
 	log(MODNAME, "Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	char str[128];
 	char sizeStr[16];
-	uint64_t usable = 0;
+	uint64_t totalUsableBytes = 0;
 	uint_fast8_t usableIdx = 0;
 	int usableRegions[16] = {0xFFFF};
 
@@ -92,7 +85,7 @@ void PMM_Init() {
 		if ((memmap->numEntries >= 10) && (i < 10)) {space = " ";}
 
 		if (cur.type == MM_TYPE_FREE) {
-			usable += cur.size;
+			totalUsableBytes += cur.size;
 			usableRegions[usableIdx] = i;
 			usableIdx++;
 		}
@@ -100,7 +93,7 @@ void PMM_Init() {
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
 		log(MODNAME, str, LOGLEVEL_DEBUG);
 	}
-	PMM_CalcSizeStr(sizeStr, usable);
+	PMM_CalcSizeStr(sizeStr, totalUsableBytes);
 	sprintf(str, "Total usable memory: %s", sizeStr);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 	
