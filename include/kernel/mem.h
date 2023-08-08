@@ -41,3 +41,7 @@ typedef struct {
 
 
 extern void PMM_Init();
+
+
+#define PAGE_SIZE 4096
+#define ALIGN_PAGE(x) ((x + 4095) / 4096)

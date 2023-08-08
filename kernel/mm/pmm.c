@@ -105,4 +105,32 @@ void PMM_Init() {
 		first = false;
 	}
 	log(MODNAME, str, LOGLEVEL_DEBUG);
+
+	uint64_t bitmapPages = ALIGN_PAGE(totalUsableBytes);
+	sprintf(str, "Making bitmap of size %lu pages (%lu bytes)", bitmapPages, bitmapPages / 8);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
+
+	log(MODNAME, "Finding the smallest region big enough to hold the bitmap...", LOGLEVEL_DEBUG);
+	int bitmapRegion = -1;
+	
+	for (uint_fast8_t i = 0; i < usableIdx; i++) {
+		int regionIndex = usableRegions[i];
+		if (memmap->entries[regionIndex].size >= (bitmapPages / 8)) {
+			if (bitmapRegion == -1 || memmap->entries[regionIndex].size < memmap->entries[usableRegions[bitmapRegion]].size) {
+				bitmapRegion = i;
+			}
+		}
+	}
+	
+	if (bitmapRegion == -1) {
+		registers_t regs;
+		DUMPREGS(&regs);
+		log(MODNAME, "Couldn't find a region big enough to hold the bitmap!", LOGLEVEL_FATAL);
+		panic("All memory regions too small to hold bitmap", &regs);
+	}
+
+	sprintf(str, "Found region %d, initializing bitmap on it.", usableRegions[bitmapRegion]);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
+
+	
 }
