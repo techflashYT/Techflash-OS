@@ -150,4 +150,5 @@ void PMM_Init() {
 	for (uint8_t i = 0; i != numBitmapData; i++) {
 		// TODO: set bitmapData info
 	}
+	(void)bitmapData;
 }
