@@ -1,10 +1,7 @@
-HOSTCC=$(shell command -v gcc 2> /dev/null)
-ifeq ($(HOSTCC),)
 HOSTCC=$(shell command -v clang 2> /dev/null)
-endif
 
 ifeq ($(HOSTCC),)
-$(error [31mNo C compiler found. Please install gcc or clang.[0m)
+$(error [31mNo C compiler found. Please install clang.[0m)
 endif
 
 $(info Using $(HOSTCC) as the host C compiler)

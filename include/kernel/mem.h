@@ -45,3 +45,8 @@ extern void PMM_Init();
 
 #define PAGE_SIZE 4096
 #define ALIGN_PAGE(x) ((x + 4095) / 4096)
+
+
+typedef struct {
+	uint8_t tmp;
+} bitmapData_t;

@@ -12,6 +12,7 @@
                 "CONFIG_KERN_VERSION_MINOR=1",
                 "CONFIG_KERN_VERSION_PATCH=0",
                 "CONFIG_KERN_MAXARGS=250",
+                "CONFIG_KERN_MAX_BITMAPDATA=16",
                 "bool=_Bool",
                 "true=1",
                 "false=0"

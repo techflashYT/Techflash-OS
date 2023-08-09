@@ -10,6 +10,11 @@ MODULE("PMM");
 static uint8_t *bitmap;
 
 
+
+static bitmapData_t bitmapData[CONFIG_KERN_MAX_BITMAPDATA];
+static uint8_t numBitmapData = 0;
+
+
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
@@ -125,6 +130,7 @@ void PMM_Init() {
 				bitmapRegion = i;
 			}
 		}
+		numBitmapData++;
 	}
 	
 	if (bitmapRegion == -1) {
@@ -138,4 +144,10 @@ void PMM_Init() {
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	bitmap = memmap->entries[usableRegions[bitmapRegion]].start;
+	sprintf(str, "bitmap address: %p", bitmap);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
+
+	for (uint8_t i = 0; i != numBitmapData; i++) {
+		// TODO: set bitmapData info
+	}
 }

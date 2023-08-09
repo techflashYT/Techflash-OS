@@ -7,6 +7,7 @@ CC=$(shell command -v $(ARCH)-elf-gcc 2> /dev/null)
 ifeq ($(strip $(CC)),)
 $(warning [1;33mCross compiler not detected.  Using system compiler, $(HOSTCC)[0m)
 CC=$(HOSTCC)
+LD=ld.lld
 endif
 
 CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier
@@ -14,7 +15,7 @@ CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier
 
 LIBS=-lc
 
-LDFLAGS=-L../lib -TlinkerScript.ld -fpie
+LDFLAGS=-L../lib -TlinkerScript.ld
 WARN=-Wall -Wextra -Wno-pedantic -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
 FEAT=-ffreestanding -fpie
 INCLUDES=-imacros misc/defines.h -include kernel/log.h
@@ -23,6 +24,8 @@ ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32
 endif
+
+include ../.config
 
 $(info Using $(CC) as the kernel C compiler)
 
@@ -47,7 +50,7 @@ all: ../bin/tfos_kernel.elf
 ../bin/tfos_kernel.elf: $(OBJFILES)
 	@mkdir -p $(@D)
 	@$(info LD    $(patsubst ../build/kernel/%.o,%.o,$^) $(foreach lib,$(subst -l,lib,$(LIBS)),$(lib).a) ==> $(patsubst ../bin/%,%,$@))
-	@$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
+	@$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 ../build/kernel/%.o: %.c
 	@mkdir -p $(@D)
