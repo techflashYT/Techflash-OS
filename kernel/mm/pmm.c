@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 MODULE("PMM");
+
+static uint8_t *bitmap;
+
+
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
@@ -65,8 +69,9 @@ void PMM_Init() {
 	memmap_t *memmap = BOOT_ParseMemmap();
 
 	sprintf(str, "Got memory map with %lu entries at %p", memmap->numEntries, memmap);
-	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
+	
+	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
 
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {
 		char typeStr[128];
@@ -132,5 +137,5 @@ void PMM_Init() {
 	sprintf(str, "Found region %d, initializing bitmap on it.", usableRegions[bitmapRegion]);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
-	
+	bitmap = memmap->entries[usableRegions[bitmapRegion]].start;
 }
