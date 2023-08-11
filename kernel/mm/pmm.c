@@ -148,7 +148,13 @@ void PMM_Init() {
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	for (uint8_t i = 0; i != numBitmapData; i++) {
-		// TODO: set bitmapData info
+		bitmapData[i].basePtr = memmap->entries[usableRegions[i]].start;
+		bitmapData[i].endingBit = memmap->entries[usableRegions[i]].size / PAGE_SIZE;
+		for (int j = i - 1; j > 0; j--) {
+			bitmapData[i].endingBit += bitmapData[j].endingBit;
+		}
+		printf("bitmapData[%d] = {.basePtr = %p, .endingBit = %lu}\n", i, bitmapData[i].basePtr, bitmapData[i].endingBit);
 	}
 	(void)bitmapData;
+
 }

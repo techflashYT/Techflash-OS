@@ -47,6 +47,8 @@ extern void PMM_Init();
 #define ALIGN_PAGE(x) ((x + 4095) / 4096)
 
 
+// this is enough info to calculate the start and end of each chunk of memory in terms of both address space, as well as bitmap bits.
 typedef struct {
-	uint8_t tmp;
+	void *basePtr;
+	size_t endingBit;
 } bitmapData_t;
