@@ -8,7 +8,7 @@
 MODULE("PMM");
 
 static uint8_t *bitmap;
-
+static size_t   bitmapPages;
 
 
 static bitmapData_t bitmapData[CONFIG_KERN_MAX_BITMAPDATA];
@@ -116,7 +116,7 @@ void PMM_Init() {
 	}
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
-	uint64_t bitmapPages = ALIGN_PAGE(totalUsableBytes);
+	bitmapPages = ALIGN_PAGE(totalUsableBytes);
 	sprintf(str, "Making bitmap of size %lu pages (%lu bytes)", bitmapPages, bitmapPages / 8);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
@@ -152,16 +152,24 @@ void PMM_Init() {
 		size_t size = memmap->entries[usableRegions[i]].size;
 
 		bitmapData[i].basePtr = memmap->entries[usableRegions[i]].start;
-
-		if (usableRegions[i] == bitmapRegion) {
-			bitmapData[i].basePtr = (void *)(ALIGN_PAGE(((size_t)bitmap + bitmapPages / 8)) * 4096);
-			size -= bitmapPages / 8;
-		}
 		bitmapData[i].endingBit = size / PAGE_SIZE;
+
+		// if (usableRegions[i] == bitmapRegion) {
+			// bitmapData[i].basePtr = (void *)(ALIGN_PAGE(((size_t)bitmap + bitmapPages / 8)) * 4096);
+			// size -= bitmapPages / 8;
+		// }
 
 		for (int j = i - 1; j > 0; j--) {
 			bitmapData[i].endingBit += bitmapData[j].endingBit;
 		}
-		printf("bitmapData[%d] = {.basePtr = %p, .endingBit = %lu}\n", i, bitmapData[i].basePtr, bitmapData[i].endingBit);
+		sprintf(str, "bitmapData[%d] = {.basePtr = %p, .endingBit = %lu}", i, bitmapData[i].basePtr, bitmapData[i].endingBit);
+		log(MODNAME, str, LOGLEVEL_VERBOSE);
 	}
+
+	log(MODNAME, "Bitmap Data saved.  Setting all pages to free...", LOGLEVEL_DEBUG);
+	memset(bitmap, 0x00, bitmapPages / 8);
+	log(MODNAME, "Done.  Setting bitmap pages to used...", LOGLEVEL_DEBUG);
+	memset(bitmap, 0xFF, ALIGN_PAGE(bitmapPages / 8));
+
+	log(MODNAME, "PMM Initialized!", LOGLEVEL_INFO);
 }
