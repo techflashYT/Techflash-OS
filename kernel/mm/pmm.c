@@ -140,21 +140,28 @@ void PMM_Init() {
 		panic("All memory regions too small to hold bitmap", &regs);
 	}
 
-	sprintf(str, "Found region %d, initializing bitmap on it.", usableRegions[bitmapRegion]);
+	bitmapRegion = usableRegions[bitmapRegion];
+	sprintf(str, "Found region %d, initializing bitmap on it.", bitmapRegion);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
-	bitmap = memmap->entries[usableRegions[bitmapRegion]].start;
+	bitmap = memmap->entries[bitmapRegion].start;
 	sprintf(str, "bitmap address: %p", bitmap);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 
 	for (uint8_t i = 0; i != numBitmapData; i++) {
+		size_t size = memmap->entries[usableRegions[i]].size;
+
 		bitmapData[i].basePtr = memmap->entries[usableRegions[i]].start;
-		bitmapData[i].endingBit = memmap->entries[usableRegions[i]].size / PAGE_SIZE;
+
+		if (usableRegions[i] == bitmapRegion) {
+			bitmapData[i].basePtr = (void *)(ALIGN_PAGE(((size_t)bitmap + bitmapPages / 8)) * 4096);
+			size -= bitmapPages / 8;
+		}
+		bitmapData[i].endingBit = size / PAGE_SIZE;
+
 		for (int j = i - 1; j > 0; j--) {
 			bitmapData[i].endingBit += bitmapData[j].endingBit;
 		}
 		printf("bitmapData[%d] = {.basePtr = %p, .endingBit = %lu}\n", i, bitmapData[i].basePtr, bitmapData[i].endingBit);
 	}
-	(void)bitmapData;
-
 }
