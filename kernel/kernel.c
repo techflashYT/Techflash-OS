@@ -5,6 +5,7 @@
 #include <kernel/arch.h>
 #include <kernel/bootloader.h>
 #include <stdio.h>
+#include <string.h>
 
 
 void __attribute__((noreturn)) main() {
@@ -14,6 +15,12 @@ void __attribute__((noreturn)) main() {
 	ARCH_Init();
 	PMM_Init();
 
+
+	puts("Testing PMM!\r\n");
+
+	void *ptr = PMM_Alloc(5);
+	printf("Recieved pointer: %p\r\n", ptr);
+	memset(ptr, 0xA5, 5 * 4096);
 	puts("Kernel execution done.  Hanging.\r\n");
 	while (true) {asm ("cli; hlt");}
 }

@@ -7,6 +7,8 @@
 #include <string.h>
 MODULE("PMM");
 
+
+// NOTE: In the bitmap, 0 means free, 1 means used.
 static uint8_t *bitmap;
 static size_t   bitmapPages;
 
@@ -14,6 +16,40 @@ static size_t   bitmapPages;
 static bitmapData_t bitmapData[CONFIG_KERN_MAX_BITMAPDATA];
 static uint8_t numBitmapData = 0;
 
+
+static bool PMM_CheckBitmapSet(size_t byteOffset, uint_fast8_t bitOffset) {
+	return (bitmap[byteOffset] & (1 << bitOffset));
+}
+
+static void *PMM_BitmapToAddress(size_t byteOffset, uint_fast8_t bitOffset) {
+	// use bitmapData struct to find the address of the bit in the bitmap
+	/* STEPS:
+		1. Find the first entry where our bit is higher than the .endingBit value
+		2. Use the previous entry, since it's somewhere in there
+		3. Figure out the starting bit of that entry with the following logic:
+			- if the entry number is 0, the starting bit is 0
+			- if the entry number is greater than 0, the starting bit is the .endingBit value of the previous entry + 1.
+		4. Figure out the starting bit + the offset in bits, converted to an offset in address (multiple by 8 * 4096)
+		5. Return that address
+	*/
+	int entryIndex = 0;
+	while (entryIndex < CONFIG_KERN_MAX_BITMAPDATA && bitmapData[entryIndex].endingBit < bitOffset) {
+		entryIndex++;
+	}
+
+	if (entryIndex > 0) {
+		entryIndex--;
+	}
+
+	size_t startingBit = 0;
+	if (entryIndex != 0) {
+		startingBit = bitmapData[entryIndex - 1].endingBit + 1;
+	}
+
+	size_t startingOffset = (startingBit + bitOffset) * (8 * 4096);
+
+	return (void *)(byteOffset + startingOffset);
+}
 
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -172,4 +208,39 @@ void PMM_Init() {
 	memset(bitmap, 0xFF, ALIGN_PAGE(bitmapPages / 8));
 
 	log(MODNAME, "PMM Initialized!", LOGLEVEL_INFO);
+}
+
+void *PMM_Alloc(size_t pages) {
+	if (pages == 0) {
+		log(MODNAME, "Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
+		return NULL;
+	}
+	/*
+		TODO: the requirement for contiguous memory here is bad.
+		Find a way to allow piecing together different chunks of memory, probably using paging.
+	*/
+	// find a section of memory that is at least `pages` long (each bit of the bitmap represents 1 page)
+	
+	// find the first bit in the bitmap that isn't set
+	size_t freeSize = 0;
+	for (size_t i = 0; i != bitmapPages / 8; i++) {
+		for (uint_fast8_t j = 0; j != 8; j++) {
+			if (!PMM_CheckBitmapSet(i, j)) {
+				// hey we found a free page!
+				freeSize++;
+				// have we found enough free pages yet?
+				if (freeSize == pages) {
+					// YES!  Return the memory we found.
+					return PMM_BitmapToAddress(i, j);
+				}
+				continue;
+			}
+			// this page was used.  Set freeSize to 0 so we can keep going until we find the next block.
+			freeSize = 0;
+		}
+	}
+	// we ran out of pages in the bitmap without finding a chunk of free memory big enough.
+	return NULL;
+
+	// TODO: if we get here, we should find non-contiguous memory and piece it together with paging, but that's for later.
 }
