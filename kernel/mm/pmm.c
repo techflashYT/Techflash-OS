@@ -32,25 +32,22 @@ static void *PMM_BitmapToAddress(size_t byteOffset, uint_fast8_t bitOffset) {
 		4. Figure out the starting bit + the offset in bits, converted to an offset in address (multiple by 8 * 4096)
 		5. Return that address
 	*/
-	int entryIndex = 0;
-	while (entryIndex < CONFIG_KERN_MAX_BITMAPDATA && bitmapData[entryIndex].endingBit < bitOffset) {
-		entryIndex++;
+	int correctEntry = 0;
+
+	if ((byteOffset * 8) + bitOffset > bitmapData[0].endingBit) {
+		for (correctEntry = 0; correctEntry < numBitmapData; correctEntry++) {
+			if (bitmapData[correctEntry].endingBit > bitOffset) {
+				break;
+			}
+		}
+		correctEntry--;
 	}
+	
 
-	if (entryIndex > 0) {
-		entryIndex--;
-	}
-
-	size_t startingBit = 0;
-	if (entryIndex != 0) {
-		startingBit = bitmapData[entryIndex - 1].endingBit + 1;
-	}
-
-	size_t startingOffset = (startingBit + bitOffset) * (8 * 4096);
-
-	return (void *)(byteOffset + startingOffset);
+	size_t addr   = (size_t)bitmapData[correctEntry].basePtr;
+	size_t offset = (((byteOffset * 8) + bitOffset) * 4096);
+	return (void *)(addr + offset);
 }
-
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
@@ -222,11 +219,15 @@ void *PMM_Alloc(size_t pages) {
 	// find a section of memory that is at least `pages` long (each bit of the bitmap represents 1 page)
 	
 	// find the first bit in the bitmap that isn't set
+	char str[32];
+	sprintf(str, "finding %zu pages", pages);
+	log(MODNAME, str, LOGLEVEL_DEBUG);
 	size_t freeSize = 0;
 	for (size_t i = 0; i != bitmapPages / 8; i++) {
 		for (uint_fast8_t j = 0; j != 8; j++) {
 			if (!PMM_CheckBitmapSet(i, j)) {
 				// hey we found a free page!
+				log(MODNAME, "Found a free page!", LOGLEVEL_DEBUG);
 				freeSize++;
 				// have we found enough free pages yet?
 				if (freeSize == pages) {
@@ -236,6 +237,7 @@ void *PMM_Alloc(size_t pages) {
 				continue;
 			}
 			// this page was used.  Set freeSize to 0 so we can keep going until we find the next block.
+			log(MODNAME, "Page was used.", LOGLEVEL_DEBUG);
 			freeSize = 0;
 		}
 	}
