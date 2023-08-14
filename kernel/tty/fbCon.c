@@ -31,6 +31,10 @@ framebuffer_t FBCON_Init() {
 		log(MODNAME, "Unknown bootloader.  Unable to set framebuffer!  Keeping print method to default, you will probably not have video output!", LOGLEVEL_FATAL);
 		ret = (framebuffer_t){.ptr = NULL, .width = 0, .height = 0, .mode = 0};
 	}
+	fbCon.width  = ret.width;
+	fbCon.height = ret.height;
+	fbCon.mode   = ret.mode;
+	fbCon.ptr    = ret.ptr;
 
 	if (ret.ptr != 0) {
 		log(MODNAME, "Setting TTY Write func", LOGLEVEL_DEBUG);
@@ -38,6 +42,5 @@ framebuffer_t FBCON_Init() {
 		log(MODNAME, "Done setting TTY Write func", LOGLEVEL_DEBUG);
 	}
 
-	fbCon = ret;
 	return ret;
 }
