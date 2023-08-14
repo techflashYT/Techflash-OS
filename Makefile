@@ -7,7 +7,7 @@ endif
 $(info Using $(HOSTCC) as the host C compiler)
 
 
-.PHONY: config clean all iso usb limineCoreFiles run
+.PHONY: config clean all iso usb limineCoreFiles run libc kernel
 
 all: iso
 
@@ -49,10 +49,13 @@ limine/limine-cmd: limine/limine.c limine/limine-bios-hdd.h
 		$(HOSTCC) limine.c -o limine-cmd;\
 		cd ../
 
-
-bin/tfos_kernel.elf:
+libc:
 	@$(MAKE) -C libc HOSTCC=$(HOSTCC)
+
+kernel: libc
 	@$(MAKE) -C kernel HOSTCC=$(HOSTCC)
+
+bin/tfos_kernel.elf: libc kernel
 
 #config: bin/configure
 #	@bin/configure
