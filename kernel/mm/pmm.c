@@ -227,7 +227,7 @@ void *PMM_Alloc(size_t pages) {
 		for (uint_fast8_t j = 0; j != 8; j++) {
 			if (!PMM_CheckBitmapSet(i, j)) {
 				// hey we found a free page!
-				log(MODNAME, "Found a free page!", LOGLEVEL_DEBUG);
+				// log(MODNAME, "Found a free page!", LOGLEVEL_DEBUG);
 				freeSize++;
 				// have we found enough free pages yet?
 				if (freeSize == pages) {
@@ -237,7 +237,7 @@ void *PMM_Alloc(size_t pages) {
 				continue;
 			}
 			// this page was used.  Set freeSize to 0 so we can keep going until we find the next block.
-			log(MODNAME, "Page was used.", LOGLEVEL_DEBUG);
+			// log(MODNAME, "Page was used.", LOGLEVEL_DEBUG);
 			freeSize = 0;
 		}
 	}
