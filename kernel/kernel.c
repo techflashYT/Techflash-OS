@@ -4,6 +4,7 @@
 #include <kernel/mem.h>
 #include <kernel/arch.h>
 #include <kernel/bootloader.h>
+#include <kernel/tty/fbCon.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -14,6 +15,8 @@ void __attribute__((noreturn)) main() {
 	SMP_Init();
 	ARCH_Init();
 	PMM_Init();
+
+	FBCON_Init();
 
 
 	puts("Testing PMM!\r\n");
