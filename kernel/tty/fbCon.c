@@ -5,8 +5,6 @@
 
 framebuffer_t fbCon;
 
-static bool first = true;
-
 MODULE("FBCON");
 extern framebuffer_t LM_GetFramebuffer();
 
@@ -16,10 +14,34 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 	(void)y;
 	(void)fgColor;
 	(void)bgColor;
-	if (first) {
-		first=false;
-		fbCon.ptr[0] = 0xFFFFFFFF;
+	uint8_t charData[16] = {
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b00000000,
+		0b00011000,
+		0b01100110,
+		0b01100110,
+		0b01100110,
+		0b01100110,
+		0b01111110,
+		0b01111110,
+		0b01100110,
+		0b01100110,
+		0b01100110,
+		0b00000000,
+	};
+	uint32_t offset = ((y * 16) * fbCon.width) + (x * 8);
+	for (uint_fast8_t i = 0; i != 16; i++) {
+		for (uint_fast8_t j = 0; j != 8; j++) {
+			uint32_t color = bgColor;
+			if (charData[i] & (1 << j)) {
+				color = fgColor;
+			}
+			fbCon.ptr[offset + j + (i * fbCon.height)] = color;
+		}
 	}
+	
 }
 
 framebuffer_t FBCON_Init() {
