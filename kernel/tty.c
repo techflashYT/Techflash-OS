@@ -18,7 +18,7 @@ void TTY_Write(const char ch, const uint16_t x, const uint16_t y, const uint32_t
 	TTY_CursorX++;
 	if (TTY_CursorX > TTY_Width) {
 		TTY_CursorX = 0;
-		TTY_CursorY++;
+		// TTY_CursorY++;
 	}
 	if (TTY_CursorY > TTY_Height) {
 		// TODO: Scroll TTY

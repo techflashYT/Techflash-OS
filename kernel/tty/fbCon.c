@@ -20,7 +20,7 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		0b00000000,
 		0b00000000,
 		0b00011000,
-		0b01100110,
+		0b01111110,
 		0b01100110,
 		0b01100110,
 		0b01100110,
@@ -36,9 +36,9 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		for (uint_fast8_t j = 0; j != 8; j++) {
 			uint32_t color = bgColor;
 			if (charData[i] & (1 << j)) {
-				color = fgColor;
+				color = 0xFFFFFFFF;
 			}
-			fbCon.ptr[offset + j + (i * fbCon.height)] = color;
+			fbCon.ptr[offset + j + (i * fbCon.width)] = color;
 		}
 	}
 	
