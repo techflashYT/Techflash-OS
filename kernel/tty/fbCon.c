@@ -36,12 +36,20 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		for (uint_fast8_t j = 0; j != 8; j++) {
 			uint32_t color = bgColor;
 			if (charData[i] & (1 << j)) {
-				color = 0xFFFFFFFF;
+				color = fgColor;
 			}
 			fbCon.ptr[offset + j + (i * fbCon.width)] = color;
 		}
 	}
 	
+	TTY_CursorX++;
+	if (TTY_CursorX >= TTY_Width) {
+		TTY_CursorX = 0;
+		TTY_CursorY++;
+	}
+	if (TTY_CursorY > TTY_Height) {
+		// TODO: Scroll TTY
+	}
 }
 
 framebuffer_t FBCON_Init() {
@@ -57,6 +65,13 @@ framebuffer_t FBCON_Init() {
 	fbCon.height = ret.height;
 	fbCon.mode   = ret.mode;
 	fbCon.ptr    = ret.ptr;
+
+
+	TTY_CursorX  = 0;
+	TTY_CursorY  = 0;
+	TTY_Width    = (uint16_t)(ret.width  / 8);
+	TTY_Height   = (uint16_t)(ret.height / 8);
+	TTY_Color    = 0xFF7F7F7F;
 
 	if (ret.ptr != 0) {
 		log(MODNAME, "Setting TTY Write func", LOGLEVEL_DEBUG);

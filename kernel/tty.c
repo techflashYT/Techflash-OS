@@ -15,13 +15,4 @@ void TTY_SetWriteFunc(TTY_WriteFunc_t func) {
 }
 void TTY_Write(const char ch, const uint16_t x, const uint16_t y, const uint32_t fgColor, const uint32_t bgColor) {
 	TTY_WriteFunc(ch, x, y, fgColor, bgColor);
-	TTY_CursorX++;
-	if (TTY_CursorX > TTY_Width) {
-		TTY_CursorX = 0;
-		// TTY_CursorY++;
-	}
-	if (TTY_CursorY > TTY_Height) {
-		// TODO: Scroll TTY
-	}
-	
 }
