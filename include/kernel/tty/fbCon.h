@@ -12,8 +12,18 @@ typedef struct {
 	uint32_t *ptr;
 } framebuffer_t;
 
-extern uint8_t *font[];
+extern uint8_t font[256][16];
 
 
 extern framebuffer_t fbCon;
 extern framebuffer_t FBCON_Init();
+
+#define COLOR_WHITE  0xFFFFFFFF
+#define COLOR_BLACK  0xFF000000
+#define COLOR_RED    0xFFAA0000
+#define COLOR_GREEN  0xFF00AA00
+#define COLOR_BLUE   0xFF0000AA
+#define COLOR_CYAN   0xFF00AAAA
+#define COLOR_PURPLE 0xFFAA00AA
+#define COLOR_LGRAY  0xFFAAAAAA
+#define COLOR_YELLOW 0xFFAA5500

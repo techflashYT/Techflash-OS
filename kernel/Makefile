@@ -10,7 +10,7 @@ CC=$(HOSTCC)
 LD=ld.lld
 endif
 
-CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier
+CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-vla
 
 
 LIBS=-lc
@@ -44,7 +44,7 @@ endif
 
 ASMFILES     = $(shell find -O3 . -name '*.S' -not -path './arch/*')
 
-OBJFILES=$(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES))  $(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES))
+OBJFILES=$(patsubst %.S,../build/kernel/%.o,$(ARCHASMFILES)) $(patsubst ./%.c,../build/kernel/%.o,$(CFILES)) $(patsubst ./%.S,../build/kernel/%.o,$(ASMFILES)) $(patsubst %.c,../build/kernel/%.o,$(ARCHCFILES)) ../build/kernel/font.f16.bin.o
 all: ../bin/tfos_kernel.elf
 
 ../bin/tfos_kernel.elf: $(OBJFILES)
@@ -56,6 +56,11 @@ all: ../bin/tfos_kernel.elf
 	@mkdir -p $(@D)
 	@$(info CC    $< ==> $(patsubst %.c,%.o,$<))
 	@$(CC) $(CFLAGS) -c $< -o $@
+../build/kernel/font.f16.bin.o: ../util/vgafont.f16
+	@$(info PERL  vgafont.f16 ==> font.f16.c)
+	@perl ../util/navcc.perl ../util/vgafont.f16 > ../build/kernel/font.f16.c
+	@$(info CC    font.f16.c ==> font.bin.f16.o)
+	@$(CC) -c -Wno-gnu-binary-literal -std=gnu2x ../build/kernel/font.f16.c -o ../build/kernel/font.f16.bin.o
 
 ../build/kernel/%.o: %.S
 	@mkdir -p $(@D)

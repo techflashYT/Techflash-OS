@@ -12,3 +12,4 @@ extern TTY_WriteFunc_t TTY_WriteFunc;
 
 extern void TTY_SetWriteFunc(TTY_WriteFunc_t func);
 extern void TTY_Write(const char ch, const uint16_t x, const uint16_t y, const uint32_t fgColor, const uint32_t bgColor);
+extern bool TTY_HandleEsc(char ch);

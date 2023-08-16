@@ -34,7 +34,10 @@ read $fh, my $junk, 16;
 for $i (0..254) {
 	for $l (0..15) {
 		read $fh, my $c, 1;
-		printf( "\t\t0b%08b", ord( $c ) );
+		# my $str = sprintf("%08b", ord($c));
+		# why do I even neeed to do this...
+		# printf( "\t\t0b%s", reverse($str) );
+		printf("\t\t0b%08b", ord($c) );
 		if ($l != 15) {
 			print(",");
 		}
