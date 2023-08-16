@@ -10,7 +10,7 @@ if( scalar( @ARGV ) != 1 ) {
 
 open my $fh, "<:raw", $ARGV[0];
 printf(
-"uint8_t *font[] = {
+"unsigned char font[256][16] = {
 	{
 		0b10101010,
 		0b00000001,
@@ -47,4 +47,4 @@ for $i (0..254) {
 }
 printf(
 "\t}
-};");
+};\r\n");
