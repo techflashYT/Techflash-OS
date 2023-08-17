@@ -22,7 +22,6 @@ void __attribute__((noreturn)) main() {
 	puts("Testing PMM!\r\n");
 
 	void *ptr = PMM_Alloc(5);
-	puts("1234567890");
 	printf("Recieved pointer: %p\r\n", ptr);
 	memset(ptr, 0xA5, 5 * 4096);
 	puts("Kernel execution done.  Hanging.\r\n");
