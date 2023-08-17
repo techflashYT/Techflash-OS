@@ -8,6 +8,9 @@ extern uint16_t TTY_Height;
 
 extern uint32_t TTY_Color;
 extern uint32_t TTY_BgColor;
+
+extern bool     TTY_Bold;
+
 extern TTY_WriteFunc_t TTY_WriteFunc;
 
 extern void TTY_SetWriteFunc(TTY_WriteFunc_t func);
