@@ -11,6 +11,14 @@ extern framebuffer_t LM_GetFramebuffer();
 static bool esc = false;
 
 void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32_t fgColor, const uint32_t bgColor) {
+	if (ch == '\x1b') {
+		esc = true;
+		return;
+	}
+	if (esc) {
+		esc = !TTY_HandleEsc(ch);
+		return;
+	}
 	if (ch == '\r') {
 		TTY_CursorX = 0;
 		return;
@@ -19,27 +27,29 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		TTY_CursorY++;
 		return;
 	}
-	if (ch == '\x1b') {
-		esc = true;
-	}
-	if (esc) {
-		esc = !TTY_HandleEsc(ch);
-		return;
-	}
-	(void)ch;
-	(void)x;
-	(void)y;
-	(void)fgColor;
-	(void)bgColor;
+
 	uint8_t *charData = font[(uint8_t)ch];
 	uint32_t offset = ((y * 16) * fbCon.width) + (x * 8);
 	for (uint_fast8_t i = 0; i != 16; i++) {
-		for (uint_fast8_t j = 0; j != 8; j++) {
+		for (uint_fast8_t j = 8; j != 0; j--) {
 			uint32_t color = bgColor;
 			if (charData[i] & (1 << j)) {
 				color = fgColor;
+				if (TTY_Bold) {
+					// increase the brightness of the color by incresing all but the first byte of the uint32_t value
+					for (uint_fast8_t k = 0; k != 4; k++) {
+						uint8_t originalByte = ((uint8_t*)&color)[k];
+						((uint8_t *)&color)[k] += 0x55;
+
+						// Check for overflow
+						if (((uint8_t *)&color)[k] < originalByte) {
+							((uint8_t *)&color)[k] = 0xFF;
+						}
+					}
+					
+				}
 			}
-			fbCon.ptr[offset + j + (i * fbCon.width)] = color;
+			fbCon.ptr[offset + (7 - j) + (i * fbCon.width)] = color;
 		}
 	}
 	
@@ -71,8 +81,9 @@ framebuffer_t FBCON_Init() {
 	TTY_CursorX  = 0;
 	TTY_CursorY  = 0;
 	TTY_Width    = (uint16_t)(ret.width  / 8);
-	TTY_Height   = (uint16_t)(ret.height / 8);
+	TTY_Height   = (uint16_t)(ret.height / 16);
 	TTY_Color    = COLOR_LGRAY;
+	TTY_Bold     = false;
 
 	if (ret.ptr != 0) {
 		log(MODNAME, "Setting TTY Write func", LOGLEVEL_DEBUG);
