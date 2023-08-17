@@ -31,11 +31,16 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 	uint8_t *charData = font[(uint8_t)ch];
 	uint32_t offset = ((y * 16) * fbCon.width) + (x * 8);
 	for (uint_fast8_t i = 0; i != 16; i++) {
-		for (uint_fast8_t j = 8; j != 0; j--) {
+		for (uint_fast8_t j = 7; j != 0; j--) {
 			uint32_t color = bgColor;
 			if (charData[i] & (1 << j)) {
 				color = fgColor;
 				if (TTY_Bold) {
+					// FIXME: for VGA yellow, we need to add 0xAA to the green for some reason
+					if (color == COLOR_YELLOW) {
+						color = 0xFFFF55;
+						goto done;
+					}
 					// increase the brightness of the color by incresing all but the first byte of the uint32_t value
 					for (uint_fast8_t k = 0; k != 4; k++) {
 						uint8_t originalByte = ((uint8_t*)&color)[k];
@@ -46,9 +51,9 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 							((uint8_t *)&color)[k] = 0xFF;
 						}
 					}
-					
 				}
 			}
+			done:
 			fbCon.ptr[offset + (7 - j) + (i * fbCon.width)] = color;
 		}
 	}
