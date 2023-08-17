@@ -36,16 +36,16 @@ bool TTY_HandleEsc(char ch) {
                         // Reset all attributes
                         TTY_Color = COLOR_LGRAY;
                         TTY_BgColor = COLOR_BLACK;
-                        // TTY_Bold = false;
+                        TTY_Bold = false;
                         // TODO: TTY_Underline = false;
                         break;
                     case 1:
                         // Set text style to bold
-                        // TTY_Bold = true;
+                        TTY_Bold = true;
                         break;
                     case 22:
                         // Disable bold
-                        // TTY_Bold = false;
+                        TTY_Bold = false;
                         break;
                     case 30:
                         // Set text color to black
