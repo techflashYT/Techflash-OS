@@ -13,7 +13,7 @@ static char *ansiColors[] = {
 void log(const char module[8], const char *msg, const uint8_t level) {
 	(void)level;
 	// NOTE: we do this so that GCC can check the format
-	#define fmt "\e[1;33m[\e[36m%-*s\e[1;33m]%s %s", 8
+	#define fmt "\e[1m\e[33m[\e[36m%-*s\e[1m\e[33m]%s %s", 8
 
 	// are we still in early boot where the write func is set to serial?
 	char str[256];
