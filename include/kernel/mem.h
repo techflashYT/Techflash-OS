@@ -40,8 +40,9 @@ typedef struct {
 } memmap_t;
 
 
-extern void PMM_Init();
+extern void  PMM_Init ();
 extern void *PMM_Alloc(size_t pages);
+extern void  PMM_Free (void *ptr);
 
 
 #define PAGE_SIZE 4096

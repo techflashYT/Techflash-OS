@@ -3,6 +3,7 @@
 #include <kernel/registers.h>
 #include <kernel/panic.h>
 #include <stddef.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 MODULE("PMM");
@@ -47,6 +48,16 @@ static void *PMM_BitmapToAddress(size_t byteOffset, uint_fast8_t bitOffset) {
 	size_t addr   = (size_t)bitmapData[correctEntry].basePtr;
 	size_t offset = (((byteOffset * 8) + bitOffset) * 4096);
 	return (void *)(addr + offset);
+}
+
+ssize_t PMM_AddressToBitmap(void *addr) {
+	for (size_t i = 0; i < numBitmapData; i++) {
+		if (bitmapData[i].basePtr >= addr) {
+			i--;
+			return (ssize_t)(bitmapData[i].endingBit - ALIGN_PAGE((size_t)addr));
+		}
+	}
+	return -1000000;
 }
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -232,7 +243,12 @@ void *PMM_Alloc(size_t pages) {
 				// have we found enough free pages yet?
 				if (freeSize == pages) {
 					// YES!  Return the memory we found.
-					return PMM_BitmapToAddress(i, j);
+					void *ptr = PMM_BitmapToAddress(i, j);
+					// set the pages to used
+					for (size_t k = 0; k != pages; k++) {
+						bitmap[i] |= (1 << j);
+					}
+					return ptr;
 				}
 				continue;
 			}
@@ -245,4 +261,8 @@ void *PMM_Alloc(size_t pages) {
 	return NULL;
 
 	// TODO: if we get here, we should find non-contiguous memory and piece it together with paging, but that's for later.
+}
+
+void PMM_Free(void *ptr) {
+	printf("PMM_Free: Address to bitmap position: %zd\r\n", PMM_AddressToBitmap(ptr));
 }
