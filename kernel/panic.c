@@ -5,7 +5,7 @@ void __attribute__((noreturn)) panic(char *message, registers_t *regs) {
 	printf(
 		"\r\n"
 		"\r\n"
-		"\e[0m\e[1;31m !!! !!! !!! KERNEL PANIC !!! !!! !!!\e[0m\r\n"
+		"\e[0m\e[1m\e[31m !!! !!! !!! KERNEL PANIC !!! !!! !!!\e[0m\r\n"
 		"Error: %s\r\n"
 		"Registers:\r\n"
 		"\r\n", message
