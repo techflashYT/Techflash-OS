@@ -10,7 +10,7 @@ CC=$(HOSTCC)
 LD=ld.lld
 endif
 
-CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-vla
+CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-vla -Wno-unsafe-buffer-usage
 
 
 LIBS=-lc

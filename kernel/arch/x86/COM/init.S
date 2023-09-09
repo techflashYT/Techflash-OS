@@ -94,6 +94,6 @@ x86_COM_Init:
 
 .badSerial:
 	# yikes, no serial :'(
-	# no need to save this info, because the default value is already 0 (false)
+	// no need to save this info, because the default value is already 0 (false)
 	mov $0x01, %al
 	ret
