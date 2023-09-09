@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 // free RAM, use this however
 #define MM_TYPE_FREE 0
 // reserved, we can't do anything with this (e.g. used by BIOS)

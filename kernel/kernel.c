@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
+void testMalloc();
 void __attribute__((noreturn)) main() {
 	TTY_SetWriteFunc(COM_LogWrapper);
 	BOOT_CheckLoader();
@@ -16,7 +16,7 @@ void __attribute__((noreturn)) main() {
 	ARCH_Init();
 	PMM_Init();
 
-	FBCON_Init();
+	// FBCON_Init();
 
 
 	puts("Testing PMM!\r\n");
@@ -29,6 +29,12 @@ void __attribute__((noreturn)) main() {
 
 	PMM_Free(ptr);
 	PMM_Free(ptr2);
+
+	ptr2 = PMM_Alloc(5);
+	printf("Recieved pointers: %p and %p\r\n", ptr, ptr2);
+
+	testMalloc();
+	
 
 	puts("Kernel execution done.  Hanging.\r\n");
 	while (true) {asm ("cli; hlt");}

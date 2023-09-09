@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/arch/x86/COM.h>
+#include <kernel/tty.h>
 void COM_Write(uint8_t serPort, uint8_t byte) {
 	#ifdef __x86_64__
 	uint16_t *portNums = &SERIAL_PORT_COM1;
@@ -20,4 +21,13 @@ void COM_LogWrapper(const char ch, const uint16_t x, const uint16_t y, const uin
 	(void)fgColor;
 	(void)bgColor;
 	COM_Write(0, (uint8_t)ch);
+	if (ch == '\r') {
+		TTY_CursorX = 0;
+		return;
+	}
+	if (ch == '\n') {
+		TTY_CursorY++;
+		return;
+	}
+	TTY_CursorX++;
 }

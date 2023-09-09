@@ -11,6 +11,9 @@ static char *ansiColors[] = {
 	"\e[31m !!! "  // fatal
 };
 void log(const char module[8], const char *msg, const uint8_t level) {
+	if (TTY_CursorX != 0) {
+		puts("\r\n");
+	}
 	(void)level;
 	// NOTE: we do this so that GCC can check the format
 	#define fmt "\e[1m\e[33m[\e[36m%-*s\e[1m\e[33m]%s %s", 8

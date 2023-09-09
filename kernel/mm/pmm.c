@@ -18,8 +18,11 @@ static bitmapData_t bitmapData[CONFIG_KERN_MAX_BITMAPDATA];
 static uint8_t numBitmapData = 0;
 
 
+static void PMM_BitmapSetBitValue(size_t byteOffset, uint_fast8_t bitOffset, uint8_t value) {
+	bitmap[byteOffset] = (uint8_t)((bitmap[byteOffset] & ~(1 << bitOffset)) | (value << bitOffset));
+}
 static bool PMM_CheckBitmapSet(size_t byteOffset, uint_fast8_t bitOffset) {
-	return (bitmap[byteOffset] & (1 << bitOffset));
+	return (bitmap[byteOffset] & (1 << bitOffset)) == 0;
 }
 
 static void *PMM_BitmapToAddress(size_t byteOffset, uint_fast8_t bitOffset) {
@@ -54,7 +57,7 @@ ssize_t PMM_AddressToBitmap(void *addr) {
 	for (size_t i = 0; i < numBitmapData; i++) {
 		if (bitmapData[i].basePtr >= addr) {
 			i--;
-			return (ssize_t)(bitmapData[i].endingBit - ALIGN_PAGE((size_t)addr));
+			return (ssize_t)(bitmapData[i].endingBit - ALIGN_PAGE(((size_t)addr - (size_t)bitmapData[i].basePtr)));
 		}
 	}
 	return -1000000;
@@ -230,9 +233,9 @@ void *PMM_Alloc(size_t pages) {
 	// find a section of memory that is at least `pages` long (each bit of the bitmap represents 1 page)
 	
 	// find the first bit in the bitmap that isn't set
-	char str[32];
-	sprintf(str, "finding %zu pages", pages);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
+	// char str[32];
+	// sprintf(str, "finding %zu pages", pages);
+	// log(MODNAME, str, LOGLEVEL_DEBUG);
 	size_t freeSize = 0;
 	for (size_t i = 0; i != bitmapPages / 8; i++) {
 		for (uint_fast8_t j = 0; j != 8; j++) {
@@ -246,8 +249,15 @@ void *PMM_Alloc(size_t pages) {
 					void *ptr = PMM_BitmapToAddress(i, j);
 					// set the pages to used
 					for (size_t k = 0; k != pages; k++) {
-						bitmap[i] |= (1 << j);
+						// Set the bitmap value to used (0)
+						PMM_BitmapSetBitValue(i, (j + k) % 8, 0);
+
+						// Check if we need to increment i
+						if ((j + k + 1) % 8 == 0) {
+							i++;
+						}
 					}
+
 					return ptr;
 				}
 				continue;
@@ -258,11 +268,14 @@ void *PMM_Alloc(size_t pages) {
 		}
 	}
 	// we ran out of pages in the bitmap without finding a chunk of free memory big enough.
+	log(MODNAME, "Out of memory", LOGLEVEL_FATAL);
 	return NULL;
 
 	// TODO: if we get here, we should find non-contiguous memory and piece it together with paging, but that's for later.
 }
 
 void PMM_Free(void *ptr) {
-	printf("PMM_Free: Address to bitmap position: %zd\r\n", PMM_AddressToBitmap(ptr));
+	ssize_t bitmapPos = PMM_AddressToBitmap(ptr);
+	// set it to 0
+	PMM_BitmapSetBitValue((size_t)(bitmapPos / 8), (uint_fast8_t)(bitmapPos % 8), 0);
 }
