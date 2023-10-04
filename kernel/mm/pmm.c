@@ -9,59 +9,10 @@
 MODULE("PMM");
 
 
-// NOTE: In the bitmap, 0 means free, 1 means used.
-static uint8_t *bitmap;
-static size_t   bitmapPages;
+// we keep a copule blocks in BSS just to have something to dump the info to,
+// since we can't allocate more memory without it
+static meminfoBlk_t memInfoBlocks[32];
 
-
-static bitmapData_t bitmapData[CONFIG_KERN_MAX_BITMAPDATA];
-static uint8_t numBitmapData = 0;
-
-
-static void PMM_BitmapSetBitValue(size_t byteOffset, uint_fast8_t bitOffset, uint8_t value) {
-	bitmap[byteOffset] = (uint8_t)((bitmap[byteOffset] & ~(1 << bitOffset)) | (value << bitOffset));
-}
-static bool PMM_CheckBitmapSet(size_t byteOffset, uint_fast8_t bitOffset) {
-	return (bitmap[byteOffset] & (1 << bitOffset)) == 0;
-}
-
-static void *PMM_BitmapToAddress(size_t byteOffset, uint_fast8_t bitOffset) {
-	// use bitmapData struct to find the address of the bit in the bitmap
-	/* STEPS:
-		1. Find the first entry where our bit is higher than the .endingBit value
-		2. Use the previous entry, since it's somewhere in there
-		3. Figure out the starting bit of that entry with the following logic:
-			- if the entry number is 0, the starting bit is 0
-			- if the entry number is greater than 0, the starting bit is the .endingBit value of the previous entry + 1.
-		4. Figure out the starting bit + the offset in bits, converted to an offset in address (multiple by 8 * 4096)
-		5. Return that address
-	*/
-	int correctEntry = 0;
-
-	if ((byteOffset * 8) + bitOffset > bitmapData[0].endingBit) {
-		for (correctEntry = 0; correctEntry < numBitmapData; correctEntry++) {
-			if (bitmapData[correctEntry].endingBit > bitOffset) {
-				break;
-			}
-		}
-		correctEntry--;
-	}
-	
-
-	size_t addr   = (size_t)bitmapData[correctEntry].basePtr;
-	size_t offset = (((byteOffset * 8) + bitOffset) * 4096);
-	return (void *)(addr + offset);
-}
-
-ssize_t PMM_AddressToBitmap(void *addr) {
-	for (size_t i = 0; i < numBitmapData; i++) {
-		if (bitmapData[i].basePtr >= addr) {
-			i--;
-			return (ssize_t)(bitmapData[i].endingBit - ALIGN_PAGE(((size_t)addr - (size_t)bitmapData[i].basePtr)));
-		}
-	}
-	return -1000000;
-}
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
@@ -116,7 +67,6 @@ void PMM_Init() {
 	char sizeStr[16];
 	uint64_t totalUsableBytes = 0;
 	uint_fast8_t usableIdx = 0;
-	int usableRegions[16] = {0xFFFF};
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
@@ -143,8 +93,17 @@ void PMM_Init() {
 
 		if (cur.type == MM_TYPE_FREE) {
 			totalUsableBytes += cur.size;
-			usableRegions[usableIdx] = i;
 			usableIdx++;
+
+			int index = usableIdx;
+			usableIdx++;
+
+			memInfoBlocks[index].start = cur.start;
+			memInfoBlocks[index].size = cur.size;
+			memInfoBlocks[index].type = MEMINF_TYPE_FREE;
+			if (usableIdx >= 32) {
+				log(MODNAME, "Exceeded 32 usable memory blocks during init.  Hoping we have enough to allocate, and trying to start over.", LOGLEVEL_FATAL);
+			}
 		}
 
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
@@ -154,70 +113,6 @@ void PMM_Init() {
 	sprintf(str, "Total usable memory: %s", sizeStr);
 	log(MODNAME, str, LOGLEVEL_DEBUG);
 	
-	strcpy(str, "Usable regions: ");
-	bool first = true;
-	for (uint_fast8_t i = 0; i != usableIdx; i++) {
-		if (!first) {strcat(str, ", ");}
-		sprintf(str + strlen(str), "%d", usableRegions[i]);
-		first = false;
-	}
-	log(MODNAME, str, LOGLEVEL_DEBUG);
-
-	bitmapPages = ALIGN_PAGE(totalUsableBytes);
-	sprintf(str, "Making bitmap of size %lu pages (%lu bytes)", bitmapPages, bitmapPages / 8);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
-
-	log(MODNAME, "Finding the smallest region big enough to hold the bitmap...", LOGLEVEL_DEBUG);
-	int bitmapRegion = -1;
-	
-	for (uint_fast8_t i = 0; i < usableIdx; i++) {
-		int regionIndex = usableRegions[i];
-		if (memmap->entries[regionIndex].size >= (bitmapPages / 8)) {
-			if (bitmapRegion == -1 || memmap->entries[regionIndex].size < memmap->entries[usableRegions[bitmapRegion]].size) {
-				bitmapRegion = i;
-			}
-		}
-		numBitmapData++;
-	}
-	
-	if (bitmapRegion == -1) {
-		registers_t regs;
-		DUMPREGS(&regs);
-		log(MODNAME, "Couldn't find a region big enough to hold the bitmap!", LOGLEVEL_FATAL);
-		panic("All memory regions too small to hold bitmap", &regs);
-	}
-
-	bitmapRegion = usableRegions[bitmapRegion];
-	sprintf(str, "Found region %d, initializing bitmap on it.", bitmapRegion);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
-
-	bitmap = memmap->entries[bitmapRegion].start;
-	sprintf(str, "bitmap address: %p", bitmap);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
-
-	for (uint8_t i = 0; i != numBitmapData; i++) {
-		size_t size = memmap->entries[usableRegions[i]].size;
-
-		bitmapData[i].basePtr = memmap->entries[usableRegions[i]].start;
-		bitmapData[i].endingBit = size / PAGE_SIZE;
-
-		// if (usableRegions[i] == bitmapRegion) {
-			// bitmapData[i].basePtr = (void *)(ALIGN_PAGE(((size_t)bitmap + bitmapPages / 8)) * 4096);
-			// size -= bitmapPages / 8;
-		// }
-
-		for (int j = i - 1; j > 0; j--) {
-			bitmapData[i].endingBit += bitmapData[j].endingBit;
-		}
-		sprintf(str, "bitmapData[%d] = {.basePtr = %p, .endingBit = %lu}", i, bitmapData[i].basePtr, bitmapData[i].endingBit);
-		log(MODNAME, str, LOGLEVEL_VERBOSE);
-	}
-
-	log(MODNAME, "Bitmap Data saved.  Setting all pages to free...", LOGLEVEL_DEBUG);
-	memset(bitmap, 0x00, bitmapPages / 8);
-	log(MODNAME, "Done.  Setting bitmap pages to used...", LOGLEVEL_DEBUG);
-	memset(bitmap, 0xFF, ALIGN_PAGE(bitmapPages / 8));
-
 	log(MODNAME, "PMM Initialized!", LOGLEVEL_INFO);
 }
 
@@ -236,37 +131,7 @@ void *PMM_Alloc(size_t pages) {
 	// char str[32];
 	// sprintf(str, "finding %zu pages", pages);
 	// log(MODNAME, str, LOGLEVEL_DEBUG);
-	size_t freeSize = 0;
-	for (size_t i = 0; i != bitmapPages / 8; i++) {
-		for (uint_fast8_t j = 0; j != 8; j++) {
-			if (!PMM_CheckBitmapSet(i, j)) {
-				// hey we found a free page!
-				// log(MODNAME, "Found a free page!", LOGLEVEL_DEBUG);
-				freeSize++;
-				// have we found enough free pages yet?
-				if (freeSize == pages) {
-					// YES!  Return the memory we found.
-					void *ptr = PMM_BitmapToAddress(i, j);
-					// set the pages to used
-					for (size_t k = 0; k != pages; k++) {
-						// Set the bitmap value to used (0)
-						PMM_BitmapSetBitValue(i, (j + k) % 8, 0);
 
-						// Check if we need to increment i
-						if ((j + k + 1) % 8 == 0) {
-							i++;
-						}
-					}
-
-					return ptr;
-				}
-				continue;
-			}
-			// this page was used.  Set freeSize to 0 so we can keep going until we find the next block.
-			// log(MODNAME, "Page was used.", LOGLEVEL_DEBUG);
-			freeSize = 0;
-		}
-	}
 	// we ran out of pages in the bitmap without finding a chunk of free memory big enough.
 	log(MODNAME, "Out of memory", LOGLEVEL_FATAL);
 	return NULL;
@@ -275,7 +140,5 @@ void *PMM_Alloc(size_t pages) {
 }
 
 void PMM_Free(void *ptr) {
-	ssize_t bitmapPos = PMM_AddressToBitmap(ptr);
-	// set it to 0
-	PMM_BitmapSetBitValue((size_t)(bitmapPos / 8), (uint_fast8_t)(bitmapPos % 8), 0);
+	(void)ptr;
 }

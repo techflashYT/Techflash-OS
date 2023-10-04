@@ -49,9 +49,17 @@ extern void  PMM_Free (void *ptr);
 #define PAGE_SIZE 4096
 #define ALIGN_PAGE(x) ((x + 4095) / 4096)
 
-
-// this is enough info to calculate the start and end of each chunk of memory in terms of both address space, as well as bitmap bits.
 typedef struct {
-	void *basePtr;
-	size_t endingBit;
-} bitmapData_t;
+	void *start;
+	size_t size;
+	// you might be thinking, "how is this enough info?"
+	// well, we only set the actually free memory to free blocks here, so we don't need to worry
+	// about things that aren't just free memory (e.g. MMIO)
+	enum {
+		MEMINF_TYPE_END  = 0,
+		MEMINF_TYPE_FREE,
+		MEMINF_TYPE_USED,
+		// `start` is a pointer to a new region of info blocks, terminated by a `MEMINF_TYPE_END` block
+		MEMINF_TYPE_INFOPTR
+	} type;
+} meminfoBlk_t;
