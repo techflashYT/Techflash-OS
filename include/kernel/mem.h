@@ -50,19 +50,6 @@ extern void  PMM_Free (void *ptr);
 #define ALIGN_PAGE(x) ((x + 4095) / 4096)
 
 typedef struct {
-	void *start;
-	// this represents the number of pages in this block
+	uint64_t *bits;
 	size_t size;
-	// you might be thinking, "how is this enough info?"
-	// well, we only set the actually free memory to free blocks here, so we don't need to worry
-	// about things that aren't just free memory (e.g. MMIO)
-	enum {
-		MEMINF_TYPE_END    = -1,
-		// so that we can memset it to 0's and a get a bunch of "empty" blocks, ready to be overwritten
-		MEMINF_TYPE_EMPTY  = 0,
-		MEMINF_TYPE_FREE,
-		MEMINF_TYPE_USED,
-		// `start` is a pointer to a new region of info blocks, terminated by a `MEMINF_TYPE_END` block
-		MEMINF_TYPE_INFOPTR
-	} type;
-} meminfoBlk_t;
+} bitmap_t;

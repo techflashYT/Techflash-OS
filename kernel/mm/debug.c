@@ -10,7 +10,7 @@
 static uint_fast8_t dotsPos = 0;
 static void handleDots() {
 	if (dotsPos == 3) {
-		puts("\b\b\b");
+		puts("\b\b\b   \b\b\b");
 		dotsPos = 0;
 		return;
 	}
@@ -19,7 +19,7 @@ static void handleDots() {
 }
 static void resetDots() {
 	for (uint_fast8_t i = 0; i != dotsPos; i++) {
-		putchar('\b');
+		puts("\b \b");
 	}
 	dotsPos = 0;
 }
@@ -34,11 +34,6 @@ static void printGreen(const char* message) {
 
 
 char* alloc[NUM_TESTS];
-// Helper function to log output to both TTY and serial
-void printTTYSerial(const char* message) {
-	printf("\033[1;31m%s\033[0m\r\n", message);
-	COM_WriteStr(0, message);
-}
 void checkContiguous(int test_num, void* block1, void* block2) {
 	size_t diff = (size_t)block2 - (size_t)block1;
 	if (diff != PAGE_SIZE) {
@@ -81,9 +76,6 @@ void testMalloc() {
 	for (int i = 0; i < NUM_TESTS / 2; i++) {
 		// Test 2: Allocating and freeing large chunks of memory
 		handleDots();
-		char str[16];
-		sprintf(str, "%d\r\n", i);
-		COM_WriteStr(0, str);
 		size_t tenMB = 1024 * 1024 * 10;
 		char* ptr2 = (char*)malloc(tenMB);
 		if (ptr2 == NULL) {

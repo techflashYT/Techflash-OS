@@ -8,10 +8,7 @@
 #include <string.h>
 MODULE("PMM");
 
-
-// we keep a copule blocks in BSS just to have something to dump the info to,
-// since we can't allocate more memory without it
-static meminfoBlk_t memInfoBlocks[32];
+static bitmap_t *bitmaps[32];
 
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -85,30 +82,44 @@ void PMM_Init() {
 
 		strcpy(typeStr, typeStrs[cur.type]);
 		for (uint_fast8_t j = 0; j != 6; j++) {
-			if (cur.flags & (1 << j)) {sprintf(typeStr + strlen(typeStr), " (%s)", flagsStrs[j]);}
+			if (cur.flags & (1 << j)) {
+				sprintf(typeStr + strlen(typeStr), " (%s)", flagsStrs[j]);
+			}
 		}
 		
 		char *space = "";
 		if ((memmap->numEntries >= 10) && (i < 10)) {space = " ";}
 
-		memset(memInfoBlocks, 0, sizeof(memInfoBlocks));
 
 		if (cur.type == MM_TYPE_FREE) {
 			totalUsableBytes += cur.size;
-			usableIdx++;
 
-			int index = usableIdx;
-			usableIdx++;
 
-			memInfoBlocks[index].start = cur.start;
-			memInfoBlocks[index].size = cur.size;
-			memInfoBlocks[index].type = MEMINF_TYPE_FREE;
+			// Calculate the number of pages in this block
+			size_t numPages = cur.size / PAGE_SIZE;
+
+			// Allocate space for the bitmap
+			bitmaps[usableIdx] = (bitmap_t *)cur.start;
+			bitmap_t *bitmap = bitmaps[usableIdx];
+
+			bitmap->size = numPages;
+			bitmap->bits = (uint64_t *)((uintptr_t)cur.start + sizeof(bitmap_t));
+
+			// Calculate the number of pages used by the bitmap
+			size_t bitmapPages = ALIGN_PAGE((numPages + 63) / 64) / PAGE_SIZE;
+
+			// Mark the pages used by the bitmap as used
+			for (size_t j = 0; j < bitmapPages; j++) {
+				bitmap->bits[j / 64] |= (1ULL << (j % 64));
+			}
+
+
 			if (usableIdx >= 32) {
 				log(MODNAME, "Exceeded 32 usable memory blocks during init.  Hoping we have enough to allocate, and trying to start over.", LOGLEVEL_FATAL);
 				goto endLoop;
 			}
-			memInfoBlocks[index + 1].type = MEMINF_TYPE_END;
 
+			usableIdx++;
 		}
 endLoop:
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
@@ -121,125 +132,39 @@ endLoop:
 	log(MODNAME, "PMM Initialized!", LOGLEVEL_INFO);
 }
 
-/*
-Should be handled like this
-- Use a stack mechanism to make use of the `MEMINF_TYPE_INFOPTR` block (popping off the stack if it was unable to find a free block before encountering a `MEMINF_TYPE_END`)
-- Using that capability if necessary, find a free block of the correct size, recursing down any info blocks if necessary
-- If a block was found that is larger than the allocation requires, we should modify the block in order to mark it as used, and have the correct size, then make a new "free" block to mark any extra space afterwards as used.
-- If after looking at every block, it was still unable to find a block of at least the correct size, give up, make a log message, and return NULL.
-*/
-static void *memInfoStack[32];
-static int   memInfoStackTop = 0;
-
-static int shiftAndCreate(meminfoBlk_t *curBlk, size_t newSize) {
-	// Reduce the size of the current block
-	size_t oldSize = curBlk->size;
-	curBlk->size = newSize;
-	curBlk->type = MEMINF_TYPE_USED;
-
-	// Find the first empty block
-	int emptyIndex = -1;
-	for (int i = 1;; i++) {
-		if (curBlk[i].type == MEMINF_TYPE_EMPTY) {
-			emptyIndex = i;
-			break;
-		}
-		if (curBlk[i].type == MEMINF_TYPE_END) {
-			// no empty blocks, give up
-			return 1;
-		}
-	}
-
-	// Shift all blocks after the current block to the right until reaching the empty block
-	for (int i = emptyIndex; i > 1; i--) {
-		curBlk[i] = curBlk[i - 1];
-	}
-
-	// Create a new block with the remaining size
-	curBlk[1].size = oldSize - newSize;
-	curBlk[1].type = MEMINF_TYPE_FREE;
-	return 0;
-}
-
 void *PMM_Alloc(size_t pages) {
-	void *ret;
 	if (pages == 0) {
 		log(MODNAME, "Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
 		return NULL;
 	}
-	meminfoBlk_t *curInfoBlk = memInfoBlocks;
-	while (true) {
-		if (curInfoBlk->type == MEMINF_TYPE_USED || curInfoBlk->type == MEMINF_TYPE_EMPTY) {
-			curInfoBlk = &(curInfoBlk[1]);
-			continue;
-		}
-		else if (curInfoBlk->type == MEMINF_TYPE_FREE) {
-			// found a free block!  But is it big enough?
-			if (curInfoBlk->size == pages) {
-				// yes, exactly big enough!  just set it to used and return it
-				curInfoBlk->type = MEMINF_TYPE_USED;
-				ret = curInfoBlk->start;
-				goto leave;
-			}
-			else if (curInfoBlk->size > pages) {
-				// bigger than we need.  reduce the size of curInfoBlk to what is necessary,
-				// find the first empty block, shift all blocks after curInfoBlk to the right until reaching that empty block
-				// make the new block, set it to free, and set the size to the difference between the original curInfoBlk's size, and the new one that we just set as used. 
-				if (shiftAndCreate(curInfoBlk, pages) == 1) {
-					log(MODNAME, "Failed to shift mem control blocks over - No empty blocks", LOGLEVEL_ERROR);
-					continue;
-				}
-			}
-		}
-		else if (curInfoBlk->type == MEMINF_TYPE_INFOPTR) {
-			// push the next block to check onto the stack
-			memInfoStack[memInfoStackTop] = &(curInfoBlk[1]);
-			memInfoStackTop++;
-			curInfoBlk = curInfoBlk->start;
-			continue;
-		}
-		else if (curInfoBlk->type == MEMINF_TYPE_END) {
-			// end of this block, but we might be in part of a stack
-			// check if we are in a stack, if we are, pop out of it
-			// if we're at the lowest level and still hit an end without
-			// finding any free blocks, we can give up and return NULL
 
-			if (memInfoStackTop > 0) {
-				// we are in a stack, pop out of it and continue
-				curInfoBlk = memInfoStack[memInfoStackTop];
-				
-				// drop our stack level
-				memInfoStackTop--;
-				
-				// continue parsing the next highest level block
-				continue;
-			}
+	for (int idx = 0; idx < 32; idx++) {
+		bitmap_t *bitmap = bitmaps[idx];
+		for (size_t i = 0; i < bitmap->size; i++) {
+			if (!(bitmap->bits[i / 64] & (1ULL << (i % 64)))) {
+				// Found a free page, mark it as used
+				bitmap->bits[i / 64] |= (1ULL << (i % 64));
 
-			// nope, we're at the bottom of the stack, lets get out of here
-			ret = NULL;
-			goto leave;
+				// Return the address of the page
+				return (void *)((uintptr_t)bitmap->bits + i * PAGE_SIZE);
+			}
 		}
-		else {
-			// we've encountered some nonsense data
-			// we've either ran past the end of the array somehow,
-			// or the memory is corrupted
-			// either way, this is very bad, panic
-			registers_t regs;
-			char tmp[64];
-			
-			DUMPREGS(&regs);
-			
-			snprintf(tmp, sizeof(tmp), "Invalid memory control block type: 0x%X", curInfoBlk->type);
-			panic(tmp, &regs);
-		}
-		curInfoBlk = &(curInfoBlk[1]);
 	}
-
-leave:
-	memInfoStackTop = 0;
-	return ret;
+	return NULL;
 }
 
 void PMM_Free(void *ptr) {
-	(void)ptr;
+	for (int idx = 0; idx < 32; idx++) {
+		bitmap_t *bitmap = bitmaps[idx];
+		// Calculate the page index
+		size_t i = ((uintptr_t)ptr - (uintptr_t)bitmap->bits) / PAGE_SIZE;
+
+		// Check if the pointer falls within this bitmap
+		if (i < bitmap->size) {
+			// Mark the page as free
+			bitmap->bits[i / 64] &= ~(1ULL << (i % 64));
+			return;
+		}
+	}
+	log(MODNAME, "Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
 }

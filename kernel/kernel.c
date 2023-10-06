@@ -19,6 +19,7 @@ void __attribute__((noreturn)) main() {
 	// FBCON_Init();
 
 
+	/*
 	puts("Testing PMM!\r\n");
 
 	void *ptr = PMM_Alloc(5);
@@ -33,6 +34,7 @@ void __attribute__((noreturn)) main() {
 	ptr2 = PMM_Alloc(5);
 	printf("Recieved pointers: %p and %p\r\n", ptr, ptr2);
 
+	*/
 	testMalloc();
 	
 
