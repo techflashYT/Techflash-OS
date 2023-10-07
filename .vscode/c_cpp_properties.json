@@ -15,7 +15,8 @@
                 "CONFIG_KERN_MAX_BITMAPDATA=16",
                 "bool=_Bool",
                 "true=1",
-                "false=0"
+                "false=0",
+                "__TFOS__=1"
             ],
             "compilerPath": "/opt/TechflashSoftware/crossCompiler/bin/x86_64-elf-gcc",
             "cStandard": "gnu17",

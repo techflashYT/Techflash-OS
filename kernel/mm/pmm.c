@@ -8,7 +8,7 @@
 #include <string.h>
 MODULE("PMM");
 
-static bitmap_t *bitmaps[32];
+static bitmap_t bitmaps[32];
 
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -99,14 +99,13 @@ void PMM_Init() {
 			size_t numPages = cur.size / PAGE_SIZE;
 
 			// Allocate space for the bitmap
-			bitmaps[usableIdx] = (bitmap_t *)cur.start;
-			bitmap_t *bitmap = bitmaps[usableIdx];
+			bitmap_t *bitmap = &(bitmaps[usableIdx]);
 
-			bitmap->size = numPages;
-			bitmap->bits = (uint64_t *)((uintptr_t)cur.start + sizeof(bitmap_t));
+			bitmap->bits = cur.start;
+			bitmap->size = (numPages + 7) / 8;
 
 			// Calculate the number of pages used by the bitmap
-			size_t bitmapPages = ALIGN_PAGE((numPages + 63) / 64) / PAGE_SIZE;
+			size_t bitmapPages = ALIGN_PAGE(bitmap->size);
 
 			// Mark the pages used by the bitmap as used
 			for (size_t j = 0; j < bitmapPages; j++) {
@@ -139,7 +138,7 @@ void *PMM_Alloc(size_t pages) {
 	}
 
 	for (int idx = 0; idx < 32; idx++) {
-		bitmap_t *bitmap = bitmaps[idx];
+		bitmap_t *bitmap = &(bitmaps[idx]);
 		for (size_t i = 0; i < bitmap->size; i++) {
 			if (!(bitmap->bits[i / 64] & (1ULL << (i % 64)))) {
 				// Found a free page, mark it as used
@@ -155,12 +154,12 @@ void *PMM_Alloc(size_t pages) {
 
 void PMM_Free(void *ptr) {
 	for (int idx = 0; idx < 32; idx++) {
-		bitmap_t *bitmap = bitmaps[idx];
+		bitmap_t *bitmap = &(bitmaps[idx]);
 		// Calculate the page index
 		size_t i = ((uintptr_t)ptr - (uintptr_t)bitmap->bits) / PAGE_SIZE;
 
 		// Check if the pointer falls within this bitmap
-		if (i < bitmap->size) {
+		if (((uintptr_t)ptr > (uintptr_t)bitmap->bits) && ((uintptr_t)ptr < ((uintptr_t)bitmap->bits + (bitmap->size * PAGE_SIZE)))) {
 			// Mark the page as free
 			bitmap->bits[i / 64] &= ~(1ULL << (i % 64));
 			return;

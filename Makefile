@@ -15,7 +15,8 @@ iso: bin/TFOS_ISO.iso
 
 
 run:
-	@qemu-system-x86_64 -no-shutdown -no-reboot -m 256M -smp 2 -cdrom bin/TFOS_ISO.iso -display gtk -s -d int -serial stdio -cpu max
+	if [ "$$(uname -m)" = "x86_64" ]; then args=--enable-kvm; fi; \
+		qemu-system-x86_64 -no-shutdown -no-reboot -m 256M -smp 2 -cdrom bin/TFOS_ISO.iso -display gtk -s -d int -serial stdio -cpu max $$args
 
 limineCoreFiles: limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin
 
