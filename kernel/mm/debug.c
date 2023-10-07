@@ -213,7 +213,9 @@ void testMalloc() {
 		}
 
 		// Free allocated memory
+		puts("Cleaning up...");
 		for (int j = 0; j < NUM_TESTS; j++) {
+			printf("%d", j);
 			free(alloc[j]);
 		}
 
