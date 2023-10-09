@@ -21,7 +21,7 @@ static void x86_GDT_SetGate(int32_t num, uint64_t base, uint32_t limit, uint8_t 
 
 extern void x86_GDT_Flush(x86_GDT_Ptr64_t *ptr);
 void x86_GDT_Init() {
-	log(MODNAME, "GDT Initializing", LOGLEVEL_INFO);
+	log("GDT Initializing", LOGLEVEL_INFO);
 	gdtPtr.limit = (sizeof(x86_GDT_Entry64_t) * 5) - 1;
 	gdtPtr.base  = (uint64_t)&gdtEntries;
 	x86_GDT_SetGate(0, 0, 0, 0, 0);                // Null segment
@@ -31,7 +31,7 @@ void x86_GDT_Init() {
 	x86_GDT_SetGate(4, 0, 0xFFFFFFFF, 0xF2, 0xAF); // User mode data segment
 
 	x86_GDT_Flush(&gdtPtr);
-	log(MODNAME, "GDT Loaded!", LOGLEVEL_INFO);
+	log("GDT Loaded!", LOGLEVEL_INFO);
 }
 
 
@@ -59,7 +59,7 @@ static void x86_IDT_SetGate(uint8_t num, uint64_t base, uint16_t sel, uint8_t fl
 }
 
 void x86_IDT_Init() {
-	log(MODNAME, "IDT Initializing", LOGLEVEL_INFO);
+	log("IDT Initializing", LOGLEVEL_INFO);
 	// Remap IRQ table for PIC.
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);
@@ -78,5 +78,5 @@ void x86_IDT_Init() {
 
 	uint64_t junk;
 	asm("leaq x86_IDT_Descriptor(%%rip), %0; lidt (%0)" : "=a"(junk));
-	log(MODNAME, "IDT Loaded!", LOGLEVEL_INFO);
+	log("IDT Loaded!", LOGLEVEL_INFO);
 }

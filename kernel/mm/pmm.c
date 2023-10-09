@@ -17,7 +17,7 @@ static memmap_t *BOOT_ParseMemmap() {
 	}
 	registers_t regs;
 	DUMPREGS(&regs);
-	log(MODNAME, "Unkown Bootloader!  No idea where the memory map is.  Giving up.", LOGLEVEL_FATAL);
+	log("Unkown Bootloader!  No idea where the memory map is.  Giving up.", LOGLEVEL_FATAL);
 	panic("No memory map detected", &regs);
 	return NULL;
 }
@@ -58,8 +58,8 @@ static char *flagsStrs[] = {
 	"Framebuffer", "Kernel", "Modules",
 };
 void PMM_Init() {
-	log(MODNAME, "PMM Initializing", LOGLEVEL_INFO);
-	log(MODNAME, "Getting memory map from bootloader...", LOGLEVEL_DEBUG);
+	log("PMM Initializing", LOGLEVEL_INFO);
+	log("Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	char str[128];
 	char sizeStr[16];
 	uint64_t totalUsableBytes = 0;
@@ -68,9 +68,9 @@ void PMM_Init() {
 	memmap_t *memmap = BOOT_ParseMemmap();
 
 	sprintf(str, "Got memory map with %lu entries at %p", memmap->numEntries, memmap);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
+	log(str, LOGLEVEL_DEBUG);
 	
-	log(MODNAME, "====== Memory Map ======", LOGLEVEL_DEBUG);
+	log("====== Memory Map ======", LOGLEVEL_DEBUG);
 
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {
 		char typeStr[128];
@@ -114,7 +114,7 @@ void PMM_Init() {
 
 
 			if (usableIdx >= 32) {
-				log(MODNAME, "Exceeded 32 usable memory blocks during init.  Hoping we have enough to allocate, and trying to start over.", LOGLEVEL_FATAL);
+				log("Exceeded 32 usable memory blocks during init.  Hoping we have enough to allocate, and trying to start over.", LOGLEVEL_FATAL);
 				goto endLoop;
 			}
 
@@ -122,18 +122,18 @@ void PMM_Init() {
 		}
 endLoop:
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
-		log(MODNAME, str, LOGLEVEL_DEBUG);
+		log(str, LOGLEVEL_DEBUG);
 	}
 	PMM_CalcSizeStr(sizeStr, totalUsableBytes);
 	sprintf(str, "Total usable memory: %s", sizeStr);
-	log(MODNAME, str, LOGLEVEL_DEBUG);
+	log(str, LOGLEVEL_DEBUG);
 	
-	log(MODNAME, "PMM Initialized!", LOGLEVEL_INFO);
+	log("PMM Initialized!", LOGLEVEL_INFO);
 }
 
 void *PMM_Alloc(size_t pages) {
 	if (pages == 0) {
-		log(MODNAME, "Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
+		log("Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
 		return NULL;
 	}
 
@@ -165,5 +165,5 @@ void PMM_Free(void *ptr) {
 			return;
 		}
 	}
-	log(MODNAME, "Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
+	log("Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
 }

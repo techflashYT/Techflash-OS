@@ -8,5 +8,5 @@ void SMP_Init() {
 		LM_SMP_Init();
 		return;
 	}
-	log(MODNAME, "Unknown Bootloader! not initializing SMP manually, since we don't really know the machine state.", LOGLEVEL_WARN);
+	log("Unknown Bootloader! not initializing SMP manually, since we don't really know the machine state.", LOGLEVEL_WARN);
 }

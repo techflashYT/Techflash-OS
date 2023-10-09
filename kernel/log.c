@@ -10,7 +10,8 @@ static char *ansiColors[] = {
 	"\e[0;31m",    // error
 	"\e[31m !!! "  // fatal
 };
-void log(const char module[8], const char *msg, const uint8_t level) {
+
+void _log(const char module[8], const char *msg, const uint8_t level) {
 	if (TTY_CursorX != 0) {
 		puts("\r\n");
 	}

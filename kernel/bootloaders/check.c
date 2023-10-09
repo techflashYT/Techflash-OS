@@ -12,7 +12,7 @@ extern struct limine_bootloader_info_response *LM_Check();
 MODULE("BOOTDTCT");
 
 void BOOT_CheckLoader() {
-	log(MODNAME, "=== Autodetecting Bootloader ===", LOGLEVEL_INFO);
+	log("=== Autodetecting Bootloader ===", LOGLEVEL_INFO);
 
 	char str[128];
 	strcpy(str, "Limine... ");
@@ -20,10 +20,10 @@ void BOOT_CheckLoader() {
 
 	if (limineData != NULL) {
 		strcat(str, "YES");
-		log(MODNAME, str, LOGLEVEL_INFO);
+		log(str, LOGLEVEL_INFO);
 
 		sprintf(str, "Found Limine compatible bootloader, named \"%s\", with version \"%s\"", limineData->name, limineData->version);
-		log(MODNAME, str, LOGLEVEL_INFO);
+		log(str, LOGLEVEL_INFO);
 
 		if (strlen(limineData->name) <= 64) {
 			strcpy(BOOT_LoaderName, limineData->name);
@@ -44,9 +44,9 @@ void BOOT_CheckLoader() {
 		return;
 	}
 	strcat(str, "NO");
-	log(MODNAME, str, LOGLEVEL_INFO);
+	log(str, LOGLEVEL_INFO);
 
 	// TODO: Check for other bootloaders
 
-	log(MODNAME, "No known bootloader detected!  Disabling bootloader-specific features.", LOGLEVEL_WARN);
+	log("No known bootloader detected!  Disabling bootloader-specific features.", LOGLEVEL_WARN);
 }

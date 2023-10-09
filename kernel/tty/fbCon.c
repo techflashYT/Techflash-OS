@@ -68,33 +68,40 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 	}
 }
 
-framebuffer_t FBCON_Init() {
-	framebuffer_t ret;
+static bool firstRun = true;
+
+static void FBCON_InitSimple() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
-		ret = LM_GetFramebuffer();
+		fbCon = LM_GetFramebuffer();
 	}
 	else {
-		log(MODNAME, "Unknown bootloader.  Unable to set framebuffer!  Keeping print method to default, you will probably not have video output!", LOGLEVEL_FATAL);
-		ret = (framebuffer_t){.ptr = NULL, .width = 0, .height = 0, .mode = 0};
+		log("Unknown bootloader.  Unable to set framebuffer!  Keeping print method to default, you will probably not have video output!", LOGLEVEL_FATAL);
+		fbCon = (framebuffer_t){.ptr = NULL, .width = 0, .height = 0, .mode = 0};
 	}
-	fbCon.width  = ret.width;
-	fbCon.height = ret.height;
-	fbCon.mode   = ret.mode;
-	fbCon.ptr    = ret.ptr;
-
 
 	TTY_CursorX  = 0;
 	TTY_CursorY  = 0;
-	TTY_Width    = (uint16_t)(ret.width  / 8);
-	TTY_Height   = (uint16_t)(ret.height / 16);
+	TTY_Width    = (uint16_t)(fbCon.width  / 8);
+	TTY_Height   = (uint16_t)(fbCon.height / 16);
 	TTY_Color    = COLOR_LGRAY;
 	TTY_Bold     = false;
 
-	if (ret.ptr != 0) {
-		log(MODNAME, "Setting TTY Write func", LOGLEVEL_DEBUG);
+	if (fbCon.ptr != 0) {
+		log("Setting TTY Write func", LOGLEVEL_DEBUG);
 		TTY_SetWriteFunc(FBCON_Write);
-		log(MODNAME, "Done setting TTY Write func", LOGLEVEL_DEBUG);
+		log("Done setting TTY Write func", LOGLEVEL_DEBUG);
 	}
+}
 
-	return ret;
+static void FBCON_InitReal() {
+	log("")
+}
+void FBCON_Init() {
+	if (firstRun) {
+		FBCON_InitSimple();
+		firstRun = false;
+		return;
+	}
+	FBCON_InitReal();
+	return;
 }

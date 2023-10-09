@@ -36,13 +36,13 @@ void x86_ISR_Handler(registers_t *regs) {
 	// panic("Unhandled Interrupt", regs);
 	// log it, pray that it isn't necessary, and continue
 	sprintf(buffer, "Interrupt 0x%02lx triggered with no handler!  Ignoring it and hoping nothing bad happens.", regs->intNo);
-	log(MODNAME, buffer, LOGLEVEL_WARN);
+	log(buffer, LOGLEVEL_WARN);
 }
 void x86_ISR_RegisterHandler(uint8_t n, isr_t handler) {
 	// char str[72];
 	// sprintf(str, "Registering function %p to be called on interrupt 0x%02X.", handler, n);
 	
-	// log(MODNAME, str, LOGLEVEL_VERBOSE);
+	// log(str, LOGLEVEL_VERBOSE);
 	interruptHandlers[n] = handler;
 }
 

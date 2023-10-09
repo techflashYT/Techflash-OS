@@ -61,7 +61,7 @@ static void __attribute__((noreturn)) securityExceptionHandler(registers_t *regs
 
 
 void x86_Exceptions_Init() {
-	log(MODNAME, "Initializing Exception Handlers", LOGLEVEL_INFO);
+	log("Initializing Exception Handlers", LOGLEVEL_INFO);
 	x86_ISR_RegisterHandler(0,  &zeroDivHandler);
 	x86_ISR_RegisterHandler(1,  &debugHandler);
 	x86_ISR_RegisterHandler(2,  &NMIHandler);
@@ -92,5 +92,5 @@ void x86_Exceptions_Init() {
 	x86_ISR_RegisterHandler(29, &VMMCommunicationExceptionHandler);
 	x86_ISR_RegisterHandler(30, &securityExceptionHandler);
 	x86_ISR_RegisterHandler(31, &reservedHandler);
-	log(MODNAME, "Done Initializing Exception Handlers!", LOGLEVEL_INFO);
+	log("Done Initializing Exception Handlers!", LOGLEVEL_INFO);
 }

@@ -16,7 +16,7 @@ void __attribute__((noreturn)) main() {
 	ARCH_Init();
 	PMM_Init();
 
-	// FBCON_Init();
+	FBCON_Init();
 
 
 	/*

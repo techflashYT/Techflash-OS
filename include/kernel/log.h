@@ -11,4 +11,5 @@
 #define LOGLEVEL_ERROR   4
 // something EXTREMELY bad happened, this will usually be extended info just before a kernel panic.
 #define LOGLEVEL_FATAL   5
-extern void log(const char module[8], const char *msg, const uint8_t level);
+extern void _log(const char module[8], const char *msg, const uint8_t level);
+#define log(msg, level) _log(MODNAME, msg, level)
