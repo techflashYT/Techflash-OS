@@ -8,7 +8,12 @@
 #include <string.h>
 MODULE("PMM");
 
-static bitmap_t bitmaps[32];
+typedef struct {
+	uint8_t  isFree             : 1;
+	uint8_t  isNumPages         : 1;
+	uint16_t numBytesOrNumPages : 14;
+} memblk_t;
+static memblk_t *memblks[64];
 
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -91,34 +96,15 @@ void PMM_Init() {
 		if ((memmap->numEntries >= 10) && (i < 10)) {space = " ";}
 
 
+		uint_fast8_t memblkIndex = 0;
 		if (cur.type == MM_TYPE_FREE) {
 			totalUsableBytes += cur.size;
-
 
 			// Calculate the number of pages in this block
 			size_t numPages = cur.size / PAGE_SIZE;
 
-			// Allocate space for the bitmap
-			bitmap_t *bitmap = &(bitmaps[usableIdx]);
-
-			bitmap->bits = cur.start;
-			bitmap->size = (numPages + 7) / 8;
-
-			// Calculate the number of pages used by the bitmap
-			size_t bitmapPages = ALIGN_PAGE(bitmap->size);
-
-			// Mark the pages used by the bitmap as used
-			for (size_t j = 0; j < bitmapPages; j++) {
-				bitmap->bits[j / 64] |= (1ULL << (j % 64));
-			}
-
-
-			if (usableIdx >= 32) {
-				log("Exceeded 32 usable memory blocks during init.  Hoping we have enough to allocate, and trying to start over.", LOGLEVEL_FATAL);
-				goto endLoop;
-			}
-
-			usableIdx++;
+			memblks[memblkIndex] = 
+			memblkIndex++;
 		}
 endLoop:
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
@@ -137,33 +123,9 @@ void *PMM_Alloc(size_t pages) {
 		return NULL;
 	}
 
-	for (int idx = 0; idx < 32; idx++) {
-		bitmap_t *bitmap = &(bitmaps[idx]);
-		for (size_t i = 0; i < bitmap->size; i++) {
-			if (!(bitmap->bits[i / 64] & (1ULL << (i % 64)))) {
-				// Found a free page, mark it as used
-				bitmap->bits[i / 64] |= (1ULL << (i % 64));
-
-				// Return the address of the page
-				return (void *)((uintptr_t)bitmap->bits + i * PAGE_SIZE);
-			}
-		}
-	}
 	return NULL;
 }
 
 void PMM_Free(void *ptr) {
-	for (int idx = 0; idx < 32; idx++) {
-		bitmap_t *bitmap = &(bitmaps[idx]);
-		// Calculate the page index
-		size_t i = ((uintptr_t)ptr - (uintptr_t)bitmap->bits) / PAGE_SIZE;
-
-		// Check if the pointer falls within this bitmap
-		if (((uintptr_t)ptr > (uintptr_t)bitmap->bits) && ((uintptr_t)ptr < ((uintptr_t)bitmap->bits + (bitmap->size * PAGE_SIZE)))) {
-			// Mark the page as free
-			bitmap->bits[i / 64] &= ~(1ULL << (i % 64));
-			return;
-		}
-	}
-	log("Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
+	log(MODNAME, "Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
 }

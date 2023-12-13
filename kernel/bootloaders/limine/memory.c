@@ -6,8 +6,17 @@ volatile struct limine_memmap_request memmapRequest = {
 	.id = LIMINE_MEMMAP_REQUEST,
 	.revision = 0
 };
+volatile struct limine_hhdm_request hhdmRequest = {
+	.id = LIMINE_HHDM_REQUEST,
+	.revision = 0
+};
+
+
+
 static uint8_t __memmap[1024];
 memmap_t *LM_ParseMemmap() {
+	__memmap[1022] = 0xDE;
+	__memmap[1023] = 0xAD;
 	memmap_t *memmap = (memmap_t *)__memmap;
 	if (memmapRequest.response == NULL) {
 		registers_t regs;
