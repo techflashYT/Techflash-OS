@@ -40,5 +40,11 @@ memmap_t *LM_ParseMemmap() {
 		else if (current->type == LIMINE_MEMMAP_FRAMEBUFFER)            {memmap->entries[i].type = MM_TYPE_MMIO; memmap->entries[i].flags = MM_FLAG_FRAMEBUF;}
 		else                                                            {memmap->entries[i].type = MM_TYPE_UNKN;}
 	}
+	if (__memmap[1022] != 0xDE || __memmap[1023] != 0xAD) {
+		registers_t regs;
+		DUMPREGS(&regs);
+
+		panic("PMM: __memmap trashed", &regs);
+	}
 	return memmap;
 }
