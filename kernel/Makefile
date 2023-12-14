@@ -19,13 +19,15 @@ LDFLAGS=-L../lib -TlinkerScript.ld
 WARN=-Wall -Wextra -Wno-pedantic -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
 FEAT=-ffreestanding -fpie
 INCLUDES=-imacros misc/defines.h -include kernel/log.h
-CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) $(INCLUDES) -std=gnu2x -march=x86-64 -mno-3dnow -mno-mmx -mno-sse -mno-sse2
+CPU_FLAGS=-march=x86-64 -mno-3dnow -mno-mmx -mno-sse -mno-sse2
+CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) $(INCLUDES) $(CPU_FLAGS) -DGIT_STR=$(GIT_STR) -std=gnu2x
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32
 endif
 
-include ../.config
+$(shell ../util/parse-config.sh ../)
+include ../.config_makefile_parsed
 
 $(info Using $(CC) as the kernel C compiler)
 

@@ -20,6 +20,10 @@ CFLAGS += -m32
 ASFLAGS += -m32
 endif
 
+
+$(shell ../util/parse-config.sh ../)
+include ../.config_makefile_parsed
+
 $(info Using $(CC) as the libc C compiler)
 
 CFILES       = $(shell find -O3 . -name '*.c' -not -path './arch/*')

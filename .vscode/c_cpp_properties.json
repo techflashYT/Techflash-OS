@@ -8,15 +8,7 @@
                 "/opt/TechflashSoftware/crossCompiler/lib/gcc/x86_64-elf/**"
             ],
             "defines": [
-                "CONFIG_KERN_VERSION_MAJOR=0",
-                "CONFIG_KERN_VERSION_MINOR=1",
-                "CONFIG_KERN_VERSION_PATCH=0",
-                "CONFIG_KERN_MAXARGS=250",
-                "CONFIG_KERN_MAX_BITMAPDATA=16",
-                "bool=_Bool",
-                "true=1",
-                "false=0",
-                "__TFOS__=1"
+                "GIT_STR=nonsense"
             ],
             "compilerPath": "/opt/TechflashSoftware/crossCompiler/bin/x86_64-elf-gcc",
             "cStandard": "gnu17",
@@ -35,7 +27,8 @@
             "forcedInclude": [
                 "include/misc/defines.h",
                 "include/kernel/log.h"
-            ]
+            ],
+            "dotConfig": ".config"
         },
         {
             "name": "Linux",

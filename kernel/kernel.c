@@ -8,15 +8,22 @@
 #include <stdio.h>
 #include <string.h>
 
+
 void testMalloc();
 void __attribute__((noreturn)) main() {
 	TTY_SetWriteFunc(COM_LogWrapper);
+	printf("Techflash OS Version %s loading...\r\n", VER_STR);
 	BOOT_CheckLoader();
 	SMP_Init();
 	ARCH_Init();
-	PMM_Init();
 
+	#if CONFIG_PMM == 1
+	PMM_Init();
+	#endif
+
+	#if CONFIG_FBCON == 1
 	FBCON_Init();
+	#endif
 
 
 	/*
