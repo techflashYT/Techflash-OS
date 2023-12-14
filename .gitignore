@@ -9,3 +9,4 @@ limine/*
 log
 bx_enh_dbg.ini
 tmp
+.config_makefile_parsed
