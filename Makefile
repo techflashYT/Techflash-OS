@@ -7,6 +7,30 @@ endif
 $(info Using $(HOSTCC) as the host C compiler)
 
 
+GIT_HASH := $(shell git rev-parse --short HEAD)
+MODIFIED := $(shell git status --porcelain)
+AUTHOR   := $(shell git log -1 --pretty=format:'%an')
+
+# Note: This does *not* make it so that when a contributor
+# makes a commit, it becomes "unofficial"!  When I merge the PR
+# on GitHub, it makes a commit as me after merging in the
+# contributor's commit(s).
+ifeq ($(AUTHOR), techflashYT)
+   OFFICIAL := -official
+else
+   OFFICIAL := -unofficial
+endif
+
+ifeq ($(MODIFIED),)
+   MOD := 
+else
+   MOD := -(!~MOD-nocommit~!)
+endif
+
+GIT_STR := $(GIT_HASH)$(OFFICIAL)$(MOD)
+$(info git string is $(GIT_STR))
+
+
 .PHONY: config clean all iso usb limineCoreFiles run libc kernel
 
 all: iso
