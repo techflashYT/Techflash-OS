@@ -8,5 +8,7 @@ int puts(const char *s) {
 		putchar(*s);
 		s++;
 	}
+	putchar('\r');
+	putchar('\n');
 	return 0;
 }
