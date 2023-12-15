@@ -13,7 +13,7 @@ static char *ansiColors[] = {
 
 void _log(const char module[8], const char *msg, const uint8_t level) {
 	if (TTY_CursorX != 0) {
-		puts("\r\n");
+		puts("");
 	}
 	(void)level;
 	// NOTE: we do this so that GCC can check the format
@@ -32,5 +32,5 @@ void _log(const char module[8], const char *msg, const uint8_t level) {
 		COM_WriteStr(0, str);
 	}
 	// yes, just write it to serial
-	puts(str);
+	printf("%s", str);
 }
