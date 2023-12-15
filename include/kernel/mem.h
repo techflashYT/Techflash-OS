@@ -19,12 +19,14 @@
 #define MM_FLAG_BAD_MEM  0x2
 // read only memory, don't write here
 #define MM_FLAG_READONLY 0x4
+// BIOS Data Area, only used on BIOS/CSM machines
+#define MM_FLAG_BDA      0x8
 // memory with framebuffer
-#define MM_FLAG_FRAMEBUF 0x8
+#define MM_FLAG_FRAMEBUF 0x10
 // the memory where the kernel binary lives
-#define MM_FLAG_KERNEL   0x10
+#define MM_FLAG_KERNEL   0x20
 // the memory where modules live
-#define MM_FLAG_MODULES  0x20
+#define MM_FLAG_MODULES  0x40
 
 
 // these are the types they are to allow for proper alignment

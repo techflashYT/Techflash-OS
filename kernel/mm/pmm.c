@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 MODULE("PMM");
 
@@ -62,15 +63,14 @@ static char *typeStrs[] = {
 
 static char *flagsStrs[] = {
 	"Reclaimable", "Bad Memory", "Read Only",
-	"Framebuffer", "Kernel", "Modules",
+	"BIOS Data Area", "Framebuffer", "Kernel", "Modules",
 };
-void PMM_Init() {
+void __attribute__((noreturn)) PMM_Init() {
 	log("PMM Initializing", LOGLEVEL_INFO);
 	log("Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	char str[128];
 	char sizeStr[16];
 	uint64_t totalUsableBytes = 0;
-	uint_fast8_t usableIdx = 0;
 
 	memmap_t *memmap = BOOT_ParseMemmap();
 
@@ -105,11 +105,11 @@ void PMM_Init() {
 			// Calculate the number of pages in this block
 			size_t numPages = cur.size / PAGE_SIZE;
 
-			memblks[memblkIndex] = &
-			(memblk_t){.isFree = true, .isNumPages = true, .numBytesOrNumPages = numPages};
+			memblks[memblkIndex] = cur.start;
+			*memblks[memblkIndex] = (memblk_t){.isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
 			memblkIndex++;
 		}
-endLoop:
+		
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
 		log(str, LOGLEVEL_DEBUG);
 	}
@@ -118,6 +118,9 @@ endLoop:
 	log(str, LOGLEVEL_DEBUG);
 	
 	log("PMM Initialized!", LOGLEVEL_INFO);
+	while (true) {
+		asm("pause");
+	}
 }
 
 void *PMM_Alloc(size_t pages) {
@@ -130,6 +133,7 @@ void *PMM_Alloc(size_t pages) {
 }
 
 void PMM_Free(void *ptr) {
+	(void)ptr;
 	log("Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
 }
 
