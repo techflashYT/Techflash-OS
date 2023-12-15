@@ -1,7 +1,10 @@
+#if CONFIG_FBCON == 1
+
 #include <kernel/tty/fbCon.h>
 #include <kernel/tty.h>
 #include <kernel/bootloader.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 framebuffer_t fbCon;
 
@@ -94,7 +97,7 @@ static void FBCON_InitSimple() {
 }
 
 static void FBCON_InitReal() {
-	log("")
+	log("Not implemented I guess", LOGLEVEL_FATAL);
 }
 void FBCON_Init() {
 	if (firstRun) {
@@ -105,3 +108,4 @@ void FBCON_Init() {
 	FBCON_InitReal();
 	return;
 }
+#endif

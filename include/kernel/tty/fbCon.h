@@ -16,7 +16,7 @@ extern uint8_t font[256][16];
 
 
 extern framebuffer_t fbCon;
-extern framebuffer_t FBCON_Init();
+extern void FBCON_Init();
 
 #define COLOR_WHITE  0xFFFFFFFF
 #define COLOR_BLACK  0xFF000000
