@@ -1,3 +1,5 @@
+#if CONFIG_PMM == 1
+
 #include <kernel/mem.h>
 #include <kernel/bootloader.h>
 #include <kernel/registers.h>
@@ -103,7 +105,8 @@ void PMM_Init() {
 			// Calculate the number of pages in this block
 			size_t numPages = cur.size / PAGE_SIZE;
 
-			memblks[memblkIndex] = 
+			memblks[memblkIndex] = &
+			(memblk_t){.isFree = true, .isNumPages = true, .numBytesOrNumPages = numPages};
 			memblkIndex++;
 		}
 endLoop:
@@ -127,5 +130,9 @@ void *PMM_Alloc(size_t pages) {
 }
 
 void PMM_Free(void *ptr) {
-	log(MODNAME, "Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
+	log("Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
 }
+
+#else
+#warning "CONFIG_PMM != 1.  No memory management will be available!"
+#endif
