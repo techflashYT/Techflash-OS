@@ -22,7 +22,7 @@ fi
 buffer=""
 
 # empty the file
-echo -n "" > "${output_file}
+echo -n "" > "${output_file}"
 
 
 start_of_section="true"
