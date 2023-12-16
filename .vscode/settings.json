@@ -116,9 +116,11 @@
 		"dgray",
 		"disksize",
 		"DLAB",
+		"DONT",
 		"ebda",
 		"EIMAG",
 		"ELFLOAD",
+		"FBCON",
 		"hcol",
 		"iconconv",
 		"imread",
@@ -133,6 +135,7 @@
 		"lred",
 		"Lukás",
 		"MAXARGS",
+		"memblk",
 		"memsz",
 		"mkrescue",
 		"MMIO",
@@ -157,5 +160,8 @@
 		"Wuninitialized",
 		"yyyymmddhhiiss",
 		"ZYXWVUTSRQPONMLKJIHGFEDCBA"
+	],
+	"cSpell.enableFiletypes": [
+		"makefile"
 	]
 }
