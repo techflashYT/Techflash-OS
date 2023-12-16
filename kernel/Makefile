@@ -10,17 +10,17 @@ CC=$(HOSTCC)
 LD=ld.lld
 endif
 
-CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-vla -Wno-unsafe-buffer-usage -Wno-padded -Wno-language-extension-token
+CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-vla -Wno-unsafe-buffer-usage -Wno-padded -Wno-language-extension-token -Wno-cast-align
 
 
 LIBS=-lc
 
 LDFLAGS=-L../lib -TlinkerScript.ld
 WARN=-Wall -Wextra -Wno-pedantic -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
-FEAT=-ffreestanding -fpie
+FEAT=-ffreestanding -fpie -funwind-tables
 INCLUDES=-imacros misc/defines.h -include kernel/log.h
 CPU_FLAGS=-march=x86-64 -mno-3dnow -mno-mmx -mno-sse -mno-sse2
-CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) $(INCLUDES) $(CPU_FLAGS) -DGIT_STR=$(GIT_STR) -std=gnu2x
+CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) $(INCLUDES) $(CPU_FLAGS) -DGIT_STR=$(GIT_STR) -std=gnu2x -Wno-frame-address
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
 ASFLAGS += -m32

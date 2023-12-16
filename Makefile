@@ -78,7 +78,7 @@ libc:
 	@$(MAKE) -C libc HOSTCC=$(HOSTCC)
 
 kernel: libc
-	@$(MAKE) -C kernel HOSTCC=$(HOSTCC)
+	@$(MAKE) -C kernel HOSTCC=$(HOSTCC) GIT_STR='"$(GIT_STR)"'
 
 bin/tfos_kernel.elf: libc kernel
 

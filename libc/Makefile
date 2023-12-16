@@ -13,7 +13,7 @@ endif
 CC=clang -target x86_64-unknown-none -Weverything -Wno-reserved-macro-identifier -Wno-declaration-after-statement -Wno-cast-qual -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-reserved-identifier -Wno-unsafe-buffer-usage
 
 WARN=-Wall -Wextra -Wpedantic -Wno-language-extension-token -Wshadow -Wstack-protector -Wformat=2 -Wconversion -Wformat-security -Wunused-parameter -Werror
-FEAT=-ffreestanding -fpie
+FEAT=-ffreestanding -fpie -funwind-tables
 CFLAGS=-nostdlib -g -I../include $(WARN) $(FEAT) -std=gnu2x -march=x86-64 -mno-3dnow -mno-mmx -mno-sse -mno-sse2
 ifeq ($(ARCH),i386)
 CFLAGS += -m32
