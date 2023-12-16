@@ -30,6 +30,10 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		TTY_CursorY++;
 		return;
 	}
+	if (ch == '\t') {
+		TTY_CursorX += 4;
+		return;
+	}
 
 	uint8_t *charData = font[(uint8_t)ch];
 	uint32_t offset = ((y * 16) * fbCon.width) + (x * 8);
