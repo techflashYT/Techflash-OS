@@ -3,13 +3,7 @@
 #include <kernel/registers.h>
 #include <string.h>
 void *malloc(size_t size) {
-	size_t pages = NUM_PAGES(size);
-	if (pages == 0) {
-		registers_t regs;
-		DUMPREGS(&regs);
-		panic("malloc-wrapper: pages=0... wtf", &regs);
-	}
-	return PMM_Alloc(pages);
+	return PMM_AllocBytes(size);
 }
 /*
 void *realloc(void *ptr, size_t size) {

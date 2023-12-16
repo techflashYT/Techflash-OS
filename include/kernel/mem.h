@@ -45,6 +45,7 @@ typedef struct {
 
 extern void  PMM_Init ();
 extern void *PMM_Alloc(size_t pages);
+extern void *PMM_AllocBytes(size_t bytes);
 extern void  PMM_Free (void *ptr);
 
 

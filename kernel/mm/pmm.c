@@ -14,7 +14,7 @@ MODULE("PMM");
 typedef struct {
 	uint8_t  isFree             : 1;
 	uint8_t  isNumPages         : 1;
-	uint16_t numBytesOrNumPages : 14;
+	uint64_t numBytesOrNumPages : 62;
 } memblk_t;
 static memblk_t *memblks[64];
 
@@ -65,7 +65,7 @@ static char *flagsStrs[] = {
 	"Reclaimable", "Bad Memory", "Read Only",
 	"BIOS Data Area", "Framebuffer", "Kernel", "Modules",
 };
-void __attribute__((noreturn)) PMM_Init() {
+void PMM_Init() {
 	log("PMM Initializing", LOGLEVEL_INFO);
 	log("Getting memory map from bootloader...", LOGLEVEL_DEBUG);
 	char str[128];
@@ -105,7 +105,7 @@ void __attribute__((noreturn)) PMM_Init() {
 			// Calculate the number of pages in this block
 			size_t numPages = cur.size / PAGE_SIZE;
 
-			memblks[memblkIndex] = cur.start;
+			memblks[memblkIndex]  = cur.start;
 			*memblks[memblkIndex] = (memblk_t){.isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
 			memblkIndex++;
 		}
@@ -118,25 +118,114 @@ void __attribute__((noreturn)) PMM_Init() {
 	log(str, LOGLEVEL_DEBUG);
 	
 	log("PMM Initialized!", LOGLEVEL_INFO);
-	while (true) {
-		asm("pause");
-	}
+	return;
 }
 
 void *PMM_Alloc(size_t pages) {
-	if (pages == 0) {
-		log("Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
-		return NULL;
-	}
+    if (pages == 0) {
+        log("Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
+        return NULL;
+    }
 
-	return NULL;
+    for (int i = 0; i < 64; i++) {
+        memblk_t *blk = memblks[i];
+        while (blk != NULL && blk->isFree && blk->isNumPages && blk->numBytesOrNumPages >= pages) {
+            if (blk->numBytesOrNumPages > pages) {
+                // Split the block
+                memblk_t *newBlk = (memblk_t *)((char *)blk + (pages + 1) * PAGE_SIZE);
+                newBlk->isFree = true;
+                newBlk->isNumPages = true;
+                newBlk->numBytesOrNumPages = blk->numBytesOrNumPages - pages - 1;
+
+                // Update the original block
+                blk->isFree = false;
+                blk->numBytesOrNumPages = pages;
+            } else {
+                // The block is exactly the right size
+                blk->isFree = false;
+            }
+
+            // Return a pointer to the allocated block
+            return (void *)((char *)blk + PAGE_SIZE);
+        }
+
+        // Move to the next block
+        blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
+    }
+
+    log("Failed to allocate memory: not enough free space.", LOGLEVEL_ERROR);
+    return NULL;
+}
+
+void *PMM_AllocBytes(size_t bytes) {
+    if (bytes == 0) {
+        log("Refusing to allocate 0 bytes of memory.", LOGLEVEL_WARN);
+        return NULL;
+    }
+
+    for (int i = 0; i < 64; i++) {
+        memblk_t *blk = memblks[i];
+        while (blk != NULL && blk->isFree && !blk->isNumPages && blk->numBytesOrNumPages >= bytes) {
+            if (blk->numBytesOrNumPages > bytes) {
+                // Split the block
+                memblk_t *newBlk = (memblk_t *)((char *)blk + bytes + 1);
+                newBlk->isFree = true;
+                newBlk->isNumPages = false;
+                newBlk->numBytesOrNumPages = blk->numBytesOrNumPages - bytes - 1;
+
+                // Update the original block
+                blk->isFree = false;
+                blk->numBytesOrNumPages = bytes;
+            } else {
+                // The block is exactly the right size
+                blk->isFree = false;
+            }
+
+            // Return a pointer to the allocated block
+            return (void *)((char *)blk + 1);
+        }
+
+        // Move to the next block
+        blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
+    }
+
+    log("Failed to allocate memory: not enough free space.", LOGLEVEL_ERROR);
+    return NULL;
 }
 
 void PMM_Free(void *ptr) {
-	(void)ptr;
-	log("Attempted to free a pointer not managed by the PMM.", LOGLEVEL_ERROR);
-}
+    if (ptr == NULL) {
+        log("Refusing to free NULL pointer.", LOGLEVEL_WARN);
+        return;
+    }
 
+    for (int i = 0; i < 64; i++) {
+        memblk_t *blk = memblks[i];
+        while (blk != NULL) {
+            if ((void *)((char *)blk + (blk->isNumPages ? PAGE_SIZE : 1)) == ptr) {
+                // Found the block to be freed
+                blk->isFree = true;
+
+                // Merge with previous block if it's free
+                if (i > 0 && memblks[i - 1]->isFree) {
+                    memblks[i - 1]->numBytesOrNumPages += blk->numBytesOrNumPages + 1;
+                    blk = memblks[i - 1];
+                }
+
+                // Merge with next block if it's free
+                memblk_t *nextBlk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
+                if (nextBlk != NULL && nextBlk->isFree) {
+                    blk->numBytesOrNumPages += nextBlk->numBytesOrNumPages + 1;
+                }
+
+                return;
+            }
+
+            // Move to the next block
+            blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
+        }
+    }
+}
 #else
 #warning "CONFIG_PMM != 1.  No memory management will be available!"
 #endif
