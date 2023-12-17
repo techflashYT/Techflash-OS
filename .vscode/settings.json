@@ -144,6 +144,7 @@
 		"memsz",
 		"mkrescue",
 		"MMIO",
+		"nextblk",
 		"numcores",
 		"phtable",
 		"putc",

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #define MALLOC_DEBUG
 #ifdef MALLOC_DEBUG
 #define NUM_TESTS 1000
@@ -8,25 +9,13 @@
 #define PROG_BAR_WIDTH 20
 
 
-// Techflash OS has a weird puts that doesn't put a newline
-// this app was built around it, so we emulate it here
-#ifndef __TFOS__
-#include <stdlib.h>
-#include <stdbool.h>
-static void custom_puts(char *str) {
-	while (*str != '\0') {
-		putchar(*str);
-		str++;
-	}
-}
-#define puts custom_puts
-#define FAIL exit(1);
-#endif
 
 
 // building for Techflash OS, define FAIL as halt
 #ifdef __TFOS__
 #define FAIL while (true) { asm("cli; hlt");}
+#else
+#define FAIL exit(1);
 #endif
 
 
@@ -47,7 +36,7 @@ static void handleProgress(int prog, int max) {
 		for(int i = 0; i < PROG_BAR_WIDTH; i++) {
 			putchar((currentProgress >= i) ? '#' : ' ');
 		}
-		puts("] ");
+		printf("] ");
 		previousProgress = currentProgress;
 	}
 }
@@ -89,7 +78,7 @@ void checkContiguous(int test_num, void* block1, void* block2) {
 #endif
 void testMalloc() {
 	for (int goodNum = 0; goodNum != NUM_TESTS;) {
-		puts("Test #1: Basic memory allocation and deallocation: ");
+		printf("Test #1: Basic memory allocation and deallocation: ");
 		for (int i = 0; i < NUM_TESTS; i++) {
 			// Test 1: Basic memory allocation and deallocation
 			handleProgress(i, NUM_TESTS);
@@ -103,7 +92,7 @@ void testMalloc() {
 		}
 		PASS
 
-		puts("Test #2: Allocating and freeing large chunks of memory: ");
+		printf("Test #2: Allocating and freeing large chunks of memory: ");
 		for (int i = 0; i < NUM_TESTS / 6; i++) {
 			// Test 2: Allocating and freeing large chunks of memory
 			handleProgress(i, NUM_TESTS / 6);
@@ -118,7 +107,7 @@ void testMalloc() {
 		}
 		PASS
 
-		puts("Test #3: Allocate memory, modify, and check: ");
+		printf("Test #3: Allocate memory, modify, and check: ");
 		for (int i = 0; i < NUM_TESTS; i++) {
 			// Test 3: Allocate memory, modify, and check
 			handleProgress(i, NUM_TESTS);
@@ -136,7 +125,7 @@ void testMalloc() {
 		}
 		PASS
 
-		puts("Test #4: Allocate array of chars and manipulate the content: ");
+		printf("Test #4: Allocate array of chars and manipulate the content: ");
 
 		for (int i = 0; i < NUM_TESTS; i++) {
 			// Test 4: Allocate array of chars and manipulate the content
@@ -156,7 +145,7 @@ void testMalloc() {
 		}
 		PASS
 
-		puts("Test #5: Allocate multiple blocks and check for contiguous memory: ");
+		printf("Test #5: Allocate multiple blocks and check for contiguous memory: ");
 #ifndef __TFOS__
 		printYellow("Test skipped - Not in kernel");
 		last = true;
@@ -175,7 +164,7 @@ void testMalloc() {
 
 		size_t prev_end = 0;
 
-		puts("Test #6: Check that next alloc is a higher address than prev + Test #7: Ensure no two allocated ranges overlap: ");
+		printf("Test #6: Check that next alloc is a higher address than prev + Test #7: Ensure no two allocated ranges overlap: ");
 #ifndef __TFOS__
 		printYellow("Test #6 skipped - Not in kernel");
 #endif
@@ -213,7 +202,7 @@ void testMalloc() {
 		}
 
 		// Free allocated memory
-		puts("Cleaning up...");
+		printf("Cleaning up...");
 		for (int j = 0; j < NUM_TESTS; j++) {
 			printf("%d", j);
 			free(alloc[j]);

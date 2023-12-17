@@ -11,12 +11,53 @@
 #include <string.h>
 MODULE("PMM");
 
+
+/*
+	Ok so this is how the PMM works:
+	There are CONFIG_MAX_MEMBLK number of starting "memblk"s.
+	Each memblk follows the struct below this comment.
+
+	A memblk points to the next memblk by keeping the size of the block.
+
+	If the block is measured in pages, the data will begin at the next
+	page-aligned address after the block, and the next will begin 
+	at that address + (numPages * PAGE_SIZE) + 1.
+	There will be a pointer to the start of this block's metadata,
+	along with a magic number at the end of the padding page.
+
+
+	If the block is measured in bytes, the data will begin immediately
+	after the end of the block metadata, and will end at
+	start of block metadata + sizeof(memblk_t) + numBytes + 1.
+
+	To allocate a block:
+	  - Start at one of the starting memblk's
+	  - Follow it with the rules above.
+	  - Find a valid free block with enough free bytes (or free pages)
+	  - If one is found, mark it as used, set the size and pages flags accordingly, then follow the rules above for figuring out the pointer to return.
+	  - If you encounter a NULL before finding a free block, try the next starting block and repeat
+
+	To free a block:
+	  - Check a few bytes back.  Do we have the pointer magic, or block magic?
+	  - If we have the block magic, we have a bytes allocation, and we can just mark it as free
+	  	- NOTE: Check for other free blocks before and after this to see if we can merge them!
+	  - If we have the pointer magic, we need to go to the pointer value.
+	  - Now we have the block, follow the same steps as for freeing a bytes block.
+*/
+
+#define BLOCK_MAGIC 0x4F6F
+#define PTR_MAGIC   0x6F4F
 typedef struct {
+	uint16_t magicNum;
+	void *   ptr;
+} blockPtr_t;
+typedef struct {
+	uint16_t magicNum			: 16;
 	uint8_t  isFree             : 1;
 	uint8_t  isNumPages         : 1;
-	uint64_t numBytesOrNumPages : 62;
+	uint64_t numBytesOrNumPages : 46;
 } memblk_t;
-static memblk_t *memblks[64];
+static memblk_t *memblks[CONFIG_MAX_MEMBLK];
 
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
@@ -106,7 +147,7 @@ void PMM_Init() {
 			size_t numPages = cur.size / PAGE_SIZE;
 
 			memblks[memblkIndex]  = cur.start;
-			*memblks[memblkIndex] = (memblk_t){.isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
+			*memblks[memblkIndex] = (memblk_t){.magicNum = BLOCK_MAGIC, .isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
 			memblkIndex++;
 		}
 		
@@ -122,109 +163,84 @@ void PMM_Init() {
 }
 
 void *PMM_Alloc(size_t pages) {
-    if (pages == 0) {
-        log("Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
-        return NULL;
-    }
+	if (pages == 0) {
+		log("Refusing to allocate 0 pages of memory.", LOGLEVEL_WARN);
+		return NULL;
+	}
 
-    for (int i = 0; i < 64; i++) {
-        memblk_t *blk = memblks[i];
-        while (blk != NULL && blk->isFree && blk->isNumPages && blk->numBytesOrNumPages >= pages) {
-            if (blk->numBytesOrNumPages > pages) {
-                // Split the block
-                memblk_t *newBlk = (memblk_t *)((char *)blk + (pages + 1) * PAGE_SIZE);
-                newBlk->isFree = true;
-                newBlk->isNumPages = true;
-                newBlk->numBytesOrNumPages = blk->numBytesOrNumPages - pages - 1;
-
-                // Update the original block
-                blk->isFree = false;
-                blk->numBytesOrNumPages = pages;
-            } else {
-                // The block is exactly the right size
-                blk->isFree = false;
-            }
-
-            // Return a pointer to the allocated block
-            return (void *)((char *)blk + PAGE_SIZE);
-        }
-
-        // Move to the next block
-        blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
-    }
-
-    log("Failed to allocate memory: not enough free space.", LOGLEVEL_ERROR);
-    return NULL;
+	return NULL;
 }
 
 void *PMM_AllocBytes(size_t bytes) {
-    if (bytes == 0) {
-        log("Refusing to allocate 0 bytes of memory.", LOGLEVEL_WARN);
-        return NULL;
-    }
+	log("PMM_AllocBytes", 
+	if (bytes == 0) {
+		log("Refusing to allocate 0 bytes of memory.", LOGLEVEL_WARN);
+		return NULL;
+	}
 
-    for (int i = 0; i < 64; i++) {
-        memblk_t *blk = memblks[i];
-        while (blk != NULL && blk->isFree && !blk->isNumPages && blk->numBytesOrNumPages >= bytes) {
-            if (blk->numBytesOrNumPages > bytes) {
-                // Split the block
-                memblk_t *newBlk = (memblk_t *)((char *)blk + bytes + 1);
-                newBlk->isFree = true;
-                newBlk->isNumPages = false;
-                newBlk->numBytesOrNumPages = blk->numBytesOrNumPages - bytes - 1;
+	for (int i = 0; i != CONFIG_MAX_MEMBLK; i++) {
+		memblk_t *current = memblks[i];
 
-                // Update the original block
-                blk->isFree = false;
-                blk->numBytesOrNumPages = bytes;
-            } else {
-                // The block is exactly the right size
-                blk->isFree = false;
-            }
+		if (current == NULL) {
+			log("Reached end of memblks list and haven't found free block big enough. OOM?", LOGLEVEL_FATAL);
+			return NULL;
+		}
+		while (*(uint64_t *)current != 0) {
+			if (current->magicNum != BLOCK_MAGIC) {
+				log("Block magic invalid!!  Skipping to next memblk.", LOGLEVEL_WARN);
+				break;
+			}
+			(void)PTR_MAGIC;
 
-            // Return a pointer to the allocated block
-            return (void *)((char *)blk + 1);
-        }
+			size_t nbytes = current->numBytesOrNumPages;
+			uint8_t *currentTmp = (uint8_t *)current;
+			if (current->isNumPages != 0) {
+				nbytes *= 4096;
+			}
 
-        // Move to the next block
-        blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
-    }
 
-    log("Failed to allocate memory: not enough free space.", LOGLEVEL_ERROR);
-    return NULL;
+			if (!current->isFree) {
+				// not free, skip
+				log("used blk", LOGLEVEL_VERBOSE);
+				goto nextblk;
+			}
+
+
+			if (nbytes <= bytes) {
+				// block too small
+				log("too small", LOGLEVEL_VERBOSE);
+				goto nextblk;
+			}
+
+			log("Found free block", LOGLEVEL_VERBOSE);
+			current->isFree = false;
+			current->numBytesOrNumPages = bytes;
+
+			void *addr = currentTmp + sizeof(memblk_t) + 1;
+			if (addr == NULL) {
+				log("what", LOGLEVEL_FATAL);
+				while (true) {}
+			}
+
+
+			// TODO: Make new block after data
+			return addr;
+
+
+			nextblk:;
+			log("nextblk", LOGLEVEL_VERBOSE);
+			currentTmp += nbytes + 1;
+			current = (memblk_t *)currentTmp;
+		}
+	}
+	return NULL;
 }
 
 void PMM_Free(void *ptr) {
-    if (ptr == NULL) {
-        log("Refusing to free NULL pointer.", LOGLEVEL_WARN);
-        return;
-    }
-
-    for (int i = 0; i < 64; i++) {
-        memblk_t *blk = memblks[i];
-        while (blk != NULL) {
-            if ((void *)((char *)blk + (blk->isNumPages ? PAGE_SIZE : 1)) == ptr) {
-                // Found the block to be freed
-                blk->isFree = true;
-
-                // Merge with previous block if it's free
-                if (i > 0 && memblks[i - 1]->isFree) {
-                    memblks[i - 1]->numBytesOrNumPages += blk->numBytesOrNumPages + 1;
-                    blk = memblks[i - 1];
-                }
-
-                // Merge with next block if it's free
-                memblk_t *nextBlk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
-                if (nextBlk != NULL && nextBlk->isFree) {
-                    blk->numBytesOrNumPages += nextBlk->numBytesOrNumPages + 1;
-                }
-
-                return;
-            }
-
-            // Move to the next block
-            blk = (memblk_t *)((char *)blk + (blk->numBytesOrNumPages + 1) * (blk->isNumPages ? PAGE_SIZE : 1));
-        }
-    }
+	if (ptr == NULL) {
+		log("Refusing to free NULL pointer.", LOGLEVEL_WARN);
+		return;
+	}
 }
 #else
 #warning "CONFIG_PMM != 1.  No memory management will be available!"
