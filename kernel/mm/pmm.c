@@ -120,6 +120,7 @@ void PMM_Init() {
 	
 	log("====== Memory Map ======", LOGLEVEL_DEBUG);
 
+	uint_fast8_t memblkIndex = 0;
 	for (uint_fast8_t i = 0; i != memmap->numEntries; i++) {
 		char typeStr[128];
 		memmapEntry_t cur = memmap->entries[i];
@@ -139,7 +140,6 @@ void PMM_Init() {
 		if ((memmap->numEntries >= 10) && (i < 10)) {space = " ";}
 
 
-		uint_fast8_t memblkIndex = 0;
 		if (cur.type == MM_TYPE_FREE) {
 			totalUsableBytes += cur.size;
 
@@ -172,7 +172,7 @@ void *PMM_Alloc(size_t pages) {
 }
 
 void *PMM_AllocBytes(size_t bytes) {
-	log("PMM_AllocBytes", 
+	log("PMM_AllocBytes", LOGLEVEL_VERBOSE);
 	if (bytes == 0) {
 		log("Refusing to allocate 0 bytes of memory.", LOGLEVEL_WARN);
 		return NULL;
@@ -222,8 +222,20 @@ void *PMM_AllocBytes(size_t bytes) {
 				while (true) {}
 			}
 
+			currentTmp += bytes + 1;
+			current = (memblk_t *)currentTmp;
 
-			// TODO: Make new block after data
+			current->magicNum = BLOCK_MAGIC;
+			current->isFree = true;
+			
+			size_t newNbytes = nbytes - bytes;
+			if (nbytes - bytes % 4096 == 0) {
+				current->isNumPages = true;
+				newNbytes /= 4096;
+			}
+
+			current->numBytesOrNumPages = newNbytes;
+			// make a new block
 			return addr;
 
 
