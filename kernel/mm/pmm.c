@@ -149,6 +149,7 @@ void PMM_Init() {
 			memblks[memblkIndex]  = cur.start;
 			*memblks[memblkIndex] = (memblk_t){.magicNum = BLOCK_MAGIC, .isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
 			memblkIndex++;
+			memblks[memblkIndex] = NULL;
 		}
 		
 		sprintf(str, "Entry %d%s: %p - %p; %-9s Type: %s", i, space, cur.start, cur.start + cur.size, sizeStr, typeStr);
@@ -181,6 +182,7 @@ void *PMM_AllocBytes(size_t bytes) {
 	for (int i = 0; i != CONFIG_MAX_MEMBLK; i++) {
 		memblk_t *current = memblks[i];
 
+		printf("current: %p\r\n", current);
 		if (current == NULL) {
 			log("Reached end of memblks list and haven't found free block big enough. OOM?", LOGLEVEL_FATAL);
 			return NULL;
@@ -223,26 +225,29 @@ void *PMM_AllocBytes(size_t bytes) {
 			}
 
 			currentTmp += bytes + 1;
+			printf("currentTmp: %p\r\nbytes: %zu\r\n", currentTmp, bytes);
 			current = (memblk_t *)currentTmp;
 
 			current->magicNum = BLOCK_MAGIC;
 			current->isFree = true;
 			
-			size_t newNbytes = nbytes - bytes;
-			if (nbytes - bytes % 4096 == 0) {
-				current->isNumPages = true;
-				newNbytes /= 4096;
-			}
+			// size_t newNbytes = nbytes - bytes;
+			// if (nbytes - bytes % 4096 == 0) {
+				// current->isNumPages = true;
+				// newNbytes /= 4096;
+			// }
 
-			current->numBytesOrNumPages = newNbytes;
+			// current->numBytesOrNumPages = newNbytes;
 			// make a new block
 			return addr;
 
 
 			nextblk:;
 			log("nextblk", LOGLEVEL_VERBOSE);
+			printf("current2: %p\r\nnbytes: %zu\r\n", current, nbytes);
 			currentTmp += nbytes + 1;
 			current = (memblk_t *)currentTmp;
+			printf("current3: %p", current);
 		}
 	}
 	return NULL;
