@@ -61,7 +61,7 @@ isodir: bin/tfos_kernel.elf limineCoreFiles
 	@mkdir -p isodir/boot
 	@cp limine/limine-bios.sys limine/limine-bios-cd.bin limine/limine-uefi-cd.bin limine/limine.cfg isodir/limine/
 	@cp bin/tfos_kernel.elf isodir/boot/install
-	@for f in AA64 RISCV64 X64 IA32; do mcopy -i limine/limine-uefi-cd.bin ::EFI/BOOT/BOOT$$f.EFI isodir/EFI/BOOT/; done
+	@for f in AA64 RISCV64 X64 IA32; do mcopy -ni limine/limine-uefi-cd.bin ::EFI/BOOT/BOOT$$f.EFI isodir/EFI/BOOT/; done
 
 
 limine/%:
