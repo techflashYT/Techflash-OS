@@ -5,6 +5,7 @@
 #include <kernel/bootloader.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <string.h>
 
 framebuffer_t fbCon;
 
@@ -13,6 +14,18 @@ extern framebuffer_t LM_GetFramebuffer();
 
 static bool esc = false;
 
+
+static void FBCON_ScrollMaybe() {
+	if (TTY_CursorX >= TTY_Width) {
+		TTY_CursorX = 0;
+		TTY_CursorY++;
+	}
+	if (TTY_CursorY > TTY_Height) {
+		memmove(fbCon.ptr, (((uint8_t *)fbCon.ptr) + ((fbCon.width * 4) * 16)), (fbCon.width * 4) * fbCon.height);
+		TTY_CursorY--;
+		// TTY_CursorX = 0;
+	}
+}
 void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32_t fgColor, const uint32_t bgColor) {
 	if (ch == '\x1b') {
 		esc = true;
@@ -22,19 +35,21 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 		esc = !TTY_HandleEsc(ch);
 		return;
 	}
-	if (ch == '\r') {
-		TTY_CursorX = 0;
-		return;
+	switch (ch) {
+		case '\r': {
+			TTY_CursorX = 0;
+			return;
+		}
+		case '\n': {
+			TTY_CursorY++;
+			FBCON_ScrollMaybe();
+			return;
+		}
+		case '\t': {
+			TTY_CursorX += 4;
+			return;
+		}
 	}
-	if (ch == '\n') {
-		TTY_CursorY++;
-		return;
-	}
-	if (ch == '\t') {
-		TTY_CursorX += 4;
-		return;
-	}
-
 	uint8_t *charData = font[(uint8_t)ch];
 	uint32_t offset = ((y * 16) * fbCon.width) + (x * 8);
 	for (uint_fast8_t i = 0; i != 16; i++) {
@@ -66,13 +81,7 @@ void FBCON_Write(const char ch, const uint16_t x, const uint16_t y, const uint32
 	}
 	
 	TTY_CursorX++;
-	if (TTY_CursorX >= TTY_Width) {
-		TTY_CursorX = 0;
-		TTY_CursorY++;
-	}
-	if (TTY_CursorY > TTY_Height) {
-		// TODO: Scroll TTY
-	}
+	FBCON_ScrollMaybe();
 }
 
 static bool firstRun = true;
