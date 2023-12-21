@@ -147,6 +147,7 @@
 		"nextblk",
 		"numcores",
 		"phtable",
+		"printfs",
 		"putc",
 		"quietfanatic",
 		"ramdisk",
