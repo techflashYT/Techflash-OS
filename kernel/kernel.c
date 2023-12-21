@@ -27,14 +27,13 @@ void __attribute__((noreturn)) main() {
 	#endif
 
 
-	/*
 	puts("Testing PMM!\r\n");
 
-	void *ptr = PMM_Alloc(5);
-	void *ptr2 = PMM_Alloc(5);
+	void *ptr = PMM_AllocBytes(5);
+	void *ptr2 = PMM_AllocBytes(5);
 	printf("Recieved pointers: %p and %p\r\n", ptr, ptr2);
-	memset(ptr, 0xA5, 5 * 4096);
-	memset(ptr2, 0xA5, 5 * 4096);
+	memset(ptr, 0xA5, 5);
+	memset(ptr2, 0xA5, 5);
 
 	PMM_Free(ptr);
 	PMM_Free(ptr2);
@@ -42,8 +41,7 @@ void __attribute__((noreturn)) main() {
 	ptr2 = PMM_Alloc(5);
 	printf("Recieved pointers: %p and %p\r\n", ptr, ptr2);
 
-	*/
-	testMalloc();
+	// testMalloc();
 	
 
 	puts("Kernel execution done.  Hanging.\r\n");

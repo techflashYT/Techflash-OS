@@ -59,6 +59,15 @@ typedef struct {
 } memblk_t;
 static memblk_t *memblks[CONFIG_MAX_MEMBLK];
 
+
+#if CONFIG_PMM_DEBUG == 1
+#define DBG_printf printf
+#define DBG_log log
+#else
+#define DBG_printf(x, ...) (void)0
+#define DBG_log(x, y) (void)0
+#endif
+
 extern memmap_t *LM_ParseMemmap();
 static memmap_t *BOOT_ParseMemmap() {
 	if (BOOT_LoaderID == BOOT_LoaderID_LimineCompatible) {
@@ -147,7 +156,7 @@ void PMM_Init() {
 			size_t numPages = cur.size / PAGE_SIZE;
 
 			memblks[memblkIndex]  = cur.start;
-			*memblks[memblkIndex] = (memblk_t){.magicNum = BLOCK_MAGIC, .isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint16_t)numPages};
+			*memblks[memblkIndex] = (memblk_t){.magicNum = BLOCK_MAGIC, .isFree = true, .isNumPages = true, .numBytesOrNumPages = (uint64_t)numPages};
 			memblkIndex++;
 			memblks[memblkIndex] = NULL;
 		}
@@ -173,7 +182,7 @@ void *PMM_Alloc(size_t pages) {
 }
 
 void *PMM_AllocBytes(size_t bytes) {
-	log("PMM_AllocBytes", LOGLEVEL_VERBOSE);
+	DBG_log("PMM_AllocBytes", LOGLEVEL_VERBOSE);
 	if (bytes == 0) {
 		log("Refusing to allocate 0 bytes of memory.", LOGLEVEL_WARN);
 		return NULL;
@@ -182,7 +191,7 @@ void *PMM_AllocBytes(size_t bytes) {
 	for (int i = 0; i != CONFIG_MAX_MEMBLK; i++) {
 		memblk_t *current = memblks[i];
 
-		printf("current: %p\r\n", current);
+		DBG_printf("current: %p\r\n", current);
 		if (current == NULL) {
 			log("Reached end of memblks list and haven't found free block big enough. OOM?", LOGLEVEL_FATAL);
 			return NULL;
@@ -195,6 +204,7 @@ void *PMM_AllocBytes(size_t bytes) {
 			(void)PTR_MAGIC;
 
 			size_t nbytes = current->numBytesOrNumPages;
+			DBG_printf("orignbytes: %zu\r\n", nbytes);
 			uint8_t *currentTmp = (uint8_t *)current;
 			if (current->isNumPages != 0) {
 				nbytes *= 4096;
@@ -203,51 +213,47 @@ void *PMM_AllocBytes(size_t bytes) {
 
 			if (!current->isFree) {
 				// not free, skip
-				log("used blk", LOGLEVEL_VERBOSE);
+				DBG_log("used blk", LOGLEVEL_VERBOSE);
 				goto nextblk;
 			}
 
 
 			if (nbytes <= bytes) {
 				// block too small
-				log("too small", LOGLEVEL_VERBOSE);
+				DBG_log("too small", LOGLEVEL_VERBOSE);
 				goto nextblk;
 			}
 
-			log("Found free block", LOGLEVEL_VERBOSE);
+			DBG_log("Found free block", LOGLEVEL_VERBOSE);
 			current->isFree = false;
+			DBG_printf("numBytesOrPages: %zu\r\n", current->numBytesOrNumPages);
 			current->numBytesOrNumPages = bytes;
+			current->isNumPages = false;
+			DBG_printf("numBytesOrPages2: %zu\r\n", current->numBytesOrNumPages);
 
 			void *addr = currentTmp + sizeof(memblk_t) + 1;
 			if (addr == NULL) {
-				log("what", LOGLEVEL_FATAL);
+				DBG_log("what", LOGLEVEL_FATAL);
 				while (true) {}
 			}
 
-			currentTmp += bytes + 1;
-			printf("currentTmp: %p\r\nbytes: %zu\r\n", currentTmp, bytes);
+			currentTmp += bytes + sizeof(memblk_t) + 1;
+			DBG_printf("currentTmp: %p\r\nbytes: %zu\r\n", currentTmp, bytes);
 			current = (memblk_t *)currentTmp;
 
 			current->magicNum = BLOCK_MAGIC;
 			current->isFree = true;
 			
-			// size_t newNbytes = nbytes - bytes;
-			// if (nbytes - bytes % 4096 == 0) {
-				// current->isNumPages = true;
-				// newNbytes /= 4096;
-			// }
-
-			// current->numBytesOrNumPages = newNbytes;
 			// make a new block
 			return addr;
 
 
 			nextblk:;
-			log("nextblk", LOGLEVEL_VERBOSE);
-			printf("current2: %p\r\nnbytes: %zu\r\n", current, nbytes);
+			DBG_log("nextblk", LOGLEVEL_VERBOSE);
+			DBG_printf("current2: %p\r\nnbytes: %zu\r\n", current, nbytes);
 			currentTmp += nbytes + 1;
 			current = (memblk_t *)currentTmp;
-			printf("current3: %p", current);
+			DBG_printf("current3: %p\r\n", current);
 		}
 	}
 	return NULL;
