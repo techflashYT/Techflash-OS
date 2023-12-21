@@ -21,8 +21,14 @@ static void FBCON_ScrollMaybe() {
 		TTY_CursorY++;
 	}
 	if (TTY_CursorY > TTY_Height) {
-		memmove(fbCon.ptr, (((uint8_t *)fbCon.ptr) + ((fbCon.width * 4) * 16)), (fbCon.width * 4) * fbCon.height);
+		size_t fontSz = ((fbCon.width * 4) * 16);
+		uint8_t *srcAddr = (((uint8_t *)fbCon.ptr) + fontSz);
+		size_t size = (fbCon.width * 4) * fbCon.height;
+		memmove(fbCon.ptr, srcAddr, size);
 		TTY_CursorY--;
+
+		uint8_t *startZeroAddr = (srcAddr + size) - fontSz;
+		memset(startZeroAddr, 0, fontSz);
 		// TTY_CursorX = 0;
 	}
 }
