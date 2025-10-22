@@ -1,3 +1,6 @@
+# ARCHIVED, FOR HISTORICAL PURPOSES ONLY
+This was code that I wrote as a young teen, and it shows.  I have no desire to clean this up into any better state.  It's also licensed under a custom license for some weird reason (again, was a young idiot at the time), so you probably won't be able to use this code for anything useful.  Since others did contribute here, I can't even relicense it under something more normal.
+
 # ![Techflash OS Logo](/misc/logo_64x64_embed.png) Techflash OS
 
 # What is this?
